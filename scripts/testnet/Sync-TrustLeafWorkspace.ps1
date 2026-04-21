@@ -2,7 +2,8 @@ param(
     [string]$EnvFile = "D:\00 CODEX - OPENIA\bisHealth\scripts\testnet\trustleaf.testnet.env",
     [string]$ManifestPath = "D:\00 CODEX - OPENIA\bisHealth\scripts\testnet\out\trustleaf-testnet-manifest.json",
     [string]$WebEnvPath = "D:\00 CODEX - OPENIA\bisHealth\apps\web\.env.local",
-    [string]$IndexerEnvPath = "D:\00 CODEX - OPENIA\bisHealth\indexer\.env.local"
+    [string]$IndexerEnvPath = "D:\00 CODEX - OPENIA\bisHealth\indexer\.env.local",
+    [string]$AppDataManifestPath = "D:\00 CODEX - OPENIA\bisHealth\apps\web\data\trustleaf-testnet-manifest.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -79,7 +80,9 @@ $indexerEnv = @(
 
 Set-Content -LiteralPath $WebEnvPath -Value $webEnv
 Set-Content -LiteralPath $IndexerEnvPath -Value $indexerEnv
+Copy-Item -LiteralPath $ManifestPath -Destination $AppDataManifestPath -Force
 
 Write-Host "Workspace synced from live Trust Leaf testnet manifest."
 Write-Host "Web env: $WebEnvPath"
 Write-Host "Indexer env: $IndexerEnvPath"
+Write-Host "App data manifest: $AppDataManifestPath"
