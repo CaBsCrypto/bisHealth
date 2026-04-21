@@ -20,10 +20,20 @@ type TrustLeafZkLabFile = {
     proofHex: string;
     proofBytes: number;
   };
-  circuitInput: Record<string, string>;
+  circuitInput: TrustLeafZkCircuitInput;
   publicInputs: string[];
   publicInputOrder: string[];
   note: string;
+};
+
+export type TrustLeafZkCircuitInput = {
+  patientSecret: string;
+  prescriptionId: string;
+  issuedAtUnix: string;
+  validUntilUnix: string;
+  dosageClass: string;
+  policyNonce: string;
+  currentDay: string;
 };
 
 export type TrustLeafZkFixtureView = {
@@ -67,21 +77,55 @@ export type TrustLeafZkFixtureView = {
 };
 
 export async function getTrustLeafZkFixture(): Promise<TrustLeafZkFixtureView> {
+  return buildTrustLeafZkFixtureView();
+}
+
+export async function deriveTrustLeafZkFixture(options?: {
+  circuitInput?: Partial<TrustLeafZkCircuitInput>;
+  proofHex?: string;
+}): Promise<TrustLeafZkFixtureView> {
+  return buildTrustLeafZkFixtureView(options);
+}
+
+async function buildTrustLeafZkFixtureView(options?: {
+  circuitInput?: Partial<TrustLeafZkCircuitInput>;
+  proofHex?: string;
+}): Promise<TrustLeafZkFixtureView> {
   const [lab, deployment, indexedState] = await Promise.all([
     readLabFile(),
     getTrustLeafDeployment(),
     getIndexedState(),
   ]);
+  const circuitInput = {
+    ...lab.circuitInput,
+    ...options?.circuitInput,
+  };
   const derivedSignals = await deriveSignalsFromCircuitInput({
-    patientSecret: lab.circuitInput.patientSecret,
-    prescriptionId: lab.circuitInput.prescriptionId,
-    issuedAtUnix: lab.circuitInput.issuedAtUnix,
-    validUntilUnix: lab.circuitInput.validUntilUnix,
-    dosageClass: lab.circuitInput.dosageClass,
-    policyNonce: lab.circuitInput.policyNonce,
-    currentDay: lab.circuitInput.currentDay,
+    patientSecret: circuitInput.patientSecret,
+    prescriptionId: circuitInput.prescriptionId,
+    issuedAtUnix: circuitInput.issuedAtUnix,
+    validUntilUnix: circuitInput.validUntilUnix,
+    dosageClass: circuitInput.dosageClass,
+    policyNonce: circuitInput.policyNonce,
+    currentDay: circuitInput.currentDay,
   });
-  const packedProofEnvelope = createPackedProofEnvelope(lab.fixture.proofHex, derivedSignals);
+  const proofHex = options?.proofHex ?? lab.fixture.proofHex;
+  const packedProofEnvelope = createPackedProofEnvelope(proofHex, derivedSignals);
+  const fixture = {
+    currentDay: Number(circuitInput.currentDay),
+    commitment: derivedSignals.commitmentHex,
+    patientNullifier: derivedSignals.patientNullifierHex,
+    policyHash: derivedSignals.policyHashHex,
+    publicInputsHash: derivedSignals.publicInputsHashHex,
+    proofHex,
+    proofBytes: normalizeHex(proofHex).length / 2,
+  };
+  const publicInputs = [
+    circuitInput.currentDay.trim(),
+    decimalStringFromHex(derivedSignals.commitmentHex),
+    decimalStringFromHex(derivedSignals.patientNullifierHex),
+    decimalStringFromHex(derivedSignals.policyHashHex),
+  ];
   const matchesFixture = {
     commitment: normalizeHex(derivedSignals.commitmentHex) === normalizeHex(lab.fixture.commitment),
     patientNullifier:
@@ -100,15 +144,17 @@ export async function getTrustLeafZkFixture(): Promise<TrustLeafZkFixtureView> {
     matchesFixture.publicInputsHash;
 
   const consumedPrescription = indexedState.prescriptions.find(
-    (item) => normalizeHex(item.id) === normalizeHex(lab.fixture.commitment) && item.isUsed,
+    (item) => normalizeHex(item.id) === normalizeHex(fixture.commitment) && item.isUsed,
   );
 
   return {
-    fixture: lab.fixture,
-    circuitInput: lab.circuitInput,
-    publicInputs: lab.publicInputs,
+    fixture,
+    circuitInput,
+    publicInputs,
     publicInputOrder: lab.publicInputOrder,
-    note: lab.note,
+    note: matchesFixture.all
+      ? lab.note
+      : `${lab.note} Derived from the editable witness composer in the wallet-less workbench.`,
     derivedSignals,
     matchesFixture,
     packedProofEnvelope,
@@ -116,10 +162,10 @@ export async function getTrustLeafZkFixture(): Promise<TrustLeafZkFixtureView> {
       deployment.contracts.find((contract) => contract.key === "zkMedical")?.contractId ?? null,
     verifyAndConsumeArgs: {
       caller: consumedPrescription?.lastVerifiedBy ?? null,
-      commitment: lab.fixture.commitment,
-      proof: lab.fixture.proofHex,
-      publicInputsHash: lab.fixture.publicInputsHash,
-      currentDay: lab.fixture.currentDay,
+      commitment: fixture.commitment,
+      proof: proofHex,
+      publicInputsHash: fixture.publicInputsHash,
+      currentDay: fixture.currentDay,
     },
     liveStatus: {
       issueTxHash: consumedPrescription?.createdAtTxHash ?? null,
@@ -140,4 +186,8 @@ async function readLabFile(): Promise<TrustLeafZkLabFile> {
 
 function normalizeHex(value: string) {
   return value.startsWith("0x") ? value.slice(2) : value;
+}
+
+function decimalStringFromHex(value: string) {
+  return BigInt(`0x${normalizeHex(value)}`).toString(10);
 }

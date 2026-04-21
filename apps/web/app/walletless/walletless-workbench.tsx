@@ -26,6 +26,16 @@ type SessionEnvelope = {
   session: WalletlessSessionView | null;
 };
 
+type ZkCircuitInput = {
+  patientSecret: string;
+  prescriptionId: string;
+  issuedAtUnix: string;
+  validUntilUnix: string;
+  dosageClass: string;
+  policyNonce: string;
+  currentDay: string;
+};
+
 type ZkFixtureEnvelope = {
   fixture: {
     currentDay: number;
@@ -36,6 +46,9 @@ type ZkFixtureEnvelope = {
     proofHex: string;
     proofBytes: number;
   };
+  circuitInput: ZkCircuitInput;
+  publicInputs: string[];
+  publicInputOrder: string[];
   contractId: string | null;
   note: string;
   derivedSignals: {
@@ -90,6 +103,8 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
   const [defindexDepositResponse, setDefindexDepositResponse] = useState<Record<string, unknown> | null>(null);
   const [defindexSponsoredResponse, setDefindexSponsoredResponse] = useState<Record<string, unknown> | null>(null);
   const [zkFixture, setZkFixture] = useState<ZkFixtureEnvelope | null>(null);
+  const [zkPreview, setZkPreview] = useState<ZkFixtureEnvelope | null>(null);
+  const [zkCircuitInput, setZkCircuitInput] = useState<ZkCircuitInput | null>(null);
   const [defindexCaller, setDefindexCaller] = useState("");
   const [defindexAmounts, setDefindexAmounts] = useState("1000000");
   const [selectedVaultAddress, setSelectedVaultAddress] = useState("");
@@ -121,6 +136,8 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
         setStellarPasskeysConfig(nextStellarPasskeysConfig);
         setDefindexConfig(nextDefindexConfig);
         setZkFixture(nextZkFixture);
+        setZkPreview(nextZkFixture);
+        setZkCircuitInput(nextZkFixture.circuitInput);
         setSelectedVaultAddress(nextDefindexConfig.vaults.find((vault) => vault.kind === "vault")?.contractId ?? "");
         setBaseFee(nextConfig.recommendedBaseFee);
         setStatus(
@@ -256,6 +273,49 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
           : copy.sponsorMock,
       );
     });
+  }
+
+  function handleZkCircuitInputChange(field: keyof ZkCircuitInput, value: string) {
+    setZkCircuitInput((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return {
+        ...current,
+        [field]: value,
+      };
+    });
+  }
+
+  function handleRebuildZkPreview() {
+    runAction(async () => {
+      if (!zkCircuitInput || !zkFixture) {
+        throw new Error(copy.loadingZkFixture);
+      }
+
+      setStatus(copy.buildZkPreview);
+      const response = await fetchJson<ZkFixtureEnvelope>(
+        "/api/zk/derive",
+        jsonRequest({
+          circuitInput: zkCircuitInput,
+          proofHex: zkFixture.fixture.proofHex,
+        }),
+      );
+
+      setZkPreview(response);
+      setStatus(copy.buildZkPreviewDone);
+    });
+  }
+
+  function handleResetZkPreview() {
+    if (!zkFixture) {
+      return;
+    }
+
+    setZkCircuitInput(zkFixture.circuitInput);
+    setZkPreview(zkFixture);
+    setStatus(copy.zkResetDone);
   }
 
   function handleLoadDefindexVault() {
@@ -605,56 +665,111 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
             <SummaryPill
               label={copy.proofBytes}
               tone="fuchsia"
-              value={zkFixture ? String(zkFixture.fixture.proofBytes) : copy.loadingText}
+              value={zkPreview ? String(zkPreview.fixture.proofBytes) : copy.loadingText}
             />
             <SummaryPill
               label={copy.liveStatus}
-              tone={zkFixture?.liveStatus.indexedConsumed ? "emerald" : "amber"}
-              value={zkFixture?.liveStatus.indexedConsumed ? copy.consumedLive : copy.pendingLive}
+              tone={zkPreview?.liveStatus.indexedConsumed ? "emerald" : "amber"}
+              value={zkPreview?.liveStatus.indexedConsumed ? copy.consumedLive : copy.pendingLive}
             />
             <SummaryPill
               label={copy.witnessCheck}
-              tone={zkFixture?.matchesFixture.all ? "emerald" : "amber"}
-              value={zkFixture?.matchesFixture.all ? copy.matchingWitness : copy.mismatchWitness}
+              tone={zkPreview?.matchesFixture.all ? "emerald" : "amber"}
+              value={zkPreview?.matchesFixture.all ? copy.matchingWitness : copy.mismatchWitness}
             />
             <SummaryPill
               label={copy.currentDay}
               tone="stone"
-              value={zkFixture ? String(zkFixture.fixture.currentDay) : copy.loadingText}
+              value={zkPreview ? String(zkPreview.fixture.currentDay) : copy.loadingText}
             />
+            <SummaryPill
+              label={copy.zkRail}
+              tone="stone"
+              value={zkPreview?.matchesFixture.all ? copy.baselineFixture : copy.derivedPreview}
+            />
+          </div>
+
+          <div className="mt-6 rounded-[1.5rem] border border-white/8 bg-black/15 p-5">
+            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.22em] text-fuchsia-300/70">
+                  {copy.witnessLab}
+                </p>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-300">
+                  {copy.witnessLabBody}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={handleRebuildZkPreview}
+                  disabled={isPending || !zkCircuitInput || !zkFixture}
+                  className="rounded-full bg-fuchsia-300 px-4 py-2 text-sm font-semibold text-fuchsia-950 transition hover:bg-fuchsia-200 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {copy.deriveZkPreview}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetZkPreview}
+                  disabled={isPending || !zkFixture}
+                  className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-stone-100 transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {copy.resetWitness}
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              {(["patientSecret", "prescriptionId", "issuedAtUnix", "validUntilUnix", "dosageClass", "policyNonce", "currentDay"] as const).map(
+                (field) => (
+                  <label key={field} className="text-sm text-stone-300">
+                    {getZkFieldLabel(locale, field)}
+                    <input
+                      value={zkCircuitInput?.[field] ?? ""}
+                      onChange={(event) => handleZkCircuitInputChange(field, event.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-stone-100 outline-none transition focus:border-fuchsia-300/50"
+                      spellCheck={false}
+                    />
+                  </label>
+                ),
+              )}
+            </div>
           </div>
 
           <div className="mt-6 grid gap-4">
             <InfoRow label={copy.zkContract}>
-              {zkFixture?.contractId ?? copy.loadingText}
+              {zkPreview?.contractId ?? copy.loadingText}
             </InfoRow>
             <InfoRow label={copy.commitmentLabel}>
-              {zkFixture?.fixture.commitment ?? copy.loadingText}
+              {zkPreview?.fixture.commitment ?? copy.loadingText}
             </InfoRow>
             <InfoRow label={copy.publicInputsHashLabel}>
-              {zkFixture?.fixture.publicInputsHash ?? copy.loadingText}
+              {zkPreview?.fixture.publicInputsHash ?? copy.loadingText}
             </InfoRow>
             <InfoRow label={copy.consumeReceipt}>
-              {zkFixture?.liveStatus.consumeTxHash ?? copy.waitingConsume}
+              {zkPreview?.liveStatus.consumeTxHash ?? copy.waitingConsume}
             </InfoRow>
           </div>
 
           <pre className="mt-5 overflow-x-auto rounded-[1.5rem] border border-white/8 bg-black/25 p-4 text-xs leading-6 text-stone-200">
             {JSON.stringify(
-              zkFixture
+              zkPreview
                 ? {
-                    note: zkFixture.note,
-                    derivedSignals: zkFixture.derivedSignals,
-                    matchesFixture: zkFixture.matchesFixture,
+                    note: zkPreview.note,
+                    circuitInput: zkPreview.circuitInput,
+                    publicInputs: zkPreview.publicInputs,
+                    publicInputOrder: zkPreview.publicInputOrder,
+                    derivedSignals: zkPreview.derivedSignals,
+                    matchesFixture: zkPreview.matchesFixture,
                     packedProofEnvelope: {
-                      ...zkFixture.packedProofEnvelope,
-                      proofHex: `${zkFixture.packedProofEnvelope.proofHex.slice(0, 24)}...${zkFixture.packedProofEnvelope.proofHex.slice(-24)}`,
+                      ...zkPreview.packedProofEnvelope,
+                      proofHex: `${zkPreview.packedProofEnvelope.proofHex.slice(0, 24)}...${zkPreview.packedProofEnvelope.proofHex.slice(-24)}`,
                     },
                     verifyAndConsumeArgs: {
-                      ...zkFixture.verifyAndConsumeArgs,
-                      proof: `${zkFixture.verifyAndConsumeArgs.proof.slice(0, 24)}...${zkFixture.verifyAndConsumeArgs.proof.slice(-24)}`,
+                      ...zkPreview.verifyAndConsumeArgs,
+                      proof: `${zkPreview.verifyAndConsumeArgs.proof.slice(0, 24)}...${zkPreview.verifyAndConsumeArgs.proof.slice(-24)}`,
                     },
-                    liveStatus: zkFixture.liveStatus,
+                    liveStatus: zkPreview.liveStatus,
                   }
                 : {
                     note: copy.loadingZkFixture,
@@ -950,4 +1065,29 @@ function getNestedString(source: Record<string, unknown>, path: string[]) {
   }
 
   return typeof current === "string" ? current : null;
+}
+
+function getZkFieldLabel(locale: Locale, field: keyof ZkCircuitInput) {
+  const labels =
+    locale === "es"
+      ? {
+          patientSecret: "Secreto del paciente",
+          prescriptionId: "Prescription ID",
+          issuedAtUnix: "Emitida en Unix",
+          validUntilUnix: "Valida hasta Unix",
+          dosageClass: "Clase de dosis",
+          policyNonce: "Policy nonce",
+          currentDay: "Current day",
+        }
+      : {
+          patientSecret: "Patient secret",
+          prescriptionId: "Prescription ID",
+          issuedAtUnix: "Issued at Unix",
+          validUntilUnix: "Valid until Unix",
+          dosageClass: "Dosage class",
+          policyNonce: "Policy nonce",
+          currentDay: "Current day",
+        };
+
+  return labels[field];
 }
