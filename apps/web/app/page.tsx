@@ -43,9 +43,15 @@ export default async function HomePage() {
               >
                 {copy.navWalletless}
               </Link>
+              <Link
+                href="/superadmin"
+                className="rounded-full px-4 py-2 text-sm text-stone-300 transition hover:bg-white/5 hover:text-stone-100"
+              >
+                {copy.navSuperadmin}
+              </Link>
               <LanguageSwitcher locale={locale} />
               <Link
-                href="/walletless"
+                href="/patient"
                 className="rounded-full bg-emerald-300 px-5 py-2.5 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-200"
               >
                 {copy.navCta}
@@ -76,7 +82,7 @@ export default async function HomePage() {
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link
-                  href="/walletless"
+                  href="/patient"
                   className="rounded-full bg-emerald-300 px-6 py-3 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-200"
                 >
                   {copy.primaryCta}
@@ -312,20 +318,27 @@ export default async function HomePage() {
               <p className="mt-6 text-sm uppercase tracking-[0.22em] text-stone-400">{copy.finalNote}</p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
               <Link
-                href="/walletless"
+                href="/patient"
                 className="rounded-[1.8rem] border border-white/10 bg-white/8 p-5 transition hover:bg-white/12"
               >
                 <p className="text-xs uppercase tracking-[0.24em] text-emerald-300/70">Patient lane</p>
                 <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinPrimaryCta}</p>
               </Link>
               <Link
-                href="/command-center"
+                href="/superadmin"
                 className="rounded-[1.8rem] border border-white/10 bg-black/15 p-5 transition hover:bg-white/5"
               >
-                <p className="text-xs uppercase tracking-[0.24em] text-stone-400">Trust rail</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-amber-200/70">Professional lane</p>
                 <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinSecondaryCta}</p>
+              </Link>
+              <Link
+                href="/superadmin"
+                className="rounded-[1.8rem] border border-white/10 bg-black/20 p-5 transition hover:bg-white/5"
+              >
+                <p className="text-xs uppercase tracking-[0.24em] text-sky-300/70">Governance lane</p>
+                <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinTertiaryCta}</p>
               </Link>
             </div>
           </div>
