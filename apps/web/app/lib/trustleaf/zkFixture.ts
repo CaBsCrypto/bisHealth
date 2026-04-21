@@ -5,6 +5,10 @@ import path from "node:path";
 
 import { getTrustLeafDeployment } from "@/app/lib/trustleaf/deployment";
 import { getIndexedState } from "@/app/lib/trustleaf/indexedState";
+import {
+  createPackedProofEnvelope,
+  deriveSignalsFromCircuitInput,
+} from "@/app/lib/trustleaf/zkSignals";
 
 type TrustLeafZkLabFile = {
   fixture: {
@@ -28,6 +32,23 @@ export type TrustLeafZkFixtureView = {
   publicInputs: string[];
   publicInputOrder: string[];
   note: string;
+  derivedSignals: {
+    commitmentHex: string;
+    patientNullifierHex: string;
+    policyHashHex: string;
+    publicInputsHashHex: string;
+  };
+  matchesFixture: {
+    commitment: boolean;
+    patientNullifier: boolean;
+    policyHash: boolean;
+    publicInputsHash: boolean;
+    all: boolean;
+  };
+  packedProofEnvelope: {
+    proofHex: string;
+    publicInputsHashHex: string;
+  };
   contractId: string | null;
   verifyAndConsumeArgs: {
     caller: string | null;
@@ -51,6 +72,32 @@ export async function getTrustLeafZkFixture(): Promise<TrustLeafZkFixtureView> {
     getTrustLeafDeployment(),
     getIndexedState(),
   ]);
+  const derivedSignals = await deriveSignalsFromCircuitInput({
+    patientSecret: lab.circuitInput.patientSecret,
+    prescriptionId: lab.circuitInput.prescriptionId,
+    issuedAtUnix: lab.circuitInput.issuedAtUnix,
+    validUntilUnix: lab.circuitInput.validUntilUnix,
+    dosageClass: lab.circuitInput.dosageClass,
+    policyNonce: lab.circuitInput.policyNonce,
+    currentDay: lab.circuitInput.currentDay,
+  });
+  const packedProofEnvelope = createPackedProofEnvelope(lab.fixture.proofHex, derivedSignals);
+  const matchesFixture = {
+    commitment: normalizeHex(derivedSignals.commitmentHex) === normalizeHex(lab.fixture.commitment),
+    patientNullifier:
+      normalizeHex(derivedSignals.patientNullifierHex) ===
+      normalizeHex(lab.fixture.patientNullifier),
+    policyHash: normalizeHex(derivedSignals.policyHashHex) === normalizeHex(lab.fixture.policyHash),
+    publicInputsHash:
+      normalizeHex(derivedSignals.publicInputsHashHex) ===
+      normalizeHex(lab.fixture.publicInputsHash),
+    all: false,
+  };
+  matchesFixture.all =
+    matchesFixture.commitment &&
+    matchesFixture.patientNullifier &&
+    matchesFixture.policyHash &&
+    matchesFixture.publicInputsHash;
 
   const consumedPrescription = indexedState.prescriptions.find(
     (item) => normalizeHex(item.id) === normalizeHex(lab.fixture.commitment) && item.isUsed,
@@ -62,6 +109,9 @@ export async function getTrustLeafZkFixture(): Promise<TrustLeafZkFixtureView> {
     publicInputs: lab.publicInputs,
     publicInputOrder: lab.publicInputOrder,
     note: lab.note,
+    derivedSignals,
+    matchesFixture,
+    packedProofEnvelope,
     contractId:
       deployment.contracts.find((contract) => contract.key === "zkMedical")?.contractId ?? null,
     verifyAndConsumeArgs: {

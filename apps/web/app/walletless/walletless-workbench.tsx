@@ -38,6 +38,23 @@ type ZkFixtureEnvelope = {
   };
   contractId: string | null;
   note: string;
+  derivedSignals: {
+    commitmentHex: string;
+    patientNullifierHex: string;
+    policyHashHex: string;
+    publicInputsHashHex: string;
+  };
+  matchesFixture: {
+    commitment: boolean;
+    patientNullifier: boolean;
+    policyHash: boolean;
+    publicInputsHash: boolean;
+    all: boolean;
+  };
+  packedProofEnvelope: {
+    proofHex: string;
+    publicInputsHashHex: string;
+  };
   verifyAndConsumeArgs: {
     caller: string | null;
     commitment: string;
@@ -596,6 +613,11 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
               value={zkFixture?.liveStatus.indexedConsumed ? copy.consumedLive : copy.pendingLive}
             />
             <SummaryPill
+              label={copy.witnessCheck}
+              tone={zkFixture?.matchesFixture.all ? "emerald" : "amber"}
+              value={zkFixture?.matchesFixture.all ? copy.matchingWitness : copy.mismatchWitness}
+            />
+            <SummaryPill
               label={copy.currentDay}
               tone="stone"
               value={zkFixture ? String(zkFixture.fixture.currentDay) : copy.loadingText}
@@ -622,6 +644,12 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
               zkFixture
                 ? {
                     note: zkFixture.note,
+                    derivedSignals: zkFixture.derivedSignals,
+                    matchesFixture: zkFixture.matchesFixture,
+                    packedProofEnvelope: {
+                      ...zkFixture.packedProofEnvelope,
+                      proofHex: `${zkFixture.packedProofEnvelope.proofHex.slice(0, 24)}...${zkFixture.packedProofEnvelope.proofHex.slice(-24)}`,
+                    },
                     verifyAndConsumeArgs: {
                       ...zkFixture.verifyAndConsumeArgs,
                       proof: `${zkFixture.verifyAndConsumeArgs.proof.slice(0, 24)}...${zkFixture.verifyAndConsumeArgs.proof.slice(-24)}`,
