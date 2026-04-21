@@ -40,8 +40,12 @@ function Invoke-StellarCommand {
 function Test-StellarAliasExists {
     param([string]$Alias)
 
-    & stellar keys public-key $Alias *> $null
-    return $LASTEXITCODE -eq 0
+    try {
+        & stellar keys public-key $Alias 2>$null | Out-Null
+        return $LASTEXITCODE -eq 0
+    } catch {
+        return $false
+    }
 }
 
 function Ensure-StellarAlias {
