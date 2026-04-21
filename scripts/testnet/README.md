@@ -1,0 +1,59 @@
+# Trust Leaf Testnet Scripts
+
+This folder contains the first reproducible path from local development to a deployed MVP on Stellar testnet.
+
+## Files
+
+- `trustleaf.testnet.env.example`: environment template for network, source identity, aliases, and optional role addresses.
+- `trustleaf.testnet.env`: local environment used for the current live testnet deployment path.
+- `Deploy-TrustLeafTestnet.ps1`: builds, uploads, and deploys the three core contracts, then writes a deployment manifest.
+- `Initialize-TrustLeafTestnet.ps1`: initializes RBAC and optionally grants doctor, dispensary, lab, and cultivator roles.
+- `Seed-TrustLeafTestnet.ps1`: creates a live traceability batch and a non-consumed medical prescription.
+- `Run-ZkFixtureTestnet.ps1`: issues and consumes the Groth16 fixture prescription that is embedded in the ZK contract tests.
+- `Sync-TrustLeafWorkspace.ps1`: propagates the live manifest into `apps/web/.env.local` and `indexer/.env.local`.
+
+## Quick start
+
+1. Copy `trustleaf.testnet.env.example` to `trustleaf.testnet.env`.
+2. Create or choose a Stellar identity:
+   - `stellar keys generate trustleaf-admin`
+   - `stellar keys fund trustleaf-admin --network testnet`
+3. Fill the env file with your source alias and optional addresses.
+4. Preview the flow without touching the network:
+   - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Deploy-TrustLeafTestnet.ps1 -DryRun`
+   - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Initialize-TrustLeafTestnet.ps1 -DryRun`
+5. Run the real deploy:
+   - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Deploy-TrustLeafTestnet.ps1`
+6. Initialize RBAC and grant optional roles:
+   - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Initialize-TrustLeafTestnet.ps1`
+7. Sync local frontend and indexer env files:
+   - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Sync-TrustLeafWorkspace.ps1`
+8. Seed one live batch and one reserved prescription:
+   - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Seed-TrustLeafTestnet.ps1`
+9. Run the live ZK consume flow using the contract fixture proof:
+   - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Run-ZkFixtureTestnet.ps1`
+
+## Output
+
+The deployment script writes `scripts/testnet/out/trustleaf-testnet-manifest.json` with:
+
+- network metadata,
+- deployment source,
+- wasm paths and hashes,
+- contract ids for:
+  - RBAC
+  - Traceability
+  - ZK Medical
+
+This manifest is meant to become the bridge into frontend `.env` wiring and indexer configuration.
+
+## Live testnet milestones
+
+The current repo state has already exercised a full on-chain ZK redemption on Stellar testnet:
+
+- fixture prescription issued:
+  - `b777f2919847becd8bf70ebf094e5df8cac14130771fea54607757ba4d37480b`
+- fixture prescription consumed with `verify_and_consume`:
+  - `c98e87f5d73802ee5a1d1b08e076a616abd3907c7d4453560004c06f21a904f3`
+
+The fixture values are versioned in `zk/fixtures/soroban-zk-fixture.json` so the happy path can be replayed without manually re-encoding proof bytes.

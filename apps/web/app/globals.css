@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-synthesis: none;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: #04070f;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body), sans-serif;
+  background: #04070f;
+  color: #f5f5f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(110, 231, 183, 0.28);
+  color: #f5f5f4;
+}
+
+@keyframes hero-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes hero-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display), serif;
+  }
+
+  .hero-drift {
+    animation: hero-drift 12s ease-in-out infinite;
+  }
+
+  .hero-drift-slow {
+    animation: hero-drift 16s ease-in-out infinite;
+  }
+
+  .hero-pulse {
+    animation: hero-pulse 4s ease-in-out infinite;
+  }
+}

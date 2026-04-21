@@ -1,0 +1,73 @@
+type RoleMembership @entity {
+  id: ID!
+  role: String!
+  account: String!
+  grantedBy: String
+  grantedAtLedger: BigInt!
+  revokedBy: String
+  revokedAtLedger: BigInt
+  isActive: Boolean!
+}
+
+type RoleChange @entity {
+  id: ID!
+  role: String!
+  account: String!
+  action: String!
+  admin: String
+  ledger: BigInt!
+  txHash: String!
+  logIndex: Int!
+}
+
+type Batch @entity {
+  id: ID!
+  cultivator: String!
+  lab: String
+  metadataHash: String!
+  latestDocumentHash: String!
+  status: String!
+  eventCount: Int!
+  lastActor: String
+  createdAtLedger: BigInt!
+  updatedAtLedger: BigInt!
+  createdAtTxHash: String!
+  updatedAtTxHash: String!
+}
+
+type BatchTimelineItem @entity {
+  id: ID!
+  batchId: String!
+  kind: String!
+  actor: String
+  eventIndex: Int
+  eventType: String
+  status: String
+  documentHash: String!
+  ledger: BigInt!
+  txHash: String!
+  logIndex: Int!
+}
+
+type Prescription @entity {
+  id: ID!
+  doctor: String!
+  patientNullifier: String!
+  policyHash: String!
+  isUsed: Boolean!
+  lastVerifiedBy: String
+  createdAtLedger: BigInt!
+  createdAtTxHash: String!
+  consumedAtLedger: BigInt
+  consumedAtTxHash: String
+}
+
+type PrescriptionConsumption @entity {
+  id: ID!
+  prescriptionId: String!
+  caller: String!
+  patientNullifier: String!
+  ledger: BigInt!
+  txHash: String!
+  logIndex: Int!
+}

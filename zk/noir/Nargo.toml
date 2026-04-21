@@ -1,0 +1,8 @@
+[package]
+name = "trust_leaf_prescription"
+type = "bin"
+authors = ["Trust Leaf"]
+compiler_version = ">=0.33.0"
+
+[dependencies]
+

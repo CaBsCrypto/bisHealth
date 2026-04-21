@@ -1,0 +1,256 @@
+{
+  "generators": {
+    "address": 2,
+    "nonce": 0,
+    "mux_id": 0
+  },
+  "auth": [
+    [],
+    [],
+    [
+      [
+        "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4",
+        {
+          "function": {
+            "contract_fn": {
+              "contract_address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "function_name": "issue_prescription",
+              "args": [
+                {
+                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
+                },
+                {
+                  "bytes": "14d4feaf493cdfe101111ba812f3f61a9ca8234fd5aea944bb7c4849f7f681ea"
+                },
+                {
+                  "bytes": "121e8368b948d8f641f9e97ae1c314235deb1c3d595874787be47ef31195104c"
+                },
+                {
+                  "bytes": "011124e45f92c16a6fdaa1a452aee204989fd69bd851f55dce30503093c7a2a8"
+                }
+              ]
+            }
+          },
+          "sub_invocations": []
+        }
+      ]
+    ],
+    [
+      [
+        "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4",
+        {
+          "function": {
+            "contract_fn": {
+              "contract_address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "function_name": "verify_and_consume",
+              "args": [
+                {
+                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
+                },
+                {
+                  "bytes": "14d4feaf493cdfe101111ba812f3f61a9ca8234fd5aea944bb7c4849f7f681ea"
+                },
+                {
+                  "bytes": "1e5fa5a2c69da7dc8b819848ca878ea9bafceb23ff567aff3c7f28a92ebea9df033f993f520d8edb5bced899326fe111ff72cd8180cb73b4cf46764ea1a207dd08d1d407709b537ea37ebef7490affcced15c5ef2d0acab163177b7f4e253e501513db377ef0d26bd25fa8dabcab5bdc4e4add701c4a053d62ec20c45375a46e1d858861002ff3fd500ffb2bf1883735547a265b27696245e567b95b14d9834e006756f3415a42d211ae6f6786afe93173f10ee67ab190b092309bc8e15da1222c2ee71e8b04ac8fb6661c90e755a27f959dd01762df589530b56706891cd3791be45844d59bf07c2e6b43457384f7460595c43870d7a1fc18277e7772cb1985"
+                },
+                {
+                  "bytes": "b02998ce5f5a2e461898f5c1d07c439f4714b219e2f95cfc883cc378740d9e9b"
+                },
+                {
+                  "u64": "1777000000"
+                }
+              ]
+            }
+          },
+          "sub_invocations": []
+        }
+      ]
+    ],
+    []
+  ],
+  "ledger": {
+    "protocol_version": 25,
+    "sequence_number": 0,
+    "timestamp": 0,
+    "network_id": "0000000000000000000000000000000000000000000000000000000000000000",
+    "base_reserve": 0,
+    "min_persistent_entry_ttl": 4096,
+    "min_temp_entry_ttl": 16,
+    "max_entry_ttl": 6312000,
+    "ledger_entries": [
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": {
+                "vec": [
+                  {
+                    "symbol": "Nullifier"
+                  },
+                  {
+                    "bytes": "121e8368b948d8f641f9e97ae1c314235deb1c3d595874787be47ef31195104c"
+                  }
+                ]
+              },
+              "durability": "persistent",
+              "val": {
+                "bytes": "14d4feaf493cdfe101111ba812f3f61a9ca8234fd5aea944bb7c4849f7f681ea"
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": {
+                "vec": [
+                  {
+                    "symbol": "Prescription"
+                  },
+                  {
+                    "bytes": "14d4feaf493cdfe101111ba812f3f61a9ca8234fd5aea944bb7c4849f7f681ea"
+                  }
+                ]
+              },
+              "durability": "persistent",
+              "val": {
+                "map": [
+                  {
+                    "key": {
+                      "symbol": "commitment"
+                    },
+                    "val": {
+                      "bytes": "14d4feaf493cdfe101111ba812f3f61a9ca8234fd5aea944bb7c4849f7f681ea"
+                    }
+                  },
+                  {
+                    "key": {
+                      "symbol": "doctor"
+                    },
+                    "val": {
+                      "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
+                    }
+                  },
+                  {
+                    "key": {
+                      "symbol": "is_used"
+                    },
+                    "val": {
+                      "bool": true
+                    }
+                  },
+                  {
+                    "key": {
+                      "symbol": "patient_nullifier"
+                    },
+                    "val": {
+                      "bytes": "121e8368b948d8f641f9e97ae1c314235deb1c3d595874787be47ef31195104c"
+                    }
+                  },
+                  {
+                    "key": {
+                      "symbol": "policy_hash"
+                    },
+                    "val": {
+                      "bytes": "011124e45f92c16a6fdaa1a452aee204989fd69bd851f55dce30503093c7a2a8"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": "ledger_key_contract_instance",
+              "durability": "persistent",
+              "val": {
+                "contract_instance": {
+                  "executable": {
+                    "wasm": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  "storage": null
+                }
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4",
+              "key": {
+                "ledger_key_nonce": {
+                  "nonce": "801925984706572462"
+                }
+              },
+              "durability": "temporary",
+              "val": "void"
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 6311999
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4",
+              "key": {
+                "ledger_key_nonce": {
+                  "nonce": "5541220902715666415"
+                }
+              },
+              "durability": "temporary",
+              "val": "void"
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 6311999
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_code": {
+              "ext": "v0",
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "code": ""
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      }
+    ]
+  },
+  "events": []
+}

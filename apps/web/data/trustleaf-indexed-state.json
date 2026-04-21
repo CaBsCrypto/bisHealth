@@ -1,0 +1,124 @@
+{
+  "roleMemberships": [],
+  "roleChanges": [],
+  "batches": [
+    {
+      "id": "0x746c2d62617463682d3030320000000000000000000000000000000000000000",
+      "cultivator": "GD2TBM7BEWAQGM5UPVDYKEFYEDEQLLJMBTTUGFVSWO67TQWGFPOV5SAQ",
+      "lab": "GCFX75CJHIRAYDCQYSCWB5HMWSBMH6UY5RV4BAXCUWJDZY4P5X4JIT65",
+      "metadataHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+      "latestDocumentHash": "0x4444444444444444444444444444444444444444444444444444444444444444",
+      "status": "Released",
+      "eventCount": 2,
+      "lastActor": "GCFX75CJHIRAYDCQYSCWB5HMWSBMH6UY5RV4BAXCUWJDZY4P5X4JIT65",
+      "createdAtLedger": 2144066,
+      "updatedAtLedger": 2144089,
+      "createdAtTxHash": "a7acae3fdee749539ccfb4efc4e9d0a074ea4956d23ca7dc433f8ec40a97c9a1",
+      "updatedAtTxHash": "24a72fe2a3e28aa2237502858513a4e3ba860db666b48cceb31e922bd32d7f9b"
+    }
+  ],
+  "batchTimeline": [
+    {
+      "id": "a7acae3fdee749539ccfb4efc4e9d0a074ea4956d23ca7dc433f8ec40a97c9a1:0",
+      "batchId": "0x746c2d62617463682d3030320000000000000000000000000000000000000000",
+      "kind": "batch_created",
+      "actor": "GD2TBM7BEWAQGM5UPVDYKEFYEDEQLLJMBTTUGFVSWO67TQWGFPOV5SAQ",
+      "eventIndex": null,
+      "eventType": "batch_created",
+      "status": "Created",
+      "documentHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+      "ledger": 2144066,
+      "txHash": "a7acae3fdee749539ccfb4efc4e9d0a074ea4956d23ca7dc433f8ec40a97c9a1",
+      "logIndex": 0
+    },
+    {
+      "id": "9f5c4f649f31649333351def9fbe6278c60f8c33234568f35ed6c46428fbcd5c:0",
+      "batchId": "0x746c2d62617463682d3030320000000000000000000000000000000000000000",
+      "kind": "lab_assigned",
+      "actor": "GD2TBM7BEWAQGM5UPVDYKEFYEDEQLLJMBTTUGFVSWO67TQWGFPOV5SAQ",
+      "eventIndex": null,
+      "eventType": "lab_assigned",
+      "status": null,
+      "documentHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+      "ledger": 2144086,
+      "txHash": "9f5c4f649f31649333351def9fbe6278c60f8c33234568f35ed6c46428fbcd5c",
+      "logIndex": 0
+    },
+    {
+      "id": "0e64d88fa0d8629492bb88d114ecece3a5b2c890bce06b31c552538498a5fd3b:0",
+      "batchId": "0x746c2d62617463682d3030320000000000000000000000000000000000000000",
+      "kind": "batch_event_added",
+      "actor": "GCFX75CJHIRAYDCQYSCWB5HMWSBMH6UY5RV4BAXCUWJDZY4P5X4JIT65",
+      "eventIndex": 0,
+      "eventType": "HARVESTED",
+      "status": null,
+      "documentHash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+      "ledger": 2144087,
+      "txHash": "0e64d88fa0d8629492bb88d114ecece3a5b2c890bce06b31c552538498a5fd3b",
+      "logIndex": 0
+    },
+    {
+      "id": "d5ebeeefc798157d20384ae9d4d96063ad9a2db1245d037b84f709e4ce0cf2ff:0",
+      "batchId": "0x746c2d62617463682d3030320000000000000000000000000000000000000000",
+      "kind": "batch_event_added",
+      "actor": "GCFX75CJHIRAYDCQYSCWB5HMWSBMH6UY5RV4BAXCUWJDZY4P5X4JIT65",
+      "eventIndex": 1,
+      "eventType": "LAB_VERIFIED",
+      "status": null,
+      "documentHash": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "ledger": 2144088,
+      "txHash": "d5ebeeefc798157d20384ae9d4d96063ad9a2db1245d037b84f709e4ce0cf2ff",
+      "logIndex": 0
+    },
+    {
+      "id": "24a72fe2a3e28aa2237502858513a4e3ba860db666b48cceb31e922bd32d7f9b:0",
+      "batchId": "0x746c2d62617463682d3030320000000000000000000000000000000000000000",
+      "kind": "status_updated",
+      "actor": "GCFX75CJHIRAYDCQYSCWB5HMWSBMH6UY5RV4BAXCUWJDZY4P5X4JIT65",
+      "eventIndex": null,
+      "eventType": "status_updated",
+      "status": "Released",
+      "documentHash": "0x4444444444444444444444444444444444444444444444444444444444444444",
+      "ledger": 2144089,
+      "txHash": "24a72fe2a3e28aa2237502858513a4e3ba860db666b48cceb31e922bd32d7f9b",
+      "logIndex": 0
+    }
+  ],
+  "prescriptions": [
+    {
+      "id": "0x24d4feaf493cdfe101111ba812f3f61a9ca8234fd5aea944bb7c4849f7f682ff",
+      "doctor": "GDOVJO25LQ7HCYWWPN4COVBHDSOU32PMWUOJDMGA5U23XHRQGVZRCT3O",
+      "patientNullifier": "0x21e8368b948d8f641f9e97ae1c314235deb1c3d595874787be47ef3119510abc",
+      "policyHash": "0x031124e45f92c16a6fdaa1a452aee204989fd69bd851f55dce30503093c7b9de",
+      "isUsed": false,
+      "lastVerifiedBy": null,
+      "createdAtLedger": 2144225,
+      "createdAtTxHash": "5b6e00d573b55dd807bcde431ff56d24082522a00e7518066ff9a594006569a4",
+      "consumedAtLedger": null,
+      "consumedAtTxHash": null
+    },
+    {
+      "id": "0x14d4feaf493cdfe101111ba812f3f61a9ca8234fd5aea944bb7c4849f7f681ea",
+      "doctor": "GDOVJO25LQ7HCYWWPN4COVBHDSOU32PMWUOJDMGA5U23XHRQGVZRCT3O",
+      "patientNullifier": "0x121e8368b948d8f641f9e97ae1c314235deb1c3d595874787be47ef31195104c",
+      "policyHash": "0x011124e45f92c16a6fdaa1a452aee204989fd69bd851f55dce30503093c7a2a8",
+      "isUsed": true,
+      "lastVerifiedBy": "GBD6FI2FCWIGYRONA4C2E37HHQYB3D7D2AEASG4PXKGQMXG6X7ALDB4D",
+      "createdAtLedger": 2144718,
+      "createdAtTxHash": "b777f2919847becd8bf70ebf094e5df8cac14130771fea54607757ba4d37480b",
+      "consumedAtLedger": 2144737,
+      "consumedAtTxHash": "c98e87f5d73802ee5a1d1b08e076a616abd3907c7d4453560004c06f21a904f3"
+    }
+  ],
+  "prescriptionConsumptions": [
+    {
+      "id": "c98e87f5d73802ee5a1d1b08e076a616abd3907c7d4453560004c06f21a904f3:0",
+      "prescriptionId": "0x14d4feaf493cdfe101111ba812f3f61a9ca8234fd5aea944bb7c4849f7f681ea",
+      "caller": "GBD6FI2FCWIGYRONA4C2E37HHQYB3D7D2AEASG4PXKGQMXG6X7ALDB4D",
+      "patientNullifier": "0x121e8368b948d8f641f9e97ae1c314235deb1c3d595874787be47ef31195104c",
+      "ledger": 2144737,
+      "txHash": "c98e87f5d73802ee5a1d1b08e076a616abd3907c7d4453560004c06f21a904f3",
+      "logIndex": 0
+    }
+  ]
+}

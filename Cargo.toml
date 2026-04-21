@@ -1,0 +1,18 @@
+[workspace]
+members = [
+  "contracts/trust_leaf_rbac",
+  "contracts/trust_leaf_traceability",
+  "contracts/trust_leaf_zk_medical",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+version = "0.1.0"
+
+[workspace.dependencies]
+soroban-sdk = "25.3.0"
+
+[profile.release]
+overflow-checks = true

@@ -1,0 +1,31 @@
+{
+    "generatedAt":  "2026-04-20T18:38:04.8521931-04:00",
+    "network":  {
+                    "rpcUrl":  "https://soroban-testnet.stellar.org",
+                    "networkPassphrase":  "Test SDF Network ; September 2015"
+                },
+    "source":  "admin",
+    "contracts":  {
+                      "rbac":  {
+                                   "package":  "trust_leaf_rbac",
+                                   "alias":  "trustleaf-rbac",
+                                   "wasm":  "D:\\00 CODEX - OPENIA\\bisHealth\\scripts\\testnet\\out\\artifacts\\trust_leaf_rbac.wasm",
+                                   "wasmHash":  "f5b2f1529033b23b593245ffa0329d359f9667c2adfe39c10b34fcef649b2d9b",
+                                   "contractId":  "CAF52MH3K32ABGJCULWQ2UJGID6SKLQFZNC6UYQL7BHVQMRRRQRIVEIG"
+                               },
+                      "traceability":  {
+                                           "package":  "trust_leaf_traceability",
+                                           "alias":  "trustleaf-traceability",
+                                           "wasm":  "D:\\00 CODEX - OPENIA\\bisHealth\\scripts\\testnet\\out\\artifacts\\trust_leaf_traceability.wasm",
+                                           "wasmHash":  "d77f94f4fdd9d79999a70f1162cc3b5b28d422671c783bfb3e3c45ca5b1bc334",
+                                           "contractId":  "CD2SSIIAM7I7YWKTG2WJLSUJHMKZMKUZZZI6U3TEBYZ56OS6QUOQQPYT"
+                                       },
+                      "zkMedical":  {
+                                        "package":  "trust_leaf_zk_medical",
+                                        "alias":  "trustleaf-zk-medical",
+                                        "wasm":  "D:\\00 CODEX - OPENIA\\bisHealth\\scripts\\testnet\\out\\artifacts\\trust_leaf_zk_medical.wasm",
+                                        "wasmHash":  "9ed01f44ded2df80230d97085784c48f38bd430f3e134968e577b1cb2e1ba4dd",
+                                        "contractId":  "CAOCOLUAT6MH3ZNIYELOHGP5VVOHX26M6T233P62FHGUZV7KAIZUGO5Z"
+                                    }
+                  }
+}
