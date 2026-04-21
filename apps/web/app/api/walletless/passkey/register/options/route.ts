@@ -2,14 +2,16 @@ import { generateRegistrationOptions } from "@simplewebauthn/server";
 
 import { getWalletlessConfig, resolveOrigin } from "@/app/lib/walletless/config";
 import {
-  findOrCreateUser,
+  buildWalletlessProfile,
   listCredentialDescriptors,
-  setPendingChallenge,
 } from "@/app/lib/walletless/store";
+import { signWalletlessToken } from "@/app/lib/walletless/tokens";
+import type { WalletlessProfileRecord } from "@/app/lib/walletless/types";
 
 type RegisterOptionsBody = {
   username?: string;
   displayName?: string;
+  profile?: WalletlessProfileRecord | null;
 };
 
 export async function POST(request: Request) {
@@ -20,16 +22,20 @@ export async function POST(request: Request) {
     return Response.json({ error: "username is required" }, { status: 400 });
   }
 
-  const user = findOrCreateUser(username, body?.displayName);
+  const profile = buildWalletlessProfile({
+    username,
+    displayName: body?.displayName,
+    profile: body?.profile,
+  });
   const config = getWalletlessConfig(resolveOrigin(request));
   const options = await generateRegistrationOptions({
     rpName: config.rpName,
     rpID: config.rpId,
-    userID: new TextEncoder().encode(user.id),
-    userName: user.username,
-    userDisplayName: user.displayName,
+    userID: new TextEncoder().encode(profile.userId),
+    userName: profile.username,
+    userDisplayName: profile.displayName,
     attestationType: "none",
-    excludeCredentials: listCredentialDescriptors(user.id),
+    excludeCredentials: listCredentialDescriptors(profile.credentials),
     authenticatorSelection: {
       residentKey: "preferred",
       userVerification: "preferred",
@@ -37,10 +43,17 @@ export async function POST(request: Request) {
     preferredAuthenticatorType: "localDevice",
   });
 
-  setPendingChallenge(user.id, "registration", options.challenge);
-
   return Response.json({
-    userId: user.id,
+    flowToken: signWalletlessToken(
+      "walletless-register",
+      {
+        userId: profile.userId,
+        username: profile.username,
+        displayName: profile.displayName,
+        challenge: options.challenge,
+      },
+      60 * 10,
+    ),
     options,
   });
 }

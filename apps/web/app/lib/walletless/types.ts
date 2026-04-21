@@ -2,6 +2,31 @@ export type SponsorMode = "mock" | "fee-bump";
 
 export type SmartWalletStatus = "not-enrolled" | "deployment-ready";
 
+export type WalletlessCredentialRecord = {
+  id: string;
+  publicKey: string;
+  counter: number;
+  transports?: string[];
+  deviceType: "singleDevice" | "multiDevice";
+  backedUp: boolean;
+  createdAt: string;
+};
+
+export type WalletlessProfileRecord = {
+  userId: string;
+  username: string;
+  displayName: string;
+  createdAt: string;
+  credentials: WalletlessCredentialRecord[];
+};
+
+export type WalletlessProfileSummary = {
+  userId: string;
+  username: string;
+  displayName: string;
+  credentialCount: number;
+};
+
 export type WalletlessSessionView = {
   userId: string;
   username: string;

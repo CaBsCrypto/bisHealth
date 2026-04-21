@@ -2,13 +2,15 @@ import { generateAuthenticationOptions } from "@simplewebauthn/server";
 
 import { getWalletlessConfig, resolveOrigin } from "@/app/lib/walletless/config";
 import {
-  getUserByUsername,
+  buildWalletlessProfile,
   listCredentialDescriptors,
-  setPendingChallenge,
 } from "@/app/lib/walletless/store";
+import { signWalletlessToken } from "@/app/lib/walletless/tokens";
+import type { WalletlessProfileRecord } from "@/app/lib/walletless/types";
 
 type LoginOptionsBody = {
   username?: string;
+  profile?: WalletlessProfileRecord | null;
 };
 
 export async function POST(request: Request) {
@@ -19,26 +21,32 @@ export async function POST(request: Request) {
     return Response.json({ error: "username is required" }, { status: 400 });
   }
 
-  const user = getUserByUsername(username);
-  if (!user) {
-    return Response.json({ error: "wallet-less user not found" }, { status: 404 });
-  }
-
-  if (user.credentials.length === 0) {
+  const profile = buildWalletlessProfile({
+    username,
+    profile: body?.profile,
+  });
+  if (profile.credentials.length === 0) {
     return Response.json({ error: "user does not have registered passkeys" }, { status: 409 });
   }
 
   const config = getWalletlessConfig(resolveOrigin(request));
   const options = await generateAuthenticationOptions({
     rpID: config.rpId,
-    allowCredentials: listCredentialDescriptors(user.id),
+    allowCredentials: listCredentialDescriptors(profile.credentials),
     userVerification: "preferred",
   });
 
-  setPendingChallenge(user.id, "authentication", options.challenge);
-
   return Response.json({
-    userId: user.id,
+    flowToken: signWalletlessToken(
+      "walletless-login",
+      {
+        userId: profile.userId,
+        username: profile.username,
+        displayName: profile.displayName,
+        challenge: options.challenge,
+      },
+      60 * 10,
+    ),
     options,
   });
 }

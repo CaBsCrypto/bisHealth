@@ -8,17 +8,24 @@ import type {
   DefindexConfigView,
   StellarPasskeysConfigView,
   WalletlessConfigView,
+  WalletlessProfileRecord,
   WalletlessSessionView,
 } from "@/app/lib/walletless/types";
 
 type RegistrationOptionsEnvelope = {
-  userId: string;
+  flowToken: string;
   options: Parameters<typeof startRegistration>[0]["optionsJSON"];
 };
 
 type AuthenticationOptionsEnvelope = {
-  userId: string;
+  flowToken: string;
   options: Parameters<typeof startAuthentication>[0]["optionsJSON"];
+};
+
+type PasskeyVerificationEnvelope = {
+  verified: boolean;
+  profile: WalletlessProfileRecord;
+  session: WalletlessSessionView;
 };
 
 type SessionEnvelope = {
@@ -106,6 +113,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
     useState<StellarPasskeysConfigView | null>(null);
   const [defindexConfig, setDefindexConfig] = useState<DefindexConfigView | null>(null);
   const [session, setSession] = useState<WalletlessSessionView | null>(null);
+  const [profile, setProfile] = useState<WalletlessProfileRecord | null>(null);
   const [username, setUsername] = useState("patient.andes");
   const [displayName, setDisplayName] = useState("Paciente Andes");
   const [innerXdr, setInnerXdr] = useState("");
@@ -149,6 +157,15 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
 
         setConfig(nextConfig);
         setSession(nextSession.session);
+        const storedProfile = getStoredWalletlessProfile(nextSession.session?.username ?? username);
+        if (storedProfile) {
+          setProfile(storedProfile);
+          setUsername(storedProfile.username);
+          setDisplayName(storedProfile.displayName);
+        } else if (nextSession.session) {
+          setUsername(nextSession.session.username);
+          setDisplayName(nextSession.session.displayName);
+        }
         setStellarPasskeysConfig(nextStellarPasskeysConfig);
         setDefindexConfig(nextDefindexConfig);
         setZkFixture(nextZkFixture);
@@ -174,6 +191,17 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
     })();
   }, []);
 
+  useEffect(() => {
+    const storedProfile = getStoredWalletlessProfile(username);
+    if (!storedProfile) {
+      setProfile(null);
+      return;
+    }
+
+    setProfile(storedProfile);
+    setDisplayName(storedProfile.displayName);
+  }, [username]);
+
   function runAction(action: () => Promise<void>) {
     startTransition(() => {
       void action().catch((error) => {
@@ -186,12 +214,14 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
     runAction(async () => {
       ensurePasskeySupport(copy.browserUnsupported);
       setStatus(copy.registerChallenge);
+      const existingProfile = getStoredWalletlessProfile(username);
 
       const registration = await fetchJson<RegistrationOptionsEnvelope>(
         "/api/walletless/passkey/register/options",
         jsonRequest({
           username,
           displayName,
+          profile: existingProfile,
         }),
       );
 
@@ -201,14 +231,19 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
 
       setStatus(copy.verifyRegistration);
 
-      const verification = await fetchJson<{ verified: boolean; session: WalletlessSessionView }>(
+      const verification = await fetchJson<PasskeyVerificationEnvelope>(
         "/api/walletless/passkey/register/verify",
         jsonRequest({
-          userId: registration.userId,
+          flowToken: registration.flowToken,
           response,
+          profile: existingProfile,
         }),
       );
 
+      storeWalletlessProfile(verification.profile);
+      setProfile(verification.profile);
+      setUsername(verification.profile.username);
+      setDisplayName(verification.profile.displayName);
       setSession(verification.session);
       setSponsorResponse(null);
       setStatus(copy.registrationDone);
@@ -219,11 +254,16 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
     runAction(async () => {
       ensurePasskeySupport(copy.browserUnsupported);
       setStatus(copy.loginChallenge);
+      const existingProfile = getStoredWalletlessProfile(username);
+      if (!existingProfile) {
+        throw new Error("No passkey profile found on this device for that username");
+      }
 
       const login = await fetchJson<AuthenticationOptionsEnvelope>(
         "/api/walletless/passkey/login/options",
         jsonRequest({
           username,
+          profile: existingProfile,
         }),
       );
 
@@ -233,14 +273,19 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
 
       setStatus(copy.verifyLogin);
 
-      const verification = await fetchJson<{ verified: boolean; session: WalletlessSessionView }>(
+      const verification = await fetchJson<PasskeyVerificationEnvelope>(
         "/api/walletless/passkey/login/verify",
         jsonRequest({
-          userId: login.userId,
+          flowToken: login.flowToken,
           response,
+          profile: existingProfile,
         }),
       );
 
+      storeWalletlessProfile(verification.profile);
+      setProfile(verification.profile);
+      setUsername(verification.profile.username);
+      setDisplayName(verification.profile.displayName);
       setSession(verification.session);
       setSponsorResponse(null);
       setStatus(copy.loginDone);
@@ -254,6 +299,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
       });
 
       setSession(null);
+      setProfile(getStoredWalletlessProfile(username));
       setSponsorResponse(null);
       setStatus(copy.logoutDone);
     });
@@ -678,6 +724,9 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
               <SessionRow label={copy.smartWalletStatus}>{session.smartWalletStatus}</SessionRow>
               <SessionRow label={copy.passkeysStored}>{String(session.credentialCount)}</SessionRow>
               <SessionRow label={copy.network}>{session.networkPassphrase}</SessionRow>
+              <SessionRow label="Local profile cache">
+                {profile ? `${profile.credentials.length} device credential(s) ready` : "No device cache found yet"}
+              </SessionRow>
             </div>
           ) : (
             <div className="mt-6 rounded-[1.5rem] border border-white/8 bg-white/5 p-5 text-sm leading-7 text-stone-300">
@@ -1141,6 +1190,49 @@ function InfoRow({ label, children }: { label: string; children: string }) {
       <p className="mt-3 break-all text-sm leading-7 text-stone-100">{children}</p>
     </div>
   );
+}
+
+const WALLETLESS_PROFILE_STORAGE_KEY = "trustleaf_walletless_profiles_v1";
+
+function getStoredWalletlessProfile(username: string) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const profiles = readStoredWalletlessProfiles();
+  return profiles[normalizeWalletlessUsername(username)] ?? null;
+}
+
+function storeWalletlessProfile(profile: WalletlessProfileRecord) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const profiles = readStoredWalletlessProfiles();
+  profiles[normalizeWalletlessUsername(profile.username)] = profile;
+  window.localStorage.setItem(WALLETLESS_PROFILE_STORAGE_KEY, JSON.stringify(profiles));
+}
+
+function readStoredWalletlessProfiles() {
+  if (typeof window === "undefined") {
+    return {} as Record<string, WalletlessProfileRecord>;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(WALLETLESS_PROFILE_STORAGE_KEY);
+    if (!raw) {
+      return {} as Record<string, WalletlessProfileRecord>;
+    }
+
+    const parsed = JSON.parse(raw) as Record<string, WalletlessProfileRecord>;
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {} as Record<string, WalletlessProfileRecord>;
+  }
+}
+
+function normalizeWalletlessUsername(username: string) {
+  return username.trim().toLowerCase();
 }
 
 function ensurePasskeySupport(message: string) {
