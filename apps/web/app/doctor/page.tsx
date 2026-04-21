@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDoctorPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
@@ -80,6 +81,8 @@ export default async function DoctorPage() {
                 {copy.title}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-100/90">{copy.body}</p>
+
+              <ActorNav current="doctor" locale={locale} />
             </div>
 
             <aside className="grid gap-4 md:grid-cols-2">

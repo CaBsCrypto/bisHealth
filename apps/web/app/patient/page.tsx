@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getPatientPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
@@ -93,6 +94,8 @@ export default async function PatientPage() {
                   {copy.reviewTrail}
                 </Link>
               </div>
+
+              <ActorNav current="patient" locale={locale} />
             </div>
 
             <aside className="grid gap-4 md:grid-cols-2 xl:grid-cols-2">

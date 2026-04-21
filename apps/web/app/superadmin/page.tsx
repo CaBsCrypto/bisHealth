@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getLocale } from "../lib/locale";
 import { getSuperAdminPageCopy } from "../lib/i18n";
@@ -65,6 +66,8 @@ export default async function SuperAdminPage() {
               <p className="mt-6 max-w-3xl text-base leading-8 text-stone-200 md:text-lg">
                 {copy.body}
               </p>
+
+              <ActorNav current="superadmin" locale={locale} />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
