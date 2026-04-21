@@ -188,7 +188,7 @@ export default async function SuperAdminPage() {
             </h2>
             <div className="mt-6 grid gap-4">
               <ActionCard href="/doctor" title={copy.actionDoctor} />
-              <ActionCard href="/command-center" title={copy.actionDisp} />
+              <ActionCard href="/dispensary" title={copy.actionDisp} />
               <ActionCard href="/api/trustleaf/deployment" title={copy.actionReview} />
               <ActionCard href="/api/indexed-state" title={copy.actionIndex} />
             </div>
