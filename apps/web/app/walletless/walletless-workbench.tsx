@@ -125,6 +125,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
   const [selectedVaultAddress, setSelectedVaultAddress] = useState("");
   const [supportsPasskeys, setSupportsPasskeys] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
+  const sponsorSmokeSummary = getSponsorSmokeSummary(sponsorResponse);
 
   useEffect(() => {
     setSupportsPasskeys(browserSupportsWebAuthn());
@@ -696,6 +697,46 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
             {copy.sponsorOutputBody}
           </p>
 
+          {sponsorSmokeSummary ? (
+            <div className="mt-6 rounded-[1.5rem] border border-emerald-200/10 bg-emerald-300/8 p-5">
+              <div className="flex flex-wrap gap-3">
+                <SummaryPill
+                  label={copy.sponsorLiveResult}
+                  tone={sponsorSmokeSummary.submitted ? "emerald" : "amber"}
+                  value={sponsorSmokeSummary.submitted ? copy.submittedTx : copy.pendingTx}
+                />
+                <SummaryPill
+                  label={copy.sponsorMode}
+                  tone="sky"
+                  value={String(sponsorResponse?.mode ?? copy.loadingMode)}
+                />
+              </div>
+
+              <div className="mt-5 grid gap-4">
+                <InfoRow label={copy.transactionHash}>
+                  {sponsorSmokeSummary.hash}
+                </InfoRow>
+                <InfoRow label={copy.feeSourceLabel}>
+                  {sponsorSmokeSummary.feeSource ?? copy.loadingText}
+                </InfoRow>
+                <InfoRow label={copy.smokeSourceLabel}>
+                  {sponsorSmokeSummary.sourceAccount ?? copy.loadingText}
+                </InfoRow>
+              </div>
+
+              {sponsorSmokeSummary.explorerUrl ? (
+                <a
+                  href={sponsorSmokeSummary.explorerUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-5 inline-flex rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-stone-100 transition hover:bg-white/5"
+                >
+                  {copy.openExplorer}
+                </a>
+              ) : null}
+            </div>
+          ) : null}
+
           <pre className="mt-6 overflow-x-auto rounded-[1.5rem] border border-white/8 bg-black/30 p-4 text-xs leading-6 text-stone-200">
             {JSON.stringify(
               sponsorResponse ?? {
@@ -1150,6 +1191,54 @@ function getNestedString(source: Record<string, unknown>, path: string[]) {
   }
 
   return typeof current === "string" ? current : null;
+}
+
+function getSponsorSmokeSummary(source: Record<string, unknown> | null) {
+  if (!source) {
+    return null;
+  }
+
+  const smoke = getNestedRecord(source, ["smoke"]);
+  const hash = getNestedString(source, ["smoke", "hash"]);
+  if (!smoke || !hash) {
+    return null;
+  }
+
+  const submitted = getNestedBoolean(source, ["smoke", "submitted"]);
+  const feeSource = getNestedString(source, ["feeSource"]);
+  const sourceAccount = getNestedString(source, ["smoke", "sourceAccount"]);
+
+  return {
+    hash,
+    submitted,
+    feeSource,
+    sourceAccount,
+    explorerUrl: `https://stellar.expert/explorer/testnet/tx/${hash}`,
+  };
+}
+
+function getNestedRecord(source: Record<string, unknown>, path: string[]) {
+  let current: unknown = source;
+  for (const key of path) {
+    if (!current || typeof current !== "object" || !(key in current)) {
+      return null;
+    }
+    current = (current as Record<string, unknown>)[key];
+  }
+
+  return current && typeof current === "object" ? (current as Record<string, unknown>) : null;
+}
+
+function getNestedBoolean(source: Record<string, unknown>, path: string[]) {
+  let current: unknown = source;
+  for (const key of path) {
+    if (!current || typeof current !== "object" || !(key in current)) {
+      return false;
+    }
+    current = (current as Record<string, unknown>)[key];
+  }
+
+  return current === true;
 }
 
 function getZkFieldLabel(locale: Locale, field: keyof ZkCircuitInput) {
