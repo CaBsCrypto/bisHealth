@@ -6,7 +6,12 @@ coverage/
 .vercel/
 .env
 .env.local
+.env.development
+.env.production
+.env.preview
+.env.test
 .env.*.local
+.env.*.bak
 scripts/testnet/trustleaf.testnet.env
 scripts/testnet/out/
 target/
