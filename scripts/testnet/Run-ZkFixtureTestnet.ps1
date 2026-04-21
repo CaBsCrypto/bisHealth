@@ -89,8 +89,16 @@ $rpcUrl = $manifest.network.rpcUrl
 $networkPassphrase = $manifest.network.networkPassphrase
 $zkMedicalId = $manifest.contracts.zkMedical.contractId
 
-$doctorAlias = "alice"
-$dispAlias = "bob"
+$doctorAlias = $envMap["TRUST_LEAF_DOCTOR_SOURCE"]
+$dispAlias = $envMap["TRUST_LEAF_DISPENSARY_SOURCE"]
+
+if ([string]::IsNullOrWhiteSpace($doctorAlias)) {
+    $doctorAlias = "trustleaf-doctor"
+}
+if ([string]::IsNullOrWhiteSpace($dispAlias)) {
+    $dispAlias = "trustleaf-dispensary"
+}
+
 $doctor = $envMap["TRUST_LEAF_DOCTOR_ADDRESS"]
 $disp = $envMap["TRUST_LEAF_DISPENSARY_ADDRESS"]
 
