@@ -101,14 +101,14 @@ export function getMarketingData(locale: Locale) {
         {
           name: "Medico",
           detail: "Solicita acceso a una red clinica curada. Solo perfiles aprobados por el superadmin pueden emitir recetas dentro del sistema.",
-          cta: "Solicitar validacion medica",
-          href: "/superadmin",
+          cta: "Ver POV medico",
+          href: "/doctor",
         },
         {
           name: "Dispensario",
           detail: "Unete a un rail global de trazabilidad y salud. Solo dispensarios aprobados por el superadmin pueden vender y validar recetas.",
-          cta: "Solicitar alta del dispensario",
-          href: "/superadmin",
+          cta: "Ver POV dispensario",
+          href: "/dispensary",
         },
         {
           name: "Superadmin",
@@ -222,14 +222,14 @@ export function getMarketingData(locale: Locale) {
       {
         name: "Doctor",
         detail: "Request access to a curated clinical network. Only superadmin-approved profiles can issue prescriptions inside the system.",
-        cta: "Request doctor approval",
-        href: "/superadmin",
+        cta: "Open doctor POV",
+        href: "/doctor",
       },
       {
         name: "Dispensary",
         detail: "Join a global trust and health rail. Only superadmin-approved dispensaries can sell and validate prescriptions.",
-        cta: "Request dispensary access",
-        href: "/superadmin",
+        cta: "Open dispensary POV",
+        href: "/dispensary",
       },
       {
         name: "Superadmin",
@@ -303,8 +303,9 @@ export function getHomeCopy(locale: Locale) {
         joinTitle: "Pacientes autoservicio. Medicos y dispensarios aprobados manualmente.",
         joinBody: "Trust Leaf combina una experiencia self-serve para pacientes con una red curada para actores regulados. El superadmin valida altas, entrega permisos y conserva la confianza operativa del ecosistema.",
         joinPrimaryCta: "Entrar como paciente",
-        joinSecondaryCta: "Solicitar acceso profesional",
-        joinTertiaryCta: "Abrir consola superadmin",
+        joinDoctorCta: "Abrir POV medico",
+        joinDispensaryCta: "Abrir POV dispensario",
+        joinSuperadminCta: "Abrir consola superadmin",
         finalNote: "MVP bilingue listo para testnet y narrativa de producto.",
       }
     : {
@@ -349,8 +350,9 @@ export function getHomeCopy(locale: Locale) {
         joinTitle: "Patients self-serve. Doctors and dispensaries are manually approved.",
         joinBody: "Trust Leaf combines a self-serve patient journey with a curated network for regulated operators. The superadmin validates applications, grants permissions, and preserves operational trust across the ecosystem.",
         joinPrimaryCta: "Enter as patient",
-        joinSecondaryCta: "Request professional access",
-        joinTertiaryCta: "Open superadmin console",
+        joinDoctorCta: "Open doctor POV",
+        joinDispensaryCta: "Open dispensary POV",
+        joinSuperadminCta: "Open superadmin console",
         finalNote: "Bilingual MVP ready for testnet and product storytelling.",
       };
 }

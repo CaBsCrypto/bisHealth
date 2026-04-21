@@ -318,7 +318,7 @@ export default async function HomePage() {
               <p className="mt-6 text-sm uppercase tracking-[0.22em] text-stone-400">{copy.finalNote}</p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <Link
                 href="/patient"
                 className="rounded-[1.8rem] border border-white/10 bg-white/8 p-5 transition hover:bg-white/12"
@@ -327,18 +327,25 @@ export default async function HomePage() {
                 <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinPrimaryCta}</p>
               </Link>
               <Link
-                href="/superadmin"
+                href="/doctor"
                 className="rounded-[1.8rem] border border-white/10 bg-black/15 p-5 transition hover:bg-white/5"
               >
-                <p className="text-xs uppercase tracking-[0.24em] text-amber-200/70">Professional lane</p>
-                <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinSecondaryCta}</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-sky-300/70">Doctor lane</p>
+                <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinDoctorCta}</p>
+              </Link>
+              <Link
+                href="/dispensary"
+                className="rounded-[1.8rem] border border-white/10 bg-black/20 p-5 transition hover:bg-white/5"
+              >
+                <p className="text-xs uppercase tracking-[0.24em] text-amber-200/70">Dispensary lane</p>
+                <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinDispensaryCta}</p>
               </Link>
               <Link
                 href="/superadmin"
                 className="rounded-[1.8rem] border border-white/10 bg-black/20 p-5 transition hover:bg-white/5"
               >
                 <p className="text-xs uppercase tracking-[0.24em] text-sky-300/70">Governance lane</p>
-                <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinTertiaryCta}</p>
+                <p className="font-display mt-3 text-3xl text-stone-50">{copy.joinSuperadminCta}</p>
               </Link>
             </div>
           </div>
