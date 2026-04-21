@@ -290,6 +290,34 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
     });
   }
 
+  function handleSponsorSmoke() {
+    runAction(async () => {
+      if (!session) {
+        throw new Error(copy.needSignin);
+      }
+
+      setStatus(copy.sponsorSmokeBuilding);
+
+      const response = await fetchJson<Record<string, unknown>>("/api/walletless/sponsor-smoke", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          baseFee,
+        }),
+      });
+
+      const smokeInnerXdr = getNestedString(response, ["innerXdr"]);
+      if (smokeInnerXdr) {
+        setInnerXdr(smokeInnerXdr);
+      }
+
+      setSponsorResponse(response);
+      setStatus(copy.sponsorSmokeDone);
+    });
+  }
+
   function handleZkCircuitInputChange(field: keyof ZkCircuitInput, value: string) {
     setZkCircuitInput((current) => {
       if (!current) {
@@ -616,6 +644,14 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
                 className="w-full rounded-[1.5rem] bg-sky-300 px-5 py-4 text-sm font-semibold text-sky-950 transition hover:bg-sky-200 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {copy.buildSponsorPayload}
+              </button>
+              <button
+                type="button"
+                onClick={handleSponsorSmoke}
+                disabled={isPending || !session}
+                className="w-full rounded-[1.5rem] border border-sky-300/30 px-5 py-4 text-sm font-semibold text-sky-100 transition hover:bg-sky-300/10 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {copy.runSponsorSmoke}
               </button>
               <div className="rounded-[1.5rem] border border-white/8 bg-white/5 p-4 text-sm text-stone-300">
                 <p className="uppercase tracking-[0.2em] text-sky-300/70">{copy.guardrails}</p>
