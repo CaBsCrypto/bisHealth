@@ -75,6 +75,21 @@ type ZkFixtureEnvelope = {
     publicInputsHash: string;
     currentDay: number;
   };
+  consumePack: {
+    payload: {
+      contractId: string | null;
+      rpcUrl: string | null;
+      networkPassphrase: string | null;
+      caller: string | null;
+      commitment: string;
+      proof: string;
+      publicInputsHash: string;
+      currentDay: number;
+    };
+    payloadBase64: string;
+    scriptPath: string;
+    scriptCommand: string;
+  };
   liveStatus: {
     issueTxHash: string | null;
     consumeTxHash: string | null;
@@ -316,6 +331,21 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
     setZkCircuitInput(zkFixture.circuitInput);
     setZkPreview(zkFixture);
     setStatus(copy.zkResetDone);
+  }
+
+  function handleCopyZkCommand() {
+    runAction(async () => {
+      if (!zkPreview?.consumePack.scriptCommand) {
+        throw new Error(copy.loadingZkFixture);
+      }
+
+      if (!globalThis.navigator?.clipboard) {
+        throw new Error(copy.unexpectedError);
+      }
+
+      await globalThis.navigator.clipboard.writeText(zkPreview.consumePack.scriptCommand);
+      setStatus(copy.copyZkCommandDone);
+    });
   }
 
   function handleLoadDefindexVault() {
@@ -716,6 +746,14 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
                 >
                   {copy.resetWitness}
                 </button>
+                <button
+                  type="button"
+                  onClick={handleCopyZkCommand}
+                  disabled={isPending || !zkPreview}
+                  className="rounded-full border border-fuchsia-300/30 px-4 py-2 text-sm font-semibold text-fuchsia-100 transition hover:bg-fuchsia-300/10 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {copy.copyZkCommand}
+                </button>
               </div>
             </div>
 
@@ -749,6 +787,12 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
             <InfoRow label={copy.consumeReceipt}>
               {zkPreview?.liveStatus.consumeTxHash ?? copy.waitingConsume}
             </InfoRow>
+            <InfoRow label={copy.consumePack}>
+              {zkPreview?.consumePack.payloadBase64 ?? copy.loadingText}
+            </InfoRow>
+            <InfoRow label={copy.scriptCommand}>
+              {zkPreview?.consumePack.scriptCommand ?? copy.loadingText}
+            </InfoRow>
           </div>
 
           <pre className="mt-5 overflow-x-auto rounded-[1.5rem] border border-white/8 bg-black/25 p-4 text-xs leading-6 text-stone-200">
@@ -768,6 +812,11 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
                     verifyAndConsumeArgs: {
                       ...zkPreview.verifyAndConsumeArgs,
                       proof: `${zkPreview.verifyAndConsumeArgs.proof.slice(0, 24)}...${zkPreview.verifyAndConsumeArgs.proof.slice(-24)}`,
+                    },
+                    consumePack: {
+                      ...zkPreview.consumePack,
+                      payloadBase64: `${zkPreview.consumePack.payloadBase64.slice(0, 24)}...${zkPreview.consumePack.payloadBase64.slice(-24)}`,
+                      scriptCommand: zkPreview.consumePack.scriptCommand,
                     },
                     liveStatus: zkPreview.liveStatus,
                   }

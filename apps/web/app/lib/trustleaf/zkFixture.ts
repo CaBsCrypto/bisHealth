@@ -67,6 +67,21 @@ export type TrustLeafZkFixtureView = {
     publicInputsHash: string;
     currentDay: number;
   };
+  consumePack: {
+    payload: {
+      contractId: string | null;
+      rpcUrl: string | null;
+      networkPassphrase: string | null;
+      caller: string | null;
+      commitment: string;
+      proof: string;
+      publicInputsHash: string;
+      currentDay: number;
+    };
+    payloadBase64: string;
+    scriptPath: string;
+    scriptCommand: string;
+  };
   liveStatus: {
     issueTxHash: string | null;
     consumeTxHash: string | null;
@@ -146,6 +161,32 @@ async function buildTrustLeafZkFixtureView(options?: {
   const consumedPrescription = indexedState.prescriptions.find(
     (item) => normalizeHex(item.id) === normalizeHex(fixture.commitment) && item.isUsed,
   );
+  const caller = consumedPrescription?.lastVerifiedBy ?? null;
+  const payload = {
+    contractId:
+      deployment.contracts.find((contract) => contract.key === "zkMedical")?.contractId ?? null,
+    rpcUrl: deployment.rpcUrl ?? null,
+    networkPassphrase: deployment.networkPassphrase ?? null,
+    caller,
+    commitment: fixture.commitment,
+    proof: proofHex,
+    publicInputsHash: fixture.publicInputsHash,
+    currentDay: fixture.currentDay,
+  };
+  const payloadBase64 = Buffer.from(JSON.stringify(payload), "utf8").toString("base64");
+  const scriptCommand = [
+    "powershell",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    ".\\scripts\\testnet\\Invoke-ZkConsumePayload.ps1",
+    "-PayloadBase64",
+    `'${payloadBase64}'`,
+    "-SourceAlias",
+    "bob",
+    "-Caller",
+    caller ?? "<dispensary-address>",
+  ].join(" ");
 
   return {
     fixture,
@@ -158,14 +199,19 @@ async function buildTrustLeafZkFixtureView(options?: {
     derivedSignals,
     matchesFixture,
     packedProofEnvelope,
-    contractId:
-      deployment.contracts.find((contract) => contract.key === "zkMedical")?.contractId ?? null,
+    contractId: payload.contractId,
     verifyAndConsumeArgs: {
-      caller: consumedPrescription?.lastVerifiedBy ?? null,
+      caller,
       commitment: fixture.commitment,
       proof: proofHex,
       publicInputsHash: fixture.publicInputsHash,
       currentDay: fixture.currentDay,
+    },
+    consumePack: {
+      payload,
+      payloadBase64,
+      scriptPath: ".\\scripts\\testnet\\Invoke-ZkConsumePayload.ps1",
+      scriptCommand,
     },
     liveStatus: {
       issueTxHash: consumedPrescription?.createdAtTxHash ?? null,
