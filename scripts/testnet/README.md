@@ -6,6 +6,7 @@ This folder contains the first reproducible path from local development to a dep
 
 - `trustleaf.testnet.env.example`: environment template for network, source identity, aliases, and optional role addresses.
 - `trustleaf.testnet.env`: local environment used for the current live testnet deployment path.
+- `Bootstrap-TrustLeafTestnetIdentities.ps1`: creates the admin, doctor, dispensary, lab, and cultivator aliases and prints an env snippet ready to paste.
 - `Deploy-TrustLeafTestnet.ps1`: builds, uploads, and deploys the three core contracts, then writes a deployment manifest.
 - `Initialize-TrustLeafTestnet.ps1`: initializes RBAC and optionally grants doctor, dispensary, lab, and cultivator roles.
 - `Seed-TrustLeafTestnet.ps1`: creates a live traceability batch and a non-consumed medical prescription.
@@ -16,10 +17,9 @@ This folder contains the first reproducible path from local development to a dep
 ## Quick start
 
 1. Copy `trustleaf.testnet.env.example` to `trustleaf.testnet.env`.
-2. Create or choose a Stellar identity:
-   - `stellar keys generate trustleaf-admin`
-   - `stellar keys fund trustleaf-admin --network testnet`
-3. Fill the env file with your source alias and optional addresses.
+2. Create or reuse the local testnet identities:
+   - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Bootstrap-TrustLeafTestnetIdentities.ps1 -Fund`
+3. Fill the env file with the printed snippet for source and role addresses.
 4. Preview the flow without touching the network:
    - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Deploy-TrustLeafTestnet.ps1 -DryRun`
    - `powershell -ExecutionPolicy Bypass -File .\scripts\testnet\Initialize-TrustLeafTestnet.ps1 -DryRun`
@@ -60,3 +60,11 @@ The current repo state has already exercised a full on-chain ZK redemption on St
   - `c98e87f5d73802ee5a1d1b08e076a616abd3907c7d4453560004c06f21a904f3`
 
 The fixture values are versioned in `zk/fixtures/soroban-zk-fixture.json` so the happy path can be replayed without manually re-encoding proof bytes.
+
+## Do I need a wallet?
+
+For deploying contracts, a wallet app is optional. The scripts use local Stellar CLI aliases such as `admin`, `alice`, and `bob`.
+
+- Use the bootstrap script above if you want a fast CLI-first setup.
+- Use Freighter or another wallet only if you want a visual way to inspect or manage the same Stellar addresses.
+- Patients and doctors in the Trust Leaf product will still use passkeys; the deployer is a separate technical identity.
