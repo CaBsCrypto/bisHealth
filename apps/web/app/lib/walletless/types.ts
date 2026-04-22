@@ -53,6 +53,9 @@ export type StellarPasskeysConfigView = {
   smartWalletModel: "contract-account";
   recommendedSdk: string;
   warning: string;
+  backendPhase: 1 | 2 | 3;
+  profileStorage: "browser-local" | "durable-db";
+  missingPieces: string[];
   rpcUrl: string;
   networkPassphrase: string;
   factoryContractId: string | null;

@@ -1,11 +1,5 @@
-import { generateAuthenticationOptions } from "@simplewebauthn/server";
-
-import { getWalletlessConfig, resolveOrigin } from "@/app/lib/walletless/config";
-import {
-  buildWalletlessProfile,
-  listCredentialDescriptors,
-} from "@/app/lib/walletless/store";
-import { signWalletlessToken } from "@/app/lib/walletless/tokens";
+import { preparePasskeyAuthentication } from "@/app/lib/passkeys/service";
+import { resolveOrigin } from "@/app/lib/walletless/config";
 import type { WalletlessProfileRecord } from "@/app/lib/walletless/types";
 
 type LoginOptionsBody = {
@@ -21,32 +15,19 @@ export async function POST(request: Request) {
     return Response.json({ error: "username is required" }, { status: 400 });
   }
 
-  const profile = buildWalletlessProfile({
-    username,
-    profile: body?.profile,
-  });
-  if (profile.credentials.length === 0) {
-    return Response.json({ error: "user does not have registered passkeys" }, { status: 409 });
+  try {
+    const envelope = await preparePasskeyAuthentication({
+      origin: resolveOrigin(request),
+      username,
+      profile: body?.profile,
+    });
+
+    return Response.json(envelope);
+  } catch (error) {
+    if (error instanceof Error && error.message === "user does not have registered passkeys") {
+      return Response.json({ error: error.message }, { status: 409 });
+    }
+
+    return Response.json({ error: "authentication options failed" }, { status: 400 });
   }
-
-  const config = getWalletlessConfig(resolveOrigin(request));
-  const options = await generateAuthenticationOptions({
-    rpID: config.rpId,
-    allowCredentials: listCredentialDescriptors(profile.credentials),
-    userVerification: "preferred",
-  });
-
-  return Response.json({
-    flowToken: signWalletlessToken(
-      "walletless-login",
-      {
-        userId: profile.userId,
-        username: profile.username,
-        displayName: profile.displayName,
-        challenge: options.challenge,
-      },
-      60 * 10,
-    ),
-    options,
-  });
 }
