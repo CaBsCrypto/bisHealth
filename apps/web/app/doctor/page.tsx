@@ -2,10 +2,12 @@ import Link from "next/link";
 
 import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorNav } from "../actor-nav";
+import { DoctorIssueSubmit } from "./doctor-issue-submit";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDoctorPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
 import { getTrustLeafDoctorActionPack } from "../lib/trustleaf/actionRails";
+import { getTrustLeafDoctorSubmitConfig } from "../lib/trustleaf/doctorIssue";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
 
 export default async function DoctorPage() {
@@ -24,6 +26,7 @@ export default async function DoctorPage() {
   const patientRoster = buildPatientRoster(locale, doctorPrescriptions);
   const consultSchedule = buildConsultSchedule(locale, selectedDoctor?.account ?? null);
   const doctorActionPack = await getTrustLeafDoctorActionPack(selectedDoctor?.account ?? null);
+  const doctorSubmitConfig = getTrustLeafDoctorSubmitConfig();
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f2f6fb] text-slate-950">
@@ -261,6 +264,16 @@ export default async function DoctorPage() {
                 ? "Puedes usar este comando en PowerShell o tomar el payload base64 como handoff para automatizar la emision clinica mas adelante."
                 : "You can run this command in PowerShell or use the base64 payload as a handoff for future clinical automation."}
             </p>
+
+            <DoctorIssueSubmit
+              locale={locale}
+              initialDoctor={doctorActionPack.doctorAccount}
+              initialCommitment={doctorActionPack.suggestedCommitment}
+              initialPatientNullifier={doctorActionPack.suggestedPatientNullifier}
+              initialPolicyHash={doctorActionPack.suggestedPolicyHash}
+              submitReady={doctorSubmitConfig.enabled}
+              submitMode={doctorSubmitConfig.mode}
+            />
 
             <div className="mt-6 grid gap-3">
               <InfoChipDark
