@@ -4,6 +4,7 @@ import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDispensaryPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
+import { getTrustLeafDispensaryActionPack } from "../lib/trustleaf/actionRails";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
 
 export default async function DispensaryPage() {
@@ -21,6 +22,9 @@ export default async function DispensaryPage() {
   );
   const inventoryCards = buildInventoryCards(locale, indexedState.batches, selectedDispensary?.account ?? null);
   const salesHistory = indexedState.prescriptionConsumptions.slice(0, 4);
+  const dispensaryActionPack = await getTrustLeafDispensaryActionPack(
+    selectedDispensary?.account ?? null,
+  );
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f7f3ec] text-stone-950">
@@ -205,6 +209,95 @@ export default async function DispensaryPage() {
             </div>
           </div>
         </section>
+
+        <section className="mt-10 grid gap-5 xl:grid-cols-[1.02fr_0.98fr]">
+          <div className="rounded-[2.2rem] border border-sky-900/10 bg-[linear-gradient(180deg,rgba(243,248,255,0.96),rgba(232,240,252,0.92))] p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
+            <p className="text-sm uppercase tracking-[0.24em] text-sky-700">
+              {locale === "es" ? "Bridge testnet" : "Testnet bridge"}
+            </p>
+            <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-950">
+              {locale === "es"
+                ? "Valida una receta real desde la cola del dispensario."
+                : "Validate a real prescription from the dispensary queue."}
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-8 text-stone-700">
+              {locale === "es"
+                ? "Este pack reutiliza el payload ZK reproducible y lo amarra a la cuenta activa del dispensario para cerrar el rail `verify_and_consume`."
+                : "This pack reuses the reproducible ZK payload and binds it to the active dispensary account so you can close the `verify_and_consume` rail."}
+            </p>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-2">
+              <InfoChip
+                label={locale === "es" ? "Cuenta dispensario" : "Dispensary account"}
+                value={shortValue(dispensaryActionPack.dispensaryAccount)}
+              />
+              <InfoChip
+                label={locale === "es" ? "Alias fuente" : "Source alias"}
+                value={dispensaryActionPack.dispensaryAlias}
+              />
+              <InfoChip
+                label={locale === "es" ? "Receta pendiente" : "Pending prescription"}
+                value={
+                  dispensaryActionPack.pendingPrescriptionId
+                    ? shortHash(dispensaryActionPack.pendingPrescriptionId)
+                    : locale === "es"
+                      ? "Sin receta pendiente"
+                      : "No pending prescription"
+                }
+              />
+              <InfoChip
+                label={locale === "es" ? "Match fixture" : "Fixture match"}
+                value={
+                  dispensaryActionPack.matchesPendingPrescription
+                    ? locale === "es"
+                      ? "Si, lista para replay"
+                      : "Yes, ready for replay"
+                    : locale === "es"
+                      ? "No exacto, revisar payload"
+                      : "Not exact, review payload"
+                }
+              />
+            </div>
+
+            <div className="mt-6 grid gap-3">
+              <InfoChip
+                label={locale === "es" ? "Commitment fixture" : "Fixture commitment"}
+                value={dispensaryActionPack.fixtureCommitment}
+              />
+              <InfoChip
+                label={locale === "es" ? "Script path" : "Script path"}
+                value={dispensaryActionPack.scriptPath}
+              />
+            </div>
+          </div>
+
+          <div className="rounded-[2.2rem] border border-stone-900/10 bg-stone-950 p-6 shadow-[0_18px_60px_rgba(41,37,36,0.08)]">
+            <p className="text-sm uppercase tracking-[0.24em] text-stone-400">
+              {locale === "es" ? "Command pack" : "Command pack"}
+            </p>
+            <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-50">
+              {locale === "es"
+                ? "Comando listo para consumir la receta."
+                : "Ready-to-run consume command."}
+            </h2>
+            <p className="mt-4 text-base leading-8 text-stone-300">
+              {locale === "es"
+                ? "Esto conecta el POV del dispensario con el script live de testnet. Sirve para demos, dry-runs operativos y validacion manual mientras cerramos submit directo desde web."
+                : "This connects the dispensary POV to the live testnet script. It works for demos, operational dry-runs, and manual validation while we finish direct web submission."}
+            </p>
+
+            <div className="mt-6 grid gap-3">
+              <InfoChipDark
+                label={locale === "es" ? "Payload base64" : "Payload base64"}
+                value={dispensaryActionPack.payloadBase64}
+              />
+            </div>
+
+            <pre className="mt-5 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-black/20 p-4 text-xs leading-6 text-stone-200">
+              {dispensaryActionPack.scriptCommand}
+            </pre>
+          </div>
+        </section>
       </section>
     </main>
   );
@@ -239,6 +332,15 @@ function InfoChip({ label, value }: { label: string; value: string }) {
     <div className="rounded-[1.3rem] border border-stone-900/10 bg-stone-900/5 px-4 py-3">
       <p className="text-xs uppercase tracking-[0.2em] text-stone-500">{label}</p>
       <p className="mt-2 break-all text-sm leading-6 text-stone-900">{value}</p>
+    </div>
+  );
+}
+
+function InfoChipDark({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[1.3rem] border border-white/10 bg-black/15 px-4 py-3">
+      <p className="text-xs uppercase tracking-[0.2em] text-stone-400">{label}</p>
+      <p className="mt-2 break-all text-sm leading-6 text-stone-100">{value}</p>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDoctorPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
+import { getTrustLeafDoctorActionPack } from "../lib/trustleaf/actionRails";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
 
 export default async function DoctorPage() {
@@ -21,6 +22,7 @@ export default async function DoctorPage() {
   const consumedReceipts = indexedState.prescriptionConsumptions.slice(0, 3);
   const patientRoster = buildPatientRoster(locale, doctorPrescriptions);
   const consultSchedule = buildConsultSchedule(locale, selectedDoctor?.account ?? null);
+  const doctorActionPack = await getTrustLeafDoctorActionPack(selectedDoctor?.account ?? null);
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f2f6fb] text-slate-950">
@@ -193,6 +195,90 @@ export default async function DoctorPage() {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="mt-10 grid gap-5 xl:grid-cols-[1.02fr_0.98fr]">
+          <div className="rounded-[2.2rem] border border-sky-900/10 bg-[linear-gradient(180deg,rgba(241,248,255,0.96),rgba(228,240,255,0.92))] p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+            <p className="text-sm uppercase tracking-[0.24em] text-sky-700">
+              {locale === "es" ? "Bridge testnet" : "Testnet bridge"}
+            </p>
+            <h2 className="font-display mt-3 text-5xl leading-[0.96] text-slate-950">
+              {locale === "es"
+                ? "Emite una receta real desde este POV."
+                : "Issue a real prescription from this POV."}
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-8 text-slate-700">
+              {locale === "es"
+                ? "Este pack deja listo el comando de `issue_prescription` para testnet con la cuenta medica activa, usando el contrato ZK que ya controlas."
+                : "This pack prepares a testnet `issue_prescription` command with the active doctor account and the live ZK contract you already control."}
+            </p>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-2">
+              <InfoChip label={copy.doctorAccount} value={shortValue(doctorActionPack.doctorAccount)} />
+              <InfoChip
+                label={locale === "es" ? "Alias fuente" : "Source alias"}
+                value={doctorActionPack.doctorAlias}
+              />
+              <InfoChip
+                label={locale === "es" ? "Paciente sugerido" : "Suggested patient"}
+                value={doctorActionPack.suggestedPatientLabel}
+              />
+              <InfoChip
+                label={locale === "es" ? "Contrato ZK" : "ZK contract"}
+                value={shortValue(doctorActionPack.contractId ?? "pending")}
+              />
+            </div>
+
+            <div className="mt-6 grid gap-3">
+              <InfoChip
+                label={locale === "es" ? "Commitment sugerido" : "Suggested commitment"}
+                value={doctorActionPack.suggestedCommitment}
+              />
+              <InfoChip
+                label={locale === "es" ? "Nullifier sugerido" : "Suggested nullifier"}
+                value={doctorActionPack.suggestedPatientNullifier}
+              />
+              <InfoChip
+                label={locale === "es" ? "Policy hash sugerido" : "Suggested policy hash"}
+                value={doctorActionPack.suggestedPolicyHash}
+              />
+            </div>
+          </div>
+
+          <div className="rounded-[2.2rem] border border-slate-900/10 bg-slate-950 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+            <p className="text-sm uppercase tracking-[0.24em] text-slate-400">
+              {locale === "es" ? "Command pack" : "Command pack"}
+            </p>
+            <h2 className="font-display mt-3 text-5xl leading-[0.96] text-slate-50">
+              {locale === "es"
+                ? "Comando listo para emitir y documentar."
+                : "Ready-to-run issuance command."}
+            </h2>
+            <p className="mt-4 text-base leading-8 text-slate-300">
+              {locale === "es"
+                ? "Puedes usar este comando en PowerShell o tomar el payload base64 como handoff para automatizar la emision clinica mas adelante."
+                : "You can run this command in PowerShell or use the base64 payload as a handoff for future clinical automation."}
+            </p>
+
+            <div className="mt-6 grid gap-3">
+              <InfoChipDark
+                label={locale === "es" ? "RPC" : "RPC"}
+                value={doctorActionPack.rpcUrl}
+              />
+              <InfoChipDark
+                label={locale === "es" ? "Network passphrase" : "Network passphrase"}
+                value={doctorActionPack.networkPassphrase}
+              />
+              <InfoChipDark
+                label={locale === "es" ? "Payload base64" : "Payload base64"}
+                value={doctorActionPack.payloadBase64}
+              />
+            </div>
+
+            <pre className="mt-5 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-black/20 p-4 text-xs leading-6 text-slate-200">
+              {doctorActionPack.scriptCommand}
+            </pre>
           </div>
         </section>
 
