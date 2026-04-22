@@ -1,9 +1,11 @@
 import Link from "next/link";
 
+import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getLocale } from "../lib/locale";
 import { getSuperAdminPageCopy } from "../lib/i18n";
+import { getTrustLeafSuperAdminActionPack } from "../lib/trustleaf/actionRails";
 import { getTrustLeafDeployment } from "../lib/trustleaf/deployment";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
 
@@ -21,6 +23,7 @@ export default async function SuperAdminPage() {
   );
   const liveContracts = deployment.contracts.filter((contract) => contract.status === "live");
   const recentChanges = indexedState.roleChanges.slice(0, 4);
+  const superAdminActionPack = await getTrustLeafSuperAdminActionPack();
 
   const approvalQueue =
     locale === "es"
@@ -241,6 +244,118 @@ export default async function SuperAdminPage() {
                 </article>
               )}
             </div>
+          </div>
+        </section>
+
+        <section className="mt-10 grid gap-5 xl:grid-cols-[1.02fr_0.98fr]">
+          <div className="rounded-[2rem] border border-sky-200/10 bg-[#0c1520]/92 p-6">
+            <p className="text-sm uppercase tracking-[0.25em] text-sky-300/70">
+              {locale === "es" ? "RBAC bridge" : "RBAC bridge"}
+            </p>
+            <h2 className="mt-2 font-display text-4xl leading-tight text-sky-50">
+              {locale === "es"
+                ? "Aprobaciones reales listas para ejecutar."
+                : "Real approvals ready to execute."}
+            </h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">
+              {locale === "es"
+                ? "Este bloque toma el contrato RBAC live, la cuenta admin y las identidades testnet ya configuradas para generar comandos de grant y revoke por rol."
+                : "This block uses the live RBAC contract, the admin account, and the configured testnet identities to generate role grant and revoke commands."}
+            </p>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-2">
+              <MetricCard
+                label={locale === "es" ? "Admin activo" : "Active admin"}
+                value={shortValue(superAdminActionPack.adminAccount)}
+                tone="sky"
+              />
+              <MetricCard
+                label={locale === "es" ? "Alias fuente" : "Source alias"}
+                value={superAdminActionPack.sourceAlias}
+                tone="stone"
+              />
+              <MetricCard
+                label={locale === "es" ? "Contrato RBAC" : "RBAC contract"}
+                value={shortValue(superAdminActionPack.contractId ?? "pending")}
+                tone="violet"
+              />
+              <MetricCard
+                label={locale === "es" ? "Plantillas de rol" : "Role templates"}
+                value={String(superAdminActionPack.roleTemplates.length)}
+                tone="emerald"
+              />
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-white/10 bg-black/20 p-6">
+            <p className="text-sm uppercase tracking-[0.25em] text-stone-400">
+              {locale === "es" ? "Admin payload" : "Admin payload"}
+            </p>
+            <h2 className="mt-2 font-display text-4xl leading-tight text-stone-50">
+              {locale === "es"
+                ? "JSON y handoff del superadmin."
+                : "Superadmin JSON and handoff."}
+            </h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">
+              {locale === "es"
+                ? "Con esto ya puedes copiar el pack completo del admin o abrir el endpoint backend-first para que otra UI lo consuma."
+                : "You can now copy the full admin pack or open the backend-first endpoint so another UI can consume it."}
+            </p>
+            <ActionBridgeTools
+              locale={locale}
+              command={superAdminActionPack.roleTemplates.map((item) => item.grantCommand).join("\n\n")}
+              payloadBase64={superAdminActionPack.payloadBase64}
+              apiPath="/api/trustleaf/actor-bridges/superadmin"
+            />
+          </div>
+        </section>
+
+        <section className="mt-10 rounded-[2rem] border border-emerald-200/10 bg-[#0b1513]/92 p-6">
+          <p className="text-sm uppercase tracking-[0.25em] text-emerald-300/70">
+            {locale === "es" ? "Approval templates" : "Approval templates"}
+          </p>
+          <h2 className="mt-2 font-display text-4xl leading-tight text-emerald-50">
+            {locale === "es"
+              ? "Grant y revoke listos por actor."
+              : "Grant and revoke packs by actor."}
+          </h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {superAdminActionPack.roleTemplates.map((template) => (
+              <article
+                key={template.key}
+                className="rounded-[1.7rem] border border-white/8 bg-black/15 p-5"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.24em] text-emerald-300/70">
+                      {template.label}
+                    </p>
+                    <h3 className="mt-3 text-2xl text-stone-50">{shortValue(template.account)}</h3>
+                  </div>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs uppercase tracking-[0.22em] ${
+                      template.isActive
+                        ? "bg-emerald-300/15 text-emerald-100"
+                        : "bg-amber-300/15 text-amber-100"
+                    }`}
+                  >
+                    {template.isActive ? "live" : copy.queueStatus}
+                  </span>
+                </div>
+                <div className="mt-4 space-y-2 text-sm leading-6 text-stone-300">
+                  <p>{copy.role}: {template.role}</p>
+                  <p>{copy.account}: {template.account}</p>
+                </div>
+                <div className="mt-5 rounded-[1.3rem] border border-white/8 bg-white/5 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-400">Grant</p>
+                  <p className="mt-3 break-all text-sm leading-6 text-stone-100">{template.grantCommand}</p>
+                </div>
+                <div className="mt-4 rounded-[1.3rem] border border-white/8 bg-white/5 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-400">Revoke</p>
+                  <p className="mt-3 break-all text-sm leading-6 text-stone-100">{template.revokeCommand}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
       </section>

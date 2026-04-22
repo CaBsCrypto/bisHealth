@@ -69,6 +69,28 @@ export type TrustLeafPatientActionPack = {
   walletlessRoute: "/walletless";
 };
 
+export type TrustLeafSuperAdminRoleTemplate = {
+  key: string;
+  label: string;
+  role: "DOCTOR" | "DISP" | "LAB" | "CULT";
+  account: string;
+  sourceAlias: string;
+  isActive: boolean;
+  grantCommand: string;
+  revokeCommand: string;
+};
+
+export type TrustLeafSuperAdminActionPack = {
+  adminAccount: string;
+  sourceAlias: string;
+  contractId: string | null;
+  rpcUrl: string;
+  networkPassphrase: string;
+  payloadBase64: string;
+  scriptPath: ".\\scripts\\testnet\\Initialize-TrustLeafTestnet.ps1";
+  roleTemplates: TrustLeafSuperAdminRoleTemplate[];
+};
+
 export async function getTrustLeafDoctorActionPack(doctorAccount: string | null) {
   const [deployment, testnetEnv] = await Promise.all([
     getTrustLeafDeployment(),
@@ -194,6 +216,108 @@ export async function getTrustLeafPatientActionPack() {
   } satisfies TrustLeafPatientActionPack;
 }
 
+export async function getTrustLeafSuperAdminActionPack() {
+  const [deployment, indexedState, testnetEnv] = await Promise.all([
+    getTrustLeafDeployment(),
+    getIndexedState(),
+    readTestnetEnvIfPresent(),
+  ]);
+  const sourceAlias = testnetEnv.TRUST_LEAF_SOURCE || deployment.sourceAccount || "trustleaf-admin";
+  const adminAccount =
+    testnetEnv.TRUST_LEAF_ADMIN_ADDRESS ||
+    indexedState.roleMemberships.find(
+      (membership) => membership.isActive && membership.role.includes("ADMIN"),
+    )?.account ||
+    "<admin-address>";
+  const contractId =
+    deployment.contracts.find((contract) => contract.key === "rbac")?.contractId ?? null;
+  const candidates = [
+    {
+      key: "doctor",
+      label: "Doctor approval",
+      role: "DOCTOR" as const,
+      account: testnetEnv.TRUST_LEAF_DOCTOR_ADDRESS,
+    },
+    {
+      key: "dispensary",
+      label: "Dispensary approval",
+      role: "DISP" as const,
+      account: testnetEnv.TRUST_LEAF_DISPENSARY_ADDRESS,
+    },
+    {
+      key: "lab",
+      label: "Lab approval",
+      role: "LAB" as const,
+      account: testnetEnv.TRUST_LEAF_LAB_ADDRESS,
+    },
+    {
+      key: "cultivator",
+      label: "Cultivator approval",
+      role: "CULT" as const,
+      account: testnetEnv.TRUST_LEAF_CULTIVATOR_ADDRESS,
+    },
+  ].filter((candidate): candidate is { key: string; label: string; role: "DOCTOR" | "DISP" | "LAB" | "CULT"; account: string } => Boolean(candidate.account));
+
+  const roleTemplates = candidates.map((candidate) => {
+    const isActive = indexedState.roleMemberships.some(
+      (membership) =>
+        membership.isActive &&
+        membership.account === candidate.account &&
+        membership.role.includes(candidate.role),
+    );
+
+    return {
+      key: candidate.key,
+      label: candidate.label,
+      role: candidate.role,
+      account: candidate.account,
+      sourceAlias,
+      isActive,
+      grantCommand: buildRbacRoleCommand({
+        contractId,
+        sourceAlias,
+        rpcUrl: deployment.rpcUrl,
+        networkPassphrase: deployment.networkPassphrase,
+        adminAccount,
+        role: candidate.role,
+        account: candidate.account,
+        action: "grant_role",
+      }),
+      revokeCommand: buildRbacRoleCommand({
+        contractId,
+        sourceAlias,
+        rpcUrl: deployment.rpcUrl,
+        networkPassphrase: deployment.networkPassphrase,
+        adminAccount,
+        role: candidate.role,
+        account: candidate.account,
+        action: "revoke_role",
+      }),
+    } satisfies TrustLeafSuperAdminRoleTemplate;
+  });
+
+  return {
+    adminAccount,
+    sourceAlias,
+    contractId,
+    rpcUrl: deployment.rpcUrl,
+    networkPassphrase: deployment.networkPassphrase,
+    payloadBase64: Buffer.from(
+      JSON.stringify({
+        adminAccount,
+        sourceAlias,
+        contractId,
+        rpcUrl: deployment.rpcUrl,
+        networkPassphrase: deployment.networkPassphrase,
+        roleTemplates,
+      }),
+      "utf8",
+    ).toString("base64"),
+    scriptPath: ".\\scripts\\testnet\\Initialize-TrustLeafTestnet.ps1",
+    roleTemplates,
+  } satisfies TrustLeafSuperAdminActionPack;
+}
+
 async function readTestnetEnvIfPresent(): Promise<TestnetEnvMap> {
   const envPath = path.resolve(process.cwd(), "..", "..", "scripts", "testnet", "trustleaf.testnet.env");
 
@@ -221,6 +345,25 @@ async function readTestnetEnvIfPresent(): Promise<TestnetEnvMap> {
 
 function deriveHex32(seed: string) {
   return createHash("sha256").update(seed).digest("hex");
+}
+
+function buildRbacRoleCommand(args: {
+  contractId: string | null;
+  sourceAlias: string;
+  rpcUrl: string;
+  networkPassphrase: string;
+  adminAccount: string;
+  role: "DOCTOR" | "DISP" | "LAB" | "CULT";
+  account: string;
+  action: "grant_role" | "revoke_role";
+}) {
+  return [
+    "powershell",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-Command",
+    `"stellar contract invoke --id ${args.contractId ?? "<rbac-contract>"} --source-account ${args.sourceAlias} --rpc-url ${args.rpcUrl} --network-passphrase '${args.networkPassphrase}' --send=yes -- ${args.action} --admin ${args.adminAccount} --role ${args.role} --account ${args.account}"`,
+  ].join(" ");
 }
 
 function normalizeHex(value: string) {
