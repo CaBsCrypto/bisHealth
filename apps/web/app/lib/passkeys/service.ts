@@ -13,7 +13,6 @@ import { getWalletlessConfig } from "@/app/lib/walletless/config";
 import { createWalletlessSession } from "@/app/lib/walletless/session";
 import {
   addCredential,
-  buildWalletlessProfile,
   getCredential,
   listCredentialDescriptors,
   toSessionView,
@@ -21,6 +20,7 @@ import {
   updateCredentialCounter,
 } from "@/app/lib/walletless/store";
 import { signWalletlessToken, verifyWalletlessToken } from "@/app/lib/walletless/tokens";
+import { getPasskeyProfileRepository } from "./repository";
 import type {
   WalletlessProfileRecord,
   WalletlessSessionView,
@@ -90,10 +90,11 @@ export type PasskeyVerificationResult = {
 export async function preparePasskeyRegistration(
   args: PreparePasskeyRegistrationArgs,
 ): Promise<PasskeyOptionsEnvelope> {
-  const profile = buildWalletlessProfile({
+  const repository = getPasskeyProfileRepository();
+  const profile = await repository.ensureProfile({
     username: args.username,
     displayName: args.displayName,
-    profile: args.profile,
+    fallbackProfile: args.profile,
   });
   const config = getWalletlessConfig(args.origin);
   const options = await generateRegistrationOptions({
@@ -134,10 +135,11 @@ export async function verifyPasskeyRegistration(
     throw new Error("registration challenge expired");
   }
 
-  const profile = buildWalletlessProfile({
+  const repository = getPasskeyProfileRepository();
+  const profile = await repository.ensureProfile({
     username: flow.data.username,
     displayName: flow.data.displayName,
-    profile: args.profile,
+    fallbackProfile: args.profile,
   });
   const config = getWalletlessConfig(args.origin);
   const verification = await verifyRegistrationResponse({
@@ -159,11 +161,12 @@ export async function verifyPasskeyRegistration(
     backedUp: verification.registrationInfo.credentialBackedUp,
     transports: args.response.response.transports,
   });
-  const summary = await createWalletlessSession(nextProfile, config.origin);
+  const savedProfile = await repository.saveProfile(nextProfile);
+  const summary = await createWalletlessSession(savedProfile, config.origin);
 
   return {
     verified: true,
-    profile: nextProfile,
+    profile: savedProfile,
     session: toSessionView(summary, config.sponsorMode, config.networkPassphrase),
   };
 }
@@ -171,11 +174,12 @@ export async function verifyPasskeyRegistration(
 export async function preparePasskeyAuthentication(
   args: PreparePasskeyAuthenticationArgs,
 ): Promise<PasskeyAuthenticationEnvelope> {
-  const profile = buildWalletlessProfile({
+  const repository = getPasskeyProfileRepository();
+  const profile = await repository.getProfileByUsername({
     username: args.username,
-    profile: args.profile,
+    fallbackProfile: args.profile,
   });
-  if (profile.credentials.length === 0) {
+  if (!profile || profile.credentials.length === 0) {
     throw new Error("user does not have registered passkeys");
   }
 
@@ -209,11 +213,15 @@ export async function verifyPasskeyAuthentication(
     throw new Error("authentication challenge expired");
   }
 
-  const profile = buildWalletlessProfile({
+  const repository = getPasskeyProfileRepository();
+  const profile = await repository.getProfileByUsername({
     username: flow.data.username,
     displayName: flow.data.displayName,
-    profile: args.profile,
+    fallbackProfile: args.profile,
   });
+  if (!profile) {
+    throw new Error("credential not registered");
+  }
   const credential = getCredential(profile, args.response.id);
   if (!credential) {
     throw new Error("credential not registered");
@@ -238,11 +246,12 @@ export async function verifyPasskeyAuthentication(
     credential.id,
     verification.authenticationInfo.newCounter,
   );
-  const summary = await createWalletlessSession(nextProfile, config.origin);
+  const savedProfile = await repository.saveProfile(nextProfile);
+  const summary = await createWalletlessSession(savedProfile, config.origin);
 
   return {
     verified: true,
-    profile: nextProfile,
+    profile: savedProfile,
     session: toSessionView(summary, config.sponsorMode, config.networkPassphrase),
   };
 }

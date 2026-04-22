@@ -133,6 +133,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
   const [selectedVaultAddress, setSelectedVaultAddress] = useState("");
   const [supportsPasskeys, setSupportsPasskeys] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
+  const usesDurablePasskeyStore = stellarPasskeysConfig?.profileStorage === "durable-db";
   const sponsorSmokeSummary = getSponsorSmokeSummary(sponsorResponse);
 
   useEffect(() => {
@@ -157,12 +158,16 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
 
         setConfig(nextConfig);
         setSession(nextSession.session);
-        const storedProfile = getStoredWalletlessProfile(nextSession.session?.username ?? username);
+        const storedProfile =
+          nextStellarPasskeysConfig.profileStorage === "browser-local"
+            ? getStoredWalletlessProfile(nextSession.session?.username ?? username)
+            : null;
         if (storedProfile) {
           setProfile(storedProfile);
           setUsername(storedProfile.username);
           setDisplayName(storedProfile.displayName);
         } else if (nextSession.session) {
+          setProfile(null);
           setUsername(nextSession.session.username);
           setDisplayName(nextSession.session.displayName);
         }
@@ -192,6 +197,11 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
   }, []);
 
   useEffect(() => {
+    if (usesDurablePasskeyStore) {
+      setProfile(null);
+      return;
+    }
+
     const storedProfile = getStoredWalletlessProfile(username);
     if (!storedProfile) {
       setProfile(null);
@@ -200,7 +210,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
 
     setProfile(storedProfile);
     setDisplayName(storedProfile.displayName);
-  }, [username]);
+  }, [usesDurablePasskeyStore, username]);
 
   function runAction(action: () => Promise<void>) {
     startTransition(() => {
@@ -214,7 +224,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
     runAction(async () => {
       ensurePasskeySupport(copy.browserUnsupported);
       setStatus(copy.registerChallenge);
-      const existingProfile = getStoredWalletlessProfile(username);
+      const existingProfile = usesDurablePasskeyStore ? null : getStoredWalletlessProfile(username);
 
       const registration = await fetchJson<RegistrationOptionsEnvelope>(
         "/api/walletless/passkey/register/options",
@@ -240,7 +250,9 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
         }),
       );
 
-      storeWalletlessProfile(verification.profile);
+      if (!usesDurablePasskeyStore) {
+        storeWalletlessProfile(verification.profile);
+      }
       setProfile(verification.profile);
       setUsername(verification.profile.username);
       setDisplayName(verification.profile.displayName);
@@ -254,8 +266,8 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
     runAction(async () => {
       ensurePasskeySupport(copy.browserUnsupported);
       setStatus(copy.loginChallenge);
-      const existingProfile = getStoredWalletlessProfile(username);
-      if (!existingProfile) {
+      const existingProfile = usesDurablePasskeyStore ? null : getStoredWalletlessProfile(username);
+      if (!usesDurablePasskeyStore && !existingProfile) {
         throw new Error("No passkey profile found on this device for that username");
       }
 
@@ -282,7 +294,9 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
         }),
       );
 
-      storeWalletlessProfile(verification.profile);
+      if (!usesDurablePasskeyStore) {
+        storeWalletlessProfile(verification.profile);
+      }
       setProfile(verification.profile);
       setUsername(verification.profile.username);
       setDisplayName(verification.profile.displayName);
@@ -299,7 +313,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
       });
 
       setSession(null);
-      setProfile(getStoredWalletlessProfile(username));
+      setProfile(usesDurablePasskeyStore ? null : getStoredWalletlessProfile(username));
       setSponsorResponse(null);
       setStatus(copy.logoutDone);
     });
@@ -724,8 +738,12 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
               <SessionRow label={copy.smartWalletStatus}>{session.smartWalletStatus}</SessionRow>
               <SessionRow label={copy.passkeysStored}>{String(session.credentialCount)}</SessionRow>
               <SessionRow label={copy.network}>{session.networkPassphrase}</SessionRow>
-              <SessionRow label="Local profile cache">
-                {profile ? `${profile.credentials.length} device credential(s) ready` : "No device cache found yet"}
+              <SessionRow label={usesDurablePasskeyStore ? "Durable passkey store" : "Local profile cache"}>
+                {usesDurablePasskeyStore
+                  ? `${session.credentialCount} credential(s) served from Firestore`
+                  : profile
+                    ? `${profile.credentials.length} device credential(s) ready`
+                    : "No device cache found yet"}
               </SessionRow>
             </div>
           ) : (
