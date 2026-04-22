@@ -1,8 +1,15 @@
 import Link from "next/link";
 
+import { ActionBridgeTools } from "../action-bridge-tools";
 import { LanguageSwitcher } from "../language-switcher";
 import { getCommandCenterCopy, getPipelineSteps } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
+import {
+  getTrustLeafDispensaryActionPack,
+  getTrustLeafDoctorActionPack,
+  getTrustLeafPatientActionPack,
+  getTrustLeafSuperAdminActionPack,
+} from "../lib/trustleaf/actionRails";
 import { getTrustLeafDeployment } from "../lib/trustleaf/deployment";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
 
@@ -10,10 +17,93 @@ export default async function CommandCenterPage() {
   const locale = await getLocale();
   const copy = getCommandCenterCopy(locale);
   const pipelineSteps = getPipelineSteps(locale);
-  const indexedState = await getIndexedState();
+  const [
+    indexedState,
+    deployment,
+    patientActionPack,
+    doctorActionPack,
+    dispensaryActionPack,
+    superAdminActionPack,
+  ] = await Promise.all([
+    getIndexedState(),
+    getTrustLeafDeployment(),
+    getTrustLeafPatientActionPack(),
+    getTrustLeafDoctorActionPack(null),
+    getTrustLeafDispensaryActionPack(null),
+    getTrustLeafSuperAdminActionPack(),
+  ]);
   const latestBatch = indexedState.batches[0] ?? null;
   const latestPrescription = indexedState.prescriptions[0] ?? null;
-  const deployment = await getTrustLeafDeployment();
+  const opsCopy =
+    locale === "es"
+      ? {
+          eyebrow: "Ops room",
+          title: "Los cuatro rails ya se pueden orquestar desde un solo punto.",
+          body: "Este tablero junta lectura indexada, bridges operativos y accesos rapidos para paciente, medico, dispensario y superadmin. Sirve para demo, para operacion y para handoffs futuros de frontend.",
+          patient: "Paciente",
+          patientBody:
+            "Ve el estado de la receta activa, el medico asignado y el dispensario listo antes de abrir el flujo final.",
+          patientStatusReady: "listo para handoff",
+          patientStatusConsumed: "ya consumida",
+          patientStatusMissing: "sin receta activa",
+          doctor: "Medico",
+          doctorBody:
+            "Prepara una emision real de receta privada con command pack, payload base64 y sugerencias de commitment.",
+          dispensary: "Dispensario",
+          dispensaryBody:
+            "Prepara el verify_and_consume live con el fixture actual y revisa si coincide con la receta pendiente.",
+          superadmin: "Superadmin",
+          superadminBody:
+            "Opera RBAC con grants y revokes reales para sostener una red curada de actores aprobados.",
+          openLane: "Abrir POV",
+          openApi: "Abrir API",
+          status: "Estado",
+          route: "Ruta",
+          doctorAccount: "Cuenta medica",
+          dispensaryAccount: "Cuenta dispensario",
+          adminAccount: "Cuenta admin",
+          prescription: "Receta",
+          patientNullifier: "Nullifier",
+          script: "Script",
+          roleTemplates: "Templates RBAC",
+          match: "Match fixture",
+          yes: "si",
+          no: "no",
+        }
+      : {
+          eyebrow: "Ops room",
+          title: "All four rails can now be orchestrated from one place.",
+          body: "This board combines indexed read models, operational bridges, and quick access for patient, doctor, dispensary, and superadmin. It is useful for demos, operations, and future frontend handoffs.",
+          patient: "Patient",
+          patientBody:
+            "Inspect the active prescription, assigned doctor, and ready dispensary before opening the final flow.",
+          patientStatusReady: "ready for handoff",
+          patientStatusConsumed: "already consumed",
+          patientStatusMissing: "no active prescription",
+          doctor: "Doctor",
+          doctorBody:
+            "Prepare a real private prescription issuance with a command pack, base64 payload, and suggested commitment.",
+          dispensary: "Dispensary",
+          dispensaryBody:
+            "Prepare the live verify_and_consume action with the current fixture and check whether it matches the pending prescription.",
+          superadmin: "Superadmin",
+          superadminBody:
+            "Operate RBAC with live grants and revokes to sustain a curated network of approved operators.",
+          openLane: "Open POV",
+          openApi: "Open API",
+          status: "Status",
+          route: "Route",
+          doctorAccount: "Doctor account",
+          dispensaryAccount: "Dispensary account",
+          adminAccount: "Admin account",
+          prescription: "Prescription",
+          patientNullifier: "Nullifier",
+          script: "Script",
+          roleTemplates: "RBAC templates",
+          match: "Fixture match",
+          yes: "yes",
+          no: "no",
+        };
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#07100d_0%,#091612_40%,#0d1f18_100%)] text-stone-100">
@@ -48,6 +138,207 @@ export default async function CommandCenterPage() {
             </Link>
           </div>
         </div>
+
+        <section className="mt-10 rounded-[2rem] border border-cyan-200/10 bg-[#08131d]/88 p-6">
+          <div className="max-w-4xl">
+            <p className="text-sm uppercase tracking-[0.25em] text-cyan-300/70">
+              {opsCopy.eyebrow}
+            </p>
+            <h2 className="mt-2 text-3xl text-cyan-50 md:text-4xl">{opsCopy.title}</h2>
+            <p className="mt-4 text-base leading-7 text-stone-300">{opsCopy.body}</p>
+          </div>
+
+          <div className="mt-6 grid gap-5 xl:grid-cols-2">
+            <section className="rounded-[1.8rem] border border-white/8 bg-black/15 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] text-cyan-300/70">
+                    {opsCopy.patient}
+                  </p>
+                  <h3 className="mt-3 text-2xl text-stone-50">{opsCopy.patient}</h3>
+                </div>
+                <span className="rounded-full bg-cyan-300/15 px-3 py-1 text-xs uppercase tracking-[0.22em] text-cyan-100">
+                  {patientActionPack.prescriptionStatus === "ready"
+                    ? opsCopy.patientStatusReady
+                    : patientActionPack.prescriptionStatus === "consumed"
+                      ? opsCopy.patientStatusConsumed
+                      : opsCopy.patientStatusMissing}
+                </span>
+              </div>
+              <p className="mt-4 text-sm leading-7 text-stone-300">{opsCopy.patientBody}</p>
+
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
+                <MetricCard
+                  label={opsCopy.prescription}
+                  value={patientActionPack.prescriptionId ?? copy.pending}
+                />
+                <MetricCard
+                  label={opsCopy.patientNullifier}
+                  value={patientActionPack.patientNullifier ?? copy.pending}
+                />
+                <MetricCard
+                  label={opsCopy.doctorAccount}
+                  value={patientActionPack.doctorAccount ?? copy.pending}
+                />
+                <MetricCard
+                  label={opsCopy.dispensaryAccount}
+                  value={patientActionPack.dispensaryAccount ?? copy.pending}
+                />
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/patient"
+                  className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+                >
+                  {opsCopy.openLane}
+                </Link>
+                <Link
+                  href="/api/trustleaf/actor-bridges/patient"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  {opsCopy.openApi}
+                </Link>
+              </div>
+            </section>
+
+            <section className="rounded-[1.8rem] border border-white/8 bg-black/15 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] text-emerald-300/70">
+                    {opsCopy.doctor}
+                  </p>
+                  <h3 className="mt-3 text-2xl text-stone-50">{opsCopy.doctor}</h3>
+                </div>
+                <span className="rounded-full bg-emerald-300/15 px-3 py-1 text-xs uppercase tracking-[0.22em] text-emerald-100">
+                  {shortHash(doctorActionPack.doctorAccount)}
+                </span>
+              </div>
+              <p className="mt-4 text-sm leading-7 text-stone-300">{opsCopy.doctorBody}</p>
+
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
+                <MetricCard label={opsCopy.doctorAccount} value={doctorActionPack.doctorAccount} />
+                <MetricCard
+                  label={opsCopy.prescription}
+                  value={doctorActionPack.suggestedCommitment}
+                />
+                <MetricCard
+                  label={opsCopy.patientNullifier}
+                  value={doctorActionPack.suggestedPatientNullifier}
+                />
+                <MetricCard label={opsCopy.script} value={doctorActionPack.scriptPath} />
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/doctor"
+                  className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  {opsCopy.openLane}
+                </Link>
+              </div>
+              <ActionBridgeTools
+                locale={locale}
+                command={doctorActionPack.scriptCommand}
+                payloadBase64={doctorActionPack.payloadBase64}
+                apiPath="/api/trustleaf/actor-bridges/doctor"
+              />
+            </section>
+
+            <section className="rounded-[1.8rem] border border-white/8 bg-black/15 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] text-amber-300/70">
+                    {opsCopy.dispensary}
+                  </p>
+                  <h3 className="mt-3 text-2xl text-stone-50">{opsCopy.dispensary}</h3>
+                </div>
+                <span className="rounded-full bg-amber-300/15 px-3 py-1 text-xs uppercase tracking-[0.22em] text-amber-100">
+                  {opsCopy.match}:{" "}
+                  {dispensaryActionPack.matchesPendingPrescription ? opsCopy.yes : opsCopy.no}
+                </span>
+              </div>
+              <p className="mt-4 text-sm leading-7 text-stone-300">{opsCopy.dispensaryBody}</p>
+
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
+                <MetricCard
+                  label={opsCopy.dispensaryAccount}
+                  value={dispensaryActionPack.dispensaryAccount}
+                />
+                <MetricCard
+                  label={opsCopy.prescription}
+                  value={dispensaryActionPack.pendingPrescriptionId ?? copy.pending}
+                />
+                <MetricCard
+                  label={opsCopy.match}
+                  value={
+                    dispensaryActionPack.matchesPendingPrescription ? opsCopy.yes : opsCopy.no
+                  }
+                />
+                <MetricCard label={opsCopy.script} value={dispensaryActionPack.scriptPath} />
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/dispensary"
+                  className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  {opsCopy.openLane}
+                </Link>
+              </div>
+              <ActionBridgeTools
+                locale={locale}
+                command={dispensaryActionPack.scriptCommand}
+                payloadBase64={dispensaryActionPack.payloadBase64}
+                apiPath="/api/trustleaf/actor-bridges/dispensary"
+              />
+            </section>
+
+            <section className="rounded-[1.8rem] border border-white/8 bg-black/15 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] text-violet-300/70">
+                    {opsCopy.superadmin}
+                  </p>
+                  <h3 className="mt-3 text-2xl text-stone-50">{opsCopy.superadmin}</h3>
+                </div>
+                <span className="rounded-full bg-violet-300/15 px-3 py-1 text-xs uppercase tracking-[0.22em] text-violet-100">
+                  {superAdminActionPack.roleTemplates.length} {opsCopy.roleTemplates}
+                </span>
+              </div>
+              <p className="mt-4 text-sm leading-7 text-stone-300">{opsCopy.superadminBody}</p>
+
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
+                <MetricCard label={opsCopy.adminAccount} value={superAdminActionPack.adminAccount} />
+                <MetricCard label={copy.contractId} value={superAdminActionPack.contractId ?? copy.pending} />
+                <MetricCard label={copy.sourceAccount} value={superAdminActionPack.sourceAlias} />
+                <MetricCard
+                  label={opsCopy.roleTemplates}
+                  value={String(superAdminActionPack.roleTemplates.length)}
+                />
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/superadmin"
+                  className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  {opsCopy.openLane}
+                </Link>
+              </div>
+              <ActionBridgeTools
+                locale={locale}
+                command={superAdminActionPack.roleTemplates
+                  .map((template) => template.grantCommand)
+                  .join("\n\n")}
+                payloadBase64={superAdminActionPack.payloadBase64}
+                apiPath="/api/trustleaf/actor-bridges/superadmin"
+              />
+            </section>
+          </div>
+        </section>
 
         <div className="mt-10 grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
           <section className="rounded-[2rem] border border-emerald-200/10 bg-[#091512]/80 p-6">
