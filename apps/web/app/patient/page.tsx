@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getPatientPageCopy } from "../lib/i18n";
@@ -393,6 +394,18 @@ export default async function PatientPage() {
                 {locale === "es" ? "Abrir dispensario" : "Open dispensary"}
               </Link>
             </div>
+            <ActionBridgeTools
+              locale={locale}
+              command={[
+                "Patient handoff",
+                `doctor=${patientActionPack.doctorRoute}`,
+                `dispensary=${patientActionPack.dispensaryRoute}`,
+                `walletless=${patientActionPack.walletlessRoute}`,
+                `prescription=${patientActionPack.prescriptionId ?? "none"}`,
+              ].join("\n")}
+              payloadBase64={Buffer.from(JSON.stringify(patientActionPack), "utf8").toString("base64")}
+              apiPath="/api/trustleaf/actor-bridges/patient"
+            />
           </div>
         </section>
 

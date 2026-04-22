@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDoctorPageCopy } from "../lib/i18n";
@@ -279,6 +280,12 @@ export default async function DoctorPage() {
             <pre className="mt-5 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-black/20 p-4 text-xs leading-6 text-slate-200">
               {doctorActionPack.scriptCommand}
             </pre>
+            <ActionBridgeTools
+              locale={locale}
+              command={doctorActionPack.scriptCommand}
+              payloadBase64={doctorActionPack.payloadBase64}
+              apiPath="/api/trustleaf/actor-bridges/doctor"
+            />
           </div>
         </section>
 

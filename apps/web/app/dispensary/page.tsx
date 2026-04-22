@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDispensaryPageCopy } from "../lib/i18n";
@@ -296,6 +297,12 @@ export default async function DispensaryPage() {
             <pre className="mt-5 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-black/20 p-4 text-xs leading-6 text-stone-200">
               {dispensaryActionPack.scriptCommand}
             </pre>
+            <ActionBridgeTools
+              locale={locale}
+              command={dispensaryActionPack.scriptCommand}
+              payloadBase64={dispensaryActionPack.payloadBase64}
+              apiPath="/api/trustleaf/actor-bridges/dispensary"
+            />
           </div>
         </section>
       </section>
