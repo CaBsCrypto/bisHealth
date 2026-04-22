@@ -56,6 +56,19 @@ export type TrustLeafDispensaryActionPack = {
   payloadBase64: string;
 };
 
+export type TrustLeafPatientActionPack = {
+  doctorAccount: string | null;
+  dispensaryAccount: string | null;
+  prescriptionId: string | null;
+  prescriptionStatus: "ready" | "consumed" | "missing";
+  createdAtLedger: number | null;
+  consumedAtLedger: number | null;
+  patientNullifier: string | null;
+  doctorRoute: "/doctor";
+  dispensaryRoute: "/dispensary";
+  walletlessRoute: "/walletless";
+};
+
 export async function getTrustLeafDoctorActionPack(doctorAccount: string | null) {
   const [deployment, testnetEnv] = await Promise.all([
     getTrustLeafDeployment(),
@@ -150,6 +163,35 @@ export async function getTrustLeafDispensaryActionPack(dispensaryAccount: string
     payload,
     payloadBase64,
   } satisfies TrustLeafDispensaryActionPack;
+}
+
+export async function getTrustLeafPatientActionPack() {
+  const indexedState = await getIndexedState();
+  const activePrescription =
+    indexedState.prescriptions.find((prescription) => !prescription.isUsed) ??
+    indexedState.prescriptions[0] ??
+    null;
+  const activeDispensary =
+    indexedState.roleMemberships.find(
+      (membership) => membership.isActive && membership.role.includes("DISP"),
+    ) ?? null;
+
+  return {
+    doctorAccount: activePrescription?.doctor ?? null,
+    dispensaryAccount: activeDispensary?.account ?? null,
+    prescriptionId: activePrescription?.id ?? null,
+    prescriptionStatus: !activePrescription
+      ? "missing"
+      : activePrescription.isUsed
+        ? "consumed"
+        : "ready",
+    createdAtLedger: activePrescription?.createdAtLedger ?? null,
+    consumedAtLedger: activePrescription?.consumedAtLedger ?? null,
+    patientNullifier: activePrescription?.patientNullifier ?? null,
+    doctorRoute: "/doctor",
+    dispensaryRoute: "/dispensary",
+    walletlessRoute: "/walletless",
+  } satisfies TrustLeafPatientActionPack;
 }
 
 async function readTestnetEnvIfPresent(): Promise<TestnetEnvMap> {

@@ -4,6 +4,7 @@ import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getPatientPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
+import { getTrustLeafPatientActionPack } from "../lib/trustleaf/actionRails";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
 
 export default async function PatientPage() {
@@ -23,6 +24,7 @@ export default async function PatientPage() {
     null;
   const doctorProfiles = buildDoctorProfiles(locale, activeDoctors);
   const catalogCards = buildCatalogCards(locale, indexedState.batches, activeDispensaries);
+  const patientActionPack = await getTrustLeafPatientActionPack();
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f4f0e8] text-stone-900">
@@ -225,6 +227,171 @@ export default async function PatientPage() {
                   <p className="mt-3 text-lg leading-8">{step}</p>
                 </article>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-10 grid gap-5 xl:grid-cols-[1.04fr_0.96fr]">
+          <div className="rounded-[2.2rem] border border-emerald-900/10 bg-[linear-gradient(180deg,rgba(244,252,247,0.96),rgba(232,246,236,0.92))] p-6 shadow-[0_18px_60px_rgba(32,26,20,0.06)]">
+            <p className="text-sm uppercase tracking-[0.24em] text-emerald-700">
+              {locale === "es" ? "Live handoff" : "Live handoff"}
+            </p>
+            <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-950">
+              {locale === "es"
+                ? "Tu ruta real desde consulta hasta retiro."
+                : "Your real route from consult to pickup."}
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-8 text-stone-700">
+              {locale === "es"
+                ? "Este bloque une los rails del medico, la receta privada y el dispensario ya aprobados en testnet para que el paciente entienda el siguiente paso sin leer complejidad blockchain."
+                : "This block connects the doctor, private prescription, and approved dispensary rails already live on testnet so the patient can understand the next step without reading blockchain complexity."}
+            </p>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              <article className="rounded-[1.7rem] border border-emerald-900/10 bg-white/80 p-5">
+                <p className="text-xs uppercase tracking-[0.24em] text-emerald-700">
+                  {locale === "es" ? "Doctor listo" : "Doctor ready"}
+                </p>
+                <p className="mt-3 font-display text-3xl text-stone-950">
+                  {patientActionPack.doctorAccount ? shortValue(patientActionPack.doctorAccount) : "--"}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-stone-600">
+                  {locale === "es"
+                    ? "El rail clinico ya puede emitir la receta privada que se ancla en Soroban."
+                    : "The clinical rail can already issue the private prescription anchored on Soroban."}
+                </p>
+                <Link
+                  href={patientActionPack.doctorRoute}
+                  className="mt-5 inline-flex rounded-full bg-emerald-900 px-4 py-2 text-sm font-semibold text-emerald-50 transition hover:bg-emerald-800"
+                >
+                  {locale === "es" ? "Ver POV medico" : "Open doctor POV"}
+                </Link>
+              </article>
+
+              <article className="rounded-[1.7rem] border border-amber-900/10 bg-white/80 p-5">
+                <p className="text-xs uppercase tracking-[0.24em] text-amber-700">
+                  {locale === "es" ? "Receta activa" : "Active prescription"}
+                </p>
+                <p className="mt-3 font-display text-3xl text-stone-950">
+                  {patientActionPack.prescriptionStatus === "ready"
+                    ? locale === "es"
+                      ? "Lista"
+                      : "Ready"
+                    : patientActionPack.prescriptionStatus === "consumed"
+                      ? locale === "es"
+                        ? "Consumida"
+                        : "Consumed"
+                      : "--"}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-stone-600">
+                  {patientActionPack.prescriptionId
+                    ? shortHash(patientActionPack.prescriptionId)
+                    : locale === "es"
+                      ? "Aun sin receta activa"
+                      : "No active prescription yet"}
+                </p>
+                <div className="mt-4 grid gap-3">
+                  <InfoChip
+                    label={copy.issuanceLedger}
+                    value={
+                      patientActionPack.createdAtLedger
+                        ? String(patientActionPack.createdAtLedger)
+                        : copy.waitingUse
+                    }
+                  />
+                  <InfoChip
+                    label={copy.nullifier}
+                    value={
+                      patientActionPack.patientNullifier
+                        ? shortHash(patientActionPack.patientNullifier)
+                        : copy.waitingUse
+                    }
+                  />
+                </div>
+              </article>
+
+              <article className="rounded-[1.7rem] border border-sky-900/10 bg-white/80 p-5">
+                <p className="text-xs uppercase tracking-[0.24em] text-sky-700">
+                  {locale === "es" ? "Dispensario listo" : "Dispensary ready"}
+                </p>
+                <p className="mt-3 font-display text-3xl text-stone-950">
+                  {patientActionPack.dispensaryAccount
+                    ? shortValue(patientActionPack.dispensaryAccount)
+                    : "--"}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-stone-600">
+                  {locale === "es"
+                    ? "El dispensario ya tiene un bridge listo para validar y consumir la receta al momento del retiro."
+                    : "The dispensary already has a bridge ready to validate and consume the prescription at pickup time."}
+                </p>
+                <Link
+                  href={patientActionPack.dispensaryRoute}
+                  className="mt-5 inline-flex rounded-full border border-sky-900/15 px-4 py-2 text-sm font-semibold text-sky-900 transition hover:bg-sky-900/5"
+                >
+                  {locale === "es" ? "Ver POV dispensario" : "Open dispensary POV"}
+                </Link>
+              </article>
+            </div>
+          </div>
+
+          <div className="rounded-[2.2rem] border border-stone-900/10 bg-white/75 p-6 shadow-[0_18px_60px_rgba(32,26,20,0.06)]">
+            <p className="text-sm uppercase tracking-[0.24em] text-stone-500">
+              {locale === "es" ? "Patient next step" : "Patient next step"}
+            </p>
+            <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-950">
+              {locale === "es"
+                ? "Entrar con passkey y cerrar el recorrido."
+                : "Enter with passkey and close the journey."}
+            </h2>
+            <p className="mt-4 text-base leading-8 text-stone-600">
+              {locale === "es"
+                ? "Cuando el paciente entra por passkeys, el rail wallet-less queda listo para sponsor fee, recibir updates de sesion y preparar un checkout simple."
+                : "When the patient enters through passkeys, the wallet-less rail is ready for fee sponsorship, session updates, and a simple checkout handoff."}
+            </p>
+
+            <div className="mt-6 grid gap-4">
+              {[
+                locale === "es"
+                  ? "1. Elige medico aprobado y abre la consulta."
+                  : "1. Choose an approved doctor and open the consult.",
+                locale === "es"
+                  ? "2. Recibe la receta privada y sigue su vigencia."
+                  : "2. Receive the private prescription and track its validity.",
+                locale === "es"
+                  ? "3. Revisa inventario y confirma el dispensario."
+                  : "3. Review inventory and confirm the dispensary.",
+                locale === "es"
+                  ? "4. Entra con passkey para completar el lane patrocinado."
+                  : "4. Enter with a passkey to complete the sponsored lane.",
+              ].map((step) => (
+                <article
+                  key={step}
+                  className="rounded-[1.6rem] border border-stone-900/10 bg-stone-950 px-5 py-4 text-stone-100"
+                >
+                  <p className="text-base leading-8">{step}</p>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href={patientActionPack.walletlessRoute}
+                className="rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-emerald-50 transition hover:bg-emerald-800"
+              >
+                {copy.finalCta}
+              </Link>
+              <Link
+                href={patientActionPack.doctorRoute}
+                className="rounded-full border border-stone-900/10 px-5 py-2.5 text-sm font-semibold text-stone-900 transition hover:bg-stone-900/5"
+              >
+                {locale === "es" ? "Abrir medico" : "Open doctor"}
+              </Link>
+              <Link
+                href={patientActionPack.dispensaryRoute}
+                className="rounded-full border border-stone-900/10 px-5 py-2.5 text-sm font-semibold text-stone-900 transition hover:bg-stone-900/5"
+              >
+                {locale === "es" ? "Abrir dispensario" : "Open dispensary"}
+              </Link>
             </div>
           </div>
         </section>
