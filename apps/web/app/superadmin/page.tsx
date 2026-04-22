@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ActionBridgeTools } from "../action-bridge-tools";
+import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getLocale } from "../lib/locale";
@@ -70,6 +71,7 @@ export default async function SuperAdminPage() {
                 {copy.body}
               </p>
 
+              <ActorEntryMode actor="superadmin" locale={locale} demoHref="#approval-queue" />
               <ActorNav current="superadmin" locale={locale} />
             </div>
 
@@ -108,7 +110,7 @@ export default async function SuperAdminPage() {
           </div>
         </section>
 
-        <section className="mt-10 grid gap-5 xl:grid-cols-[0.92fr_1.08fr]">
+        <section id="approval-queue" className="mt-10 grid gap-5 xl:grid-cols-[0.92fr_1.08fr]">
           <div className="rounded-[2rem] border border-amber-200/10 bg-[#17130c]/90 p-6">
             <p className="text-sm uppercase tracking-[0.25em] text-amber-300/70">
               {copy.approvalQueueEyebrow}

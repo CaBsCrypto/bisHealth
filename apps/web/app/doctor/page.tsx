@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ActionBridgeTools } from "../action-bridge-tools";
+import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { DoctorIssueSubmit } from "./doctor-issue-submit";
 import { LanguageSwitcher } from "../language-switcher";
@@ -88,6 +89,7 @@ export default async function DoctorPage() {
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-100/90">{copy.body}</p>
 
+              <ActorEntryMode actor="doctor" locale={locale} demoHref="#doctor-schedule" />
               <ActorNav current="doctor" locale={locale} />
             </div>
 
@@ -104,7 +106,7 @@ export default async function DoctorPage() {
           </div>
         </section>
 
-        <section className="mt-10 grid gap-5 xl:grid-cols-[0.96fr_1.04fr]">
+        <section id="doctor-schedule" className="mt-10 grid gap-5 xl:grid-cols-[0.96fr_1.04fr]">
           <div className="rounded-[2.2rem] border border-slate-900/10 bg-white/80 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
             <p className="text-sm uppercase tracking-[0.24em] text-sky-700">{copy.scheduleEyebrow}</p>
             <h2 className="font-display mt-3 text-5xl leading-[0.96] text-slate-950">{copy.scheduleTitle}</h2>

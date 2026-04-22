@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ActionBridgeTools } from "../action-bridge-tools";
+import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getPatientPageCopy } from "../lib/i18n";
@@ -98,6 +99,7 @@ export default async function PatientPage() {
                 </Link>
               </div>
 
+              <ActorEntryMode actor="patient" locale={locale} demoHref="#find-care" />
               <ActorNav current="patient" locale={locale} />
             </div>
 

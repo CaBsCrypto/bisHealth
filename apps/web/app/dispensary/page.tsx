@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ActionBridgeTools } from "../action-bridge-tools";
+import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDispensaryPageCopy } from "../lib/i18n";
@@ -87,6 +88,7 @@ export default async function DispensaryPage() {
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-stone-100/90">{copy.body}</p>
 
+              <ActorEntryMode actor="dispensary" locale={locale} demoHref="#dispensary-inventory" />
               <ActorNav current="dispensary" locale={locale} />
             </div>
 
@@ -99,7 +101,7 @@ export default async function DispensaryPage() {
           </div>
         </section>
 
-        <section className="mt-10 grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+        <section id="dispensary-inventory" className="mt-10 grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
           <div className="rounded-[2.2rem] border border-stone-900/10 bg-white/80 p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
             <p className="text-sm uppercase tracking-[0.24em] text-amber-700">{copy.inventoryEyebrow}</p>
             <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-950">{copy.inventoryTitle}</h2>
