@@ -30,6 +30,7 @@ export default async function HomePage() {
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <a href="#how-it-works" className="rounded-full px-4 py-2 text-[#51635b] transition hover:bg-[#163c30]/5 hover:text-[#12261d]">{copy.navHow}</a>
               <a href="#professionals" className="rounded-full px-4 py-2 text-[#51635b] transition hover:bg-[#163c30]/5 hover:text-[#12261d]">{copy.navProfessionals}</a>
+              <Link href="/demo-script" className="rounded-full px-4 py-2 text-[#51635b] transition hover:bg-[#163c30]/5 hover:text-[#12261d]">{copy.navScript}</Link>
               <Link href="/walletless" className="rounded-full px-4 py-2 text-[#51635b] transition hover:bg-[#163c30]/5 hover:text-[#12261d]">{copy.navDemo}</Link>
               <Link href="/command-center" className="rounded-full px-4 py-2 text-[#51635b] transition hover:bg-[#163c30]/5 hover:text-[#12261d]">{copy.navCommand}</Link>
               <LanguageSwitcher locale={locale} />
@@ -54,6 +55,7 @@ export default async function HomePage() {
               <Link href="/patient" className="rounded-full bg-[#163c30] px-6 py-3 text-sm font-semibold text-[#eef5f1] transition hover:bg-[#214d3f]">{copy.primaryCta}</Link>
               <a href="#professionals" className="rounded-full border border-[#163c30]/12 bg-white/70 px-6 py-3 text-sm font-semibold text-[#163c30] transition hover:bg-white">{copy.secondaryCta}</a>
               <Link href="/walletless" className="rounded-full px-4 py-3 text-sm text-[#51635b] transition hover:text-[#163c30]">{copy.tertiaryCta}</Link>
+              <Link href="/demo-script" className="rounded-full border border-[#163c30]/12 bg-white/70 px-6 py-3 text-sm font-semibold text-[#163c30] transition hover:bg-white">{copy.scriptCta}</Link>
             </div>
 
             <div className="mt-10 grid gap-4 md:grid-cols-3">
@@ -180,6 +182,7 @@ function getLandingCopy(locale: Locale) {
         brandTag: "Red de confianza medicinal",
         navHow: "Como funciona",
         navProfessionals: "Red profesional",
+        navScript: "Script demo",
         navDemo: "Demo",
         navCommand: "Command center",
         navCta: "Entrar",
@@ -191,6 +194,7 @@ function getLandingCopy(locale: Locale) {
         primaryCta: "Entrar como paciente",
         secondaryCta: "Soy medico o dispensario",
         tertiaryCta: "Ver demo tecnica",
+        scriptCta: "Abrir script de demo",
         consultLabel: "Medico verificado",
         consultValue: "Agenda consulta y seguimiento en una sola cuenta",
         rxLabel: "Receta validada",
@@ -239,6 +243,7 @@ function getLandingCopy(locale: Locale) {
         brandTag: "Medicinal trust network",
         navHow: "How it works",
         navProfessionals: "Professional network",
+        navScript: "Demo script",
         navDemo: "Demo",
         navCommand: "Command center",
         navCta: "Enter",
@@ -250,6 +255,7 @@ function getLandingCopy(locale: Locale) {
         primaryCta: "Enter as patient",
         secondaryCta: "I am a doctor or dispensary",
         tertiaryCta: "View technical demo",
+        scriptCta: "Open demo script",
         consultLabel: "Verified doctor",
         consultValue: "Book consults and follow-ups from one account",
         rxLabel: "Validated prescription",
