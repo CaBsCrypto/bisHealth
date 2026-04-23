@@ -3,10 +3,12 @@ import Link from "next/link";
 import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
+import { DispensaryConsumeSubmit } from "./dispensary-consume-submit";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDispensaryPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
 import { getTrustLeafDispensaryActionPack } from "../lib/trustleaf/actionRails";
+import { getTrustLeafDispensarySubmitConfig } from "../lib/trustleaf/dispensaryConsume";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
 
 export default async function DispensaryPage() {
@@ -27,6 +29,7 @@ export default async function DispensaryPage() {
   const dispensaryActionPack = await getTrustLeafDispensaryActionPack(
     selectedDispensary?.account ?? null,
   );
+  const dispensarySubmitConfig = getTrustLeafDispensarySubmitConfig();
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f7f3ec] text-stone-950">
@@ -288,6 +291,17 @@ export default async function DispensaryPage() {
                 ? "Esto conecta el POV del dispensario con el script live de testnet. Sirve para demos, dry-runs operativos y validacion manual mientras cerramos submit directo desde web."
                 : "This connects the dispensary POV to the live testnet script. It works for demos, operational dry-runs, and manual validation while we finish direct web submission."}
             </p>
+
+            <DispensaryConsumeSubmit
+              locale={locale}
+              initialCaller={dispensaryActionPack.dispensaryAccount}
+              initialCommitment={dispensaryActionPack.payload.commitment}
+              initialProof={dispensaryActionPack.payload.proof}
+              initialPublicInputsHash={dispensaryActionPack.payload.publicInputsHash}
+              initialCurrentDay={dispensaryActionPack.payload.currentDay}
+              submitReady={dispensarySubmitConfig.enabled}
+              submitMode={dispensarySubmitConfig.mode}
+            />
 
             <div className="mt-6 grid gap-3">
               <InfoChipDark
