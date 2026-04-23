@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { LanguageSwitcher } from "../language-switcher";
 import type { getWalletlessPageCopy } from "../lib/i18n";
+import { PresentationStrip } from "../presentation-strip";
 import type { StellarPasskeysConfigView, WalletlessConfigView } from "../lib/walletless/types";
 import { WalletlessWorkbench } from "./walletless-workbench";
 
@@ -68,6 +69,8 @@ export function WalletlessShell({
             </div>
           </div>
         </header>
+
+        <PresentationStrip locale={locale} current="walletless" dark />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
           <article className="rounded-[2.8rem] border border-emerald-200/10 bg-[linear-gradient(145deg,#0c2118,#123427_48%,#0a1811_100%)] p-8 shadow-[0_28px_100px_rgba(0,0,0,0.24)] md:p-10">

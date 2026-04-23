@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { LanguageSwitcher } from "../language-switcher";
 import { getLocale } from "../lib/locale";
+import { PresentationStrip } from "../presentation-strip";
 
 export default async function DemoScriptPage() {
   const locale = await getLocale();
@@ -42,6 +43,8 @@ export default async function DemoScriptPage() {
             </div>
           </div>
         </header>
+
+        <PresentationStrip locale={locale} current="demo" />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-start">
           <article className="rounded-[2.8rem] border border-[#163c30]/10 bg-[linear-gradient(145deg,#fffdf9,#f5edde_54%,#eee5d7)] p-7 shadow-[0_30px_110px_rgba(31,58,47,0.10)] md:p-10">
@@ -202,7 +205,7 @@ function getDemoScriptCopy(locale: "en" | "es") {
         steps: [
           { step: "01", runtime: "45s", mode: "Narrativa", route: "/", title: "Abre con el problema del paciente.", narrative: "Empieza en la landing y presenta a Trust Leaf como una experiencia de salud y confianza para cannabis medicinal, no como una app cripto.", say: "Hoy el paciente tiene que resolver demasiadas cosas sueltas: encontrar un medico confiable, validar la receta y luego confiar en un dispensario sin ver trazabilidad real.", show: "Hero principal, propuesta paciente-first y lanes de acceso por actor." },
           { step: "02", runtime: "60s", mode: "Demo/mockup", route: "/patient", title: "Presenta el POV del paciente como producto final.", narrative: "Entra al patient POV y recorre la experiencia como si ya estuviera en produccion: encontrar medico, ver receta activa y revisar inventario confiable.", say: "Este es el producto como deberia sentirse: simple, biometrico y sin que el paciente tenga que entender blockchain.", show: "Modo demo/mockup, cards de medicos, receta activa, inventario y el patient live journey rail." },
-          { step: "03", runtime: "60s", mode: "Operacion clinica", route: "/doctor", title: "Enseña como opera el medico dentro de la red.", narrative: "Muestra agenda, pacientes activos y el rail de issue_prescription listo. No necesitas ejecutar submit si no tienes la secret cargada.", say: "El medico trabaja dentro de una red curada. Puede emitir una receta privada y el sistema ya sabe como llevarla a testnet.", show: "Doctor lane, panel live submit, estado de rail y command pack." },
+          { step: "03", runtime: "60s", mode: "Operacion clinica", route: "/doctor", title: "Muestra como opera el medico dentro de la red.", narrative: "Muestra agenda, pacientes activos y el rail de issue_prescription listo. No necesitas ejecutar submit si no tienes la secret cargada.", say: "El medico trabaja dentro de una red curada. Puede emitir una receta privada y el sistema ya sabe como llevarla a testnet.", show: "Doctor lane, panel live submit, estado de rail y command pack." },
           { step: "04", runtime: "60s", mode: "Operacion comercial", route: "/dispensary", title: "Cierra el loop con el dispensario.", narrative: "Muestra inventario, validacion de receta y el rail verify_and_consume ya preparado desde UI.", say: "El dispensario no solo vende. Tambien valida elegibilidad, trazabilidad y consume la receta para evitar doble uso.", show: "Inventory, queue de validacion y panel consume live." },
           { step: "05", runtime: "45s", mode: "Gobernanza", route: "/superadmin", title: "Explica por que la red no esta abierta sin control.", narrative: "El superadmin muestra que medicos y dispensarios son aprobados manualmente y que los accesos viven en RBAC on-chain.", say: "El paciente puede avanzar solo. Pero los actores regulados entran mediante aprobacion manual y permisos verificables.", show: "Approval queue, access registry y RBAC bridge." },
           { step: "06", runtime: "45s", mode: "Infraestructura", route: "/command-center", title: "Demuestra que no es solo maqueta.", narrative: "Muestra command center para probar contratos live, indexacion y rails operativos desde un solo hub.", say: "Aqui demostramos que atras del producto ya hay contratos desplegados, eventos indexados y un rail real de operaciones sobre testnet.", show: "Ops room, contratos live, rails del paciente, medico, dispensario y superadmin." },

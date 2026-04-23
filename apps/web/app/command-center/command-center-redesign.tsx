@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { LanguageSwitcher } from "../language-switcher";
+import { PresentationStrip } from "../presentation-strip";
 import type { getCommandCenterCopy, getPipelineSteps } from "../lib/i18n";
 import type { getTrustLeafDispensaryActionPack, getTrustLeafDoctorActionPack, getTrustLeafPatientActionPack, getTrustLeafSuperAdminActionPack } from "../lib/trustleaf/actionRails";
 import type { getTrustLeafDeployment } from "../lib/trustleaf/deployment";
@@ -138,6 +139,8 @@ export function CommandCenterRedesign({
         <div className="mb-8 flex justify-end">
           <LanguageSwitcher locale={locale} />
         </div>
+
+        <PresentationStrip locale={locale} current="ops" dark />
 
         <section className="rounded-[2.6rem] border border-emerald-200/10 bg-[linear-gradient(145deg,#0b1511,#0f211a_48%,#0a1611)] p-8 shadow-[0_28px_100px_rgba(0,0,0,0.24)] md:p-10">
           <div className="grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-end">

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { LanguageSwitcher } from "./language-switcher";
 import { getMarketingData, type Locale } from "./lib/i18n";
+import { PresentationStrip } from "./presentation-strip";
 
 type MarketingData = ReturnType<typeof getMarketingData>;
 
@@ -42,6 +43,8 @@ export function HomeRedesign({
             </div>
           </div>
         </header>
+
+        <PresentationStrip locale={locale} current="landing" />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-start">
           <article className="rounded-[2.8rem] border border-[#163c30]/10 bg-[linear-gradient(145deg,#fffdf8,#f4ede0_58%,#eee5d8)] p-7 shadow-[0_30px_110px_rgba(31,58,47,0.10)] md:p-10">
