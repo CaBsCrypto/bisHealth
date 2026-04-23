@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
+import { PatientJourneySubmit } from "./patient-journey-submit";
 import { LanguageSwitcher } from "../language-switcher";
 import { getPatientPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
@@ -351,6 +352,8 @@ export default async function PatientPage() {
                 ? "Cuando el paciente entra por passkeys, el rail wallet-less queda listo para sponsor fee, recibir updates de sesion y preparar un checkout simple."
                 : "When the patient enters through passkeys, the wallet-less rail is ready for fee sponsorship, session updates, and a simple checkout handoff."}
             </p>
+
+            <PatientJourneySubmit locale={locale} />
 
             <div className="mt-6 grid gap-4">
               {[
