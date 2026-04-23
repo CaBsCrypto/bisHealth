@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ActionBridgeTools } from "../action-bridge-tools";
+import { CommandCenterRedesign } from "./command-center-redesign";
 import { LanguageSwitcher } from "../language-switcher";
 import { getCommandCenterCopy, getPipelineSteps } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
@@ -32,6 +33,115 @@ export default async function CommandCenterPage() {
     getTrustLeafDispensaryActionPack(null),
     getTrustLeafSuperAdminActionPack(),
   ]);
+  const latestBatch = indexedState.batches[0] ?? null;
+  const latestPrescription = indexedState.prescriptions[0] ?? null;
+  const opsCopy =
+    locale === "es"
+      ? {
+          eyebrow: "Ops room",
+          title: "Los cuatro rails ya se pueden orquestar desde un solo punto.",
+          body: "Este tablero junta lectura indexada, bridges operativos y accesos rapidos para paciente, medico, dispensario y superadmin. Sirve para demo, para operacion y para handoffs futuros de frontend.",
+          patient: "Paciente",
+          patientBody:
+            "Ve el estado de la receta activa, el medico asignado y el dispensario listo antes de abrir el flujo final.",
+          patientStatusReady: "listo para handoff",
+          patientStatusConsumed: "ya consumida",
+          patientStatusMissing: "sin receta activa",
+          doctor: "Medico",
+          doctorBody:
+            "Prepara una emision real de receta privada con command pack, payload base64 y sugerencias de commitment.",
+          dispensary: "Dispensario",
+          dispensaryBody:
+            "Prepara el verify_and_consume live con el fixture actual y revisa si coincide con la receta pendiente.",
+          superadmin: "Superadmin",
+          superadminBody:
+            "Opera RBAC con grants y revokes reales para sostener una red curada de actores aprobados.",
+          openLane: "Abrir POV",
+          openApi: "Abrir API",
+          status: "Estado",
+          route: "Ruta",
+          doctorAccount: "Cuenta medica",
+          dispensaryAccount: "Cuenta dispensario",
+          adminAccount: "Cuenta admin",
+          prescription: "Receta",
+          patientNullifier: "Nullifier",
+          script: "Script",
+          roleTemplates: "Templates RBAC",
+          match: "Match fixture",
+          yes: "si",
+          no: "no",
+        }
+      : {
+          eyebrow: "Ops room",
+          title: "All four rails can now be orchestrated from one place.",
+          body: "This board combines indexed read models, operational bridges, and quick access for patient, doctor, dispensary, and superadmin. It is useful for demos, operations, and future frontend handoffs.",
+          patient: "Patient",
+          patientBody:
+            "Inspect the active prescription, assigned doctor, and ready dispensary before opening the final flow.",
+          patientStatusReady: "ready for handoff",
+          patientStatusConsumed: "already consumed",
+          patientStatusMissing: "no active prescription",
+          doctor: "Doctor",
+          doctorBody:
+            "Prepare a real private prescription issuance with a command pack, base64 payload, and suggested commitment.",
+          dispensary: "Dispensary",
+          dispensaryBody:
+            "Prepare the live verify_and_consume action with the current fixture and check whether it matches the pending prescription.",
+          superadmin: "Superadmin",
+          superadminBody:
+            "Operate RBAC with live grants and revokes to sustain a curated network of approved operators.",
+          openLane: "Open POV",
+          openApi: "Open API",
+          status: "Status",
+          route: "Route",
+          doctorAccount: "Doctor account",
+          dispensaryAccount: "Dispensary account",
+          adminAccount: "Admin account",
+          prescription: "Prescription",
+          patientNullifier: "Nullifier",
+          script: "Script",
+          roleTemplates: "RBAC templates",
+          match: "Fixture match",
+          yes: "yes",
+          no: "no",
+        };
+
+  return (
+    <CommandCenterRedesign
+      locale={locale}
+      copy={copy}
+      pipelineSteps={pipelineSteps}
+      indexedState={indexedState}
+      deployment={deployment}
+      patientActionPack={patientActionPack}
+      doctorActionPack={doctorActionPack}
+      dispensaryActionPack={dispensaryActionPack}
+      superAdminActionPack={superAdminActionPack}
+    />
+  );
+}
+
+function LegacyCommandCenterPage({
+  locale,
+  copy,
+  pipelineSteps,
+  indexedState,
+  deployment,
+  patientActionPack,
+  doctorActionPack,
+  dispensaryActionPack,
+  superAdminActionPack,
+}: {
+  locale: "en" | "es";
+  copy: ReturnType<typeof getCommandCenterCopy>;
+  pipelineSteps: ReturnType<typeof getPipelineSteps>;
+  indexedState: Awaited<ReturnType<typeof getIndexedState>>;
+  deployment: Awaited<ReturnType<typeof getTrustLeafDeployment>>;
+  patientActionPack: Awaited<ReturnType<typeof getTrustLeafPatientActionPack>>;
+  doctorActionPack: Awaited<ReturnType<typeof getTrustLeafDoctorActionPack>>;
+  dispensaryActionPack: Awaited<ReturnType<typeof getTrustLeafDispensaryActionPack>>;
+  superAdminActionPack: Awaited<ReturnType<typeof getTrustLeafSuperAdminActionPack>>;
+}) {
   const latestBatch = indexedState.batches[0] ?? null;
   const latestPrescription = indexedState.prescriptions[0] ?? null;
   const opsCopy =

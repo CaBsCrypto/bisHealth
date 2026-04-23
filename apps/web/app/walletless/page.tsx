@@ -3,11 +3,29 @@ import Link from "next/link";
 import { LanguageSwitcher } from "../language-switcher";
 import { getWalletlessPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
+import { getStellarPasskeysConfig } from "../lib/stellar/passkeys";
+import { getWalletlessConfig } from "../lib/walletless/config";
 import { WalletlessWorkbench } from "./walletless-workbench";
+import { WalletlessShell } from "./walletless-shell";
 
 export default async function WalletlessPage() {
   const locale = await getLocale();
   const copy = getWalletlessPageCopy(locale);
+  const config = getWalletlessConfig(
+    process.env.TRUST_LEAF_ORIGIN ?? "https://trust-leaf-web.vercel.app",
+  );
+  const passkeys = getStellarPasskeysConfig();
+
+  return <WalletlessShell locale={locale} copy={copy} config={config} passkeys={passkeys} />;
+}
+
+function LegacyWalletlessPage({
+  locale,
+  copy,
+}: {
+  locale: "en" | "es";
+  copy: ReturnType<typeof getWalletlessPageCopy>;
+}) {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,#153628_0%,#091612_45%,#050b09_100%)] text-stone-100">
       <section className="mx-auto max-w-7xl px-6 py-12">
