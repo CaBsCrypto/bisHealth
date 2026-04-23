@@ -60,6 +60,15 @@ export function DispensaryConsumeSubmit({
           polledStatus: "Estado final",
           ledger: "Ledger",
           reset: "Restaurar defaults",
+          submitMode: "Modo de submit",
+          endpoint: "Proteccion",
+          state: "Estado actual",
+          endpointValue: "Sesion wallet-less requerida",
+          modeReady: "Server signing listo",
+          modePending: "Falta secret del dispensario",
+          stateReady: "Puede consumir en testnet",
+          statePending: "Modo preview / handoff",
+          resultTitle: "Resultado live",
         }
       : {
           eyebrow: "Live submit",
@@ -83,6 +92,15 @@ export function DispensaryConsumeSubmit({
           polledStatus: "Final status",
           ledger: "Ledger",
           reset: "Reset defaults",
+          submitMode: "Submit mode",
+          endpoint: "Protection",
+          state: "Current state",
+          endpointValue: "Wallet-less session required",
+          modeReady: "Server signing ready",
+          modePending: "Dispensary secret missing",
+          stateReady: "Can consume on testnet",
+          statePending: "Preview / handoff mode",
+          resultTitle: "Live result",
         };
 
   const [caller, setCaller] = useState(initialCaller);
@@ -138,7 +156,7 @@ export function DispensaryConsumeSubmit({
   }
 
   return (
-    <div className="mt-6 rounded-[1.7rem] border border-white/10 bg-black/20 p-5">
+    <div className="mt-6 rounded-[1.7rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5">
       <p className="text-xs uppercase tracking-[0.24em] text-amber-300/70">{copy.eyebrow}</p>
       <h3 className="mt-3 text-2xl text-stone-50">{copy.title}</h3>
       <p className="mt-3 text-sm leading-7 text-stone-300">{copy.body}</p>
@@ -152,6 +170,15 @@ export function DispensaryConsumeSubmit({
       >
         {submitMode === "server-signing" ? copy.envReady : copy.envMissing}
       </p>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        <InfoLine
+          label={copy.submitMode}
+          value={submitReady ? copy.modeReady : copy.modePending}
+        />
+        <InfoLine label={copy.endpoint} value={copy.endpointValue} />
+        <InfoLine label={copy.state} value={submitReady ? copy.stateReady : copy.statePending} />
+      </div>
 
       <div className="mt-5 grid gap-3">
         <Field label={copy.caller} value={caller} onChange={setCaller} />
@@ -190,6 +217,7 @@ export function DispensaryConsumeSubmit({
 
       {response?.submission?.hash ? (
         <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-7 text-stone-200">
+          <p className="text-xs uppercase tracking-[0.2em] text-stone-400">{copy.resultTitle}</p>
           <p>
             {copy.txHash}: <span className="break-all">{response.submission.hash}</span>
           </p>
@@ -214,6 +242,15 @@ export function DispensaryConsumeSubmit({
           ) : null}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function InfoLine({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
+      <p className="text-xs uppercase tracking-[0.2em] text-stone-400">{label}</p>
+      <p className="mt-2 text-sm leading-6 text-stone-100">{value}</p>
     </div>
   );
 }

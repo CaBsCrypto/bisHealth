@@ -58,6 +58,13 @@ export function PatientJourneySubmit({
           notes: "Notas operativas",
           openDoctor: "Abrir medico",
           openDispensary: "Abrir dispensario",
+          submitMode: "Modo de acceso",
+          endpoint: "Proteccion",
+          state: "En esta fase",
+          endpointValue: "Sesion wallet-less requerida",
+          modeValue: "Passkeys + session packet",
+          stateValue: "Activa el journey real del paciente",
+          resultTitle: "Journey packet",
         }
       : {
           eyebrow: "Live journey",
@@ -77,6 +84,13 @@ export function PatientJourneySubmit({
           notes: "Operational notes",
           openDoctor: "Open doctor",
           openDispensary: "Open dispensary",
+          submitMode: "Access mode",
+          endpoint: "Protection",
+          state: "At this phase",
+          endpointValue: "Wallet-less session required",
+          modeValue: "Passkeys + session packet",
+          stateValue: "Activates the real patient journey",
+          resultTitle: "Journey packet",
         };
 
   const [response, setResponse] = useState<PatientJourneyResponse | null>(null);
@@ -108,7 +122,7 @@ export function PatientJourneySubmit({
   }
 
   return (
-    <div className="mt-6 rounded-[1.8rem] border border-stone-900/10 bg-white/70 p-5">
+    <div className="mt-6 rounded-[1.8rem] border border-stone-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(255,255,255,0.72))] p-5">
       <p className="text-xs uppercase tracking-[0.24em] text-emerald-700">{copy.eyebrow}</p>
       <h3 className="mt-3 font-display text-3xl text-stone-950">{copy.title}</h3>
       <p className="mt-3 text-sm leading-7 text-stone-700">{copy.body}</p>
@@ -131,6 +145,12 @@ export function PatientJourneySubmit({
         </a>
       </div>
 
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        <InfoLine label={copy.submitMode} value={copy.modeValue} />
+        <InfoLine label={copy.endpoint} value={copy.endpointValue} />
+        <InfoLine label={copy.state} value={copy.stateValue} />
+      </div>
+
       <p className="mt-4 text-sm text-stone-600">{status || "\u00A0"}</p>
 
       {response?.error ? (
@@ -141,6 +161,7 @@ export function PatientJourneySubmit({
 
       {response?.readiness ? (
         <div className="mt-5 rounded-[1.7rem] border border-stone-900/10 bg-stone-950 px-5 py-5 text-stone-100">
+          <p className="text-xs uppercase tracking-[0.2em] text-stone-400">{copy.resultTitle}</p>
           <div className="grid gap-3 md:grid-cols-2">
             <InfoLine label={copy.nextStep} value={response.readiness.nextStep} />
             <InfoLine label={copy.sponsorMode} value={response.readiness.sponsorMode} />
