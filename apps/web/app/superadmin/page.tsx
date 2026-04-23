@@ -9,13 +9,39 @@ import { getSuperAdminPageCopy } from "../lib/i18n";
 import { getTrustLeafSuperAdminActionPack } from "../lib/trustleaf/actionRails";
 import { getTrustLeafDeployment } from "../lib/trustleaf/deployment";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
+import { SuperAdminRedesign } from "./superadmin-redesign";
 
 export default async function SuperAdminPage() {
   const locale = await getLocale();
   const copy = getSuperAdminPageCopy(locale);
   const indexedState = await getIndexedState();
   const deployment = await getTrustLeafDeployment();
+  const superAdminActionPack = await getTrustLeafSuperAdminActionPack();
 
+  return (
+    <SuperAdminRedesign
+      locale={locale}
+      copy={copy}
+      indexedState={indexedState}
+      deployment={deployment}
+      superAdminActionPack={superAdminActionPack}
+    />
+  );
+}
+
+function LegacySuperAdminPage({
+  locale,
+  copy,
+  indexedState,
+  deployment,
+  superAdminActionPack,
+}: {
+  locale: "en" | "es";
+  copy: ReturnType<typeof getSuperAdminPageCopy>;
+  indexedState: Awaited<ReturnType<typeof getIndexedState>>;
+  deployment: Awaited<ReturnType<typeof getTrustLeafDeployment>>;
+  superAdminActionPack: Awaited<ReturnType<typeof getTrustLeafSuperAdminActionPack>>;
+}) {
   const activeMemberships = indexedState.roleMemberships.filter((membership) => membership.isActive);
   const activeAdmins = activeMemberships.filter((membership) => membership.role.includes("ADMIN"));
   const activeDoctors = activeMemberships.filter((membership) => membership.role.includes("DOCTOR"));
@@ -24,7 +50,6 @@ export default async function SuperAdminPage() {
   );
   const liveContracts = deployment.contracts.filter((contract) => contract.status === "live");
   const recentChanges = indexedState.roleChanges.slice(0, 4);
-  const superAdminActionPack = await getTrustLeafSuperAdminActionPack();
 
   const approvalQueue =
     locale === "es"

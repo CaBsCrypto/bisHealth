@@ -4,6 +4,7 @@ import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { DispensaryConsumeSubmit } from "./dispensary-consume-submit";
+import { DispensaryRedesign } from "./dispensary-redesign";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDispensaryPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
@@ -15,7 +16,39 @@ export default async function DispensaryPage() {
   const locale = await getLocale();
   const copy = getDispensaryPageCopy(locale);
   const indexedState = await getIndexedState();
+  const dispensaryMemberships = indexedState.roleMemberships.filter(
+    (membership) => membership.isActive && membership.role.includes("DISP"),
+  );
+  const selectedDispensary = dispensaryMemberships[0] ?? null;
+  const dispensaryActionPack = await getTrustLeafDispensaryActionPack(
+    selectedDispensary?.account ?? null,
+  );
+  const dispensarySubmitConfig = getTrustLeafDispensarySubmitConfig();
 
+  return (
+    <DispensaryRedesign
+      locale={locale}
+      copy={copy}
+      indexedState={indexedState}
+      dispensaryActionPack={dispensaryActionPack}
+      dispensarySubmitConfig={dispensarySubmitConfig}
+    />
+  );
+}
+
+function LegacyDispensaryPage({
+  locale,
+  copy,
+  indexedState,
+  dispensaryActionPack,
+  dispensarySubmitConfig,
+}: {
+  locale: "en" | "es";
+  copy: ReturnType<typeof getDispensaryPageCopy>;
+  indexedState: Awaited<ReturnType<typeof getIndexedState>>;
+  dispensaryActionPack: Awaited<ReturnType<typeof getTrustLeafDispensaryActionPack>>;
+  dispensarySubmitConfig: ReturnType<typeof getTrustLeafDispensarySubmitConfig>;
+}) {
   const dispensaryMemberships = indexedState.roleMemberships.filter(
     (membership) => membership.isActive && membership.role.includes("DISP"),
   );
@@ -26,10 +59,6 @@ export default async function DispensaryPage() {
   );
   const inventoryCards = buildInventoryCards(locale, indexedState.batches, selectedDispensary?.account ?? null);
   const salesHistory = indexedState.prescriptionConsumptions.slice(0, 4);
-  const dispensaryActionPack = await getTrustLeafDispensaryActionPack(
-    selectedDispensary?.account ?? null,
-  );
-  const dispensarySubmitConfig = getTrustLeafDispensarySubmitConfig();
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f7f3ec] text-stone-950">

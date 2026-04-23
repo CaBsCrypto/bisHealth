@@ -4,6 +4,7 @@ import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { DoctorIssueSubmit } from "./doctor-issue-submit";
+import { DoctorRedesign } from "./doctor-redesign";
 import { LanguageSwitcher } from "../language-switcher";
 import { getDoctorPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
@@ -15,7 +16,37 @@ export default async function DoctorPage() {
   const locale = await getLocale();
   const copy = getDoctorPageCopy(locale);
   const indexedState = await getIndexedState();
+  const doctorMemberships = indexedState.roleMemberships.filter(
+    (membership) => membership.isActive && membership.role.includes("DOCTOR"),
+  );
+  const selectedDoctor = doctorMemberships[0] ?? null;
+  const doctorActionPack = await getTrustLeafDoctorActionPack(selectedDoctor?.account ?? null);
+  const doctorSubmitConfig = getTrustLeafDoctorSubmitConfig();
 
+  return (
+    <DoctorRedesign
+      locale={locale}
+      copy={copy}
+      indexedState={indexedState}
+      doctorActionPack={doctorActionPack}
+      doctorSubmitConfig={doctorSubmitConfig}
+    />
+  );
+}
+
+function LegacyDoctorPage({
+  locale,
+  copy,
+  indexedState,
+  doctorActionPack,
+  doctorSubmitConfig,
+}: {
+  locale: "en" | "es";
+  copy: ReturnType<typeof getDoctorPageCopy>;
+  indexedState: Awaited<ReturnType<typeof getIndexedState>>;
+  doctorActionPack: Awaited<ReturnType<typeof getTrustLeafDoctorActionPack>>;
+  doctorSubmitConfig: ReturnType<typeof getTrustLeafDoctorSubmitConfig>;
+}) {
   const doctorMemberships = indexedState.roleMemberships.filter(
     (membership) => membership.isActive && membership.role.includes("DOCTOR"),
   );
@@ -26,8 +57,6 @@ export default async function DoctorPage() {
   const consumedReceipts = indexedState.prescriptionConsumptions.slice(0, 3);
   const patientRoster = buildPatientRoster(locale, doctorPrescriptions);
   const consultSchedule = buildConsultSchedule(locale, selectedDoctor?.account ?? null);
-  const doctorActionPack = await getTrustLeafDoctorActionPack(selectedDoctor?.account ?? null);
-  const doctorSubmitConfig = getTrustLeafDoctorSubmitConfig();
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f2f6fb] text-slate-950">
