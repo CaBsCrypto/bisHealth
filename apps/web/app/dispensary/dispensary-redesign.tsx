@@ -4,6 +4,7 @@ import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
+import { PresentationStrip } from "../presentation-strip";
 import type { getDispensaryPageCopy } from "../lib/i18n";
 import type { getTrustLeafDispensaryActionPack } from "../lib/trustleaf/actionRails";
 import type { getTrustLeafDispensarySubmitConfig } from "../lib/trustleaf/dispensaryConsume";
@@ -69,6 +70,8 @@ export function DispensaryRedesign({
             </div>
           </div>
         </header>
+
+        <PresentationStrip locale={locale} current="dispensary" />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
           <article className="rounded-[2.8rem] border border-stone-900/10 bg-[linear-gradient(145deg,#2f1c0d,#5f3918_44%,#f9f2e7_100%)] p-7 shadow-[0_30px_110px_rgba(41,37,36,0.14)] md:p-10">

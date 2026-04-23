@@ -4,6 +4,7 @@ import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
+import { PresentationStrip } from "../presentation-strip";
 import type { getSuperAdminPageCopy } from "../lib/i18n";
 import type { getTrustLeafSuperAdminActionPack } from "../lib/trustleaf/actionRails";
 import type { getTrustLeafDeployment } from "../lib/trustleaf/deployment";
@@ -70,6 +71,8 @@ export function SuperAdminRedesign({
             </div>
           </div>
         </header>
+
+        <PresentationStrip locale={locale} current="superadmin" dark />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
           <article className="rounded-[2.8rem] border border-white/10 bg-[linear-gradient(145deg,#0c1221,#0d2a33_46%,#162132_100%)] p-7 shadow-[0_30px_110px_rgba(0,0,0,0.28)] md:p-10">

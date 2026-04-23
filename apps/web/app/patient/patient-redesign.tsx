@@ -4,6 +4,7 @@ import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
+import { PresentationStrip } from "../presentation-strip";
 import type { getPatientPageCopy } from "../lib/i18n";
 import type { getTrustLeafPatientActionPack } from "../lib/trustleaf/actionRails";
 import type { getIndexedState } from "../lib/trustleaf/indexedState";
@@ -76,6 +77,8 @@ export function PatientRedesign({
             </div>
           </div>
         </header>
+
+        <PresentationStrip locale={locale} current="patient" />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
           <article className="rounded-[2.8rem] border border-stone-900/10 bg-[linear-gradient(145deg,#173628,#214234_44%,#efe7db_100%)] p-7 shadow-[0_30px_110px_rgba(32,26,20,0.16)] md:p-10">

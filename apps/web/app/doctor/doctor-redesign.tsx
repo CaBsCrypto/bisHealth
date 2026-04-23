@@ -4,6 +4,7 @@ import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { LanguageSwitcher } from "../language-switcher";
+import { PresentationStrip } from "../presentation-strip";
 import type { getDoctorPageCopy } from "../lib/i18n";
 import type { getTrustLeafDoctorActionPack } from "../lib/trustleaf/actionRails";
 import type { getTrustLeafDoctorSubmitConfig } from "../lib/trustleaf/doctorIssue";
@@ -71,6 +72,8 @@ export function DoctorRedesign({
             </div>
           </div>
         </header>
+
+        <PresentationStrip locale={locale} current="doctor" />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
           <article className="rounded-[2.8rem] border border-slate-900/10 bg-[linear-gradient(145deg,#0d2740,#123c59_44%,#eef5fb_100%)] p-7 shadow-[0_30px_110px_rgba(15,23,42,0.14)] md:p-10">
