@@ -4,6 +4,7 @@ import { ActionBridgeTools } from "../action-bridge-tools";
 import { ActorEntryMode } from "../actor-entry-mode";
 import { ActorNav } from "../actor-nav";
 import { PatientJourneySubmit } from "./patient-journey-submit";
+import { PatientRedesign } from "./patient-redesign";
 import { LanguageSwitcher } from "../language-switcher";
 import { getPatientPageCopy } from "../lib/i18n";
 import { getLocale } from "../lib/locale";
@@ -14,7 +15,29 @@ export default async function PatientPage() {
   const locale = await getLocale();
   const copy = getPatientPageCopy(locale);
   const indexedState = await getIndexedState();
+  const patientActionPack = await getTrustLeafPatientActionPack();
 
+  return (
+    <PatientRedesign
+      locale={locale}
+      copy={copy}
+      indexedState={indexedState}
+      patientActionPack={patientActionPack}
+    />
+  );
+}
+
+function LegacyPatientPage({
+  locale,
+  copy,
+  indexedState,
+  patientActionPack,
+}: {
+  locale: "en" | "es";
+  copy: ReturnType<typeof getPatientPageCopy>;
+  indexedState: Awaited<ReturnType<typeof getIndexedState>>;
+  patientActionPack: Awaited<ReturnType<typeof getTrustLeafPatientActionPack>>;
+}) {
   const activeDoctors = indexedState.roleMemberships.filter(
     (membership) => membership.isActive && membership.role.includes("DOCTOR"),
   );
@@ -27,7 +50,6 @@ export default async function PatientPage() {
     null;
   const doctorProfiles = buildDoctorProfiles(locale, activeDoctors);
   const catalogCards = buildCatalogCards(locale, indexedState.batches, activeDispensaries);
-  const patientActionPack = await getTrustLeafPatientActionPack();
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f4f0e8] text-stone-900">

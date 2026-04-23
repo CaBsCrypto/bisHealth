@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { HomeRedesign } from "./home-redesign";
 import { LanguageSwitcher } from "./language-switcher";
 import { getMarketingData, type Locale } from "./lib/i18n";
 import { getLocale } from "./lib/locale";
@@ -8,6 +9,16 @@ import { getLocale } from "./lib/locale";
 export default async function HomePage() {
   const locale = await getLocale();
   const marketing = getMarketingData(locale);
+  return <HomeRedesign locale={locale} marketing={marketing} />;
+}
+
+function LegacyHomePage({
+  locale,
+  marketing,
+}: {
+  locale: Locale;
+  marketing: ReturnType<typeof getMarketingData>;
+}) {
   const copy = getLandingCopy(locale);
 
   return (
