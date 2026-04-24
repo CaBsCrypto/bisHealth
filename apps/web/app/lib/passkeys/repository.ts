@@ -1,7 +1,5 @@
 import "server-only";
 
-import type { QuerySnapshot } from "firebase-admin/firestore";
-
 import type { WalletlessProfileRecord } from "@/app/lib/walletless/types";
 import {
   buildWalletlessProfile,
@@ -9,9 +7,15 @@ import {
 } from "@/app/lib/walletless/store";
 
 import {
-  getPasskeyUsersCollection,
-  isFirestorePasskeyStoreConfigured,
-} from "./firestore";
+  getSupabasePasskeyUserById,
+  getSupabasePasskeyUserByUsername,
+  isSupabasePasskeyStoreConfigured,
+  listSupabasePasskeyCredentials,
+  type SupabasePasskeyCredentialRow,
+  type SupabasePasskeyUserRow,
+  upsertSupabasePasskeyCredentials,
+  upsertSupabasePasskeyUser,
+} from "./supabase";
 
 type ResolveProfileArgs = {
   username: string;
@@ -26,20 +30,9 @@ type PasskeyProfileRepository = {
   saveProfile(profile: WalletlessProfileRecord): Promise<WalletlessProfileRecord>;
 };
 
-type FirestorePasskeyUserDocument = {
-  userId: string;
-  username: string;
-  displayName: string;
-  createdAt: string;
-  updatedAt: string;
-  credentialCount: number;
-  approvalStatus: "self-serve" | "manual-review";
-  smartWalletStatus: "not-enrolled" | "deployment-ready";
-};
-
 export function getPasskeyProfileRepository(): PasskeyProfileRepository {
-  return isFirestorePasskeyStoreConfigured()
-    ? createFirestorePasskeyProfileRepository()
+  return isSupabasePasskeyStoreConfigured()
+    ? createSupabasePasskeyProfileRepository()
     : createBrowserLocalPasskeyProfileRepository();
 }
 
@@ -70,9 +63,7 @@ function createBrowserLocalPasskeyProfileRepository(): PasskeyProfileRepository 
   };
 }
 
-function createFirestorePasskeyProfileRepository(): PasskeyProfileRepository {
-  const users = getPasskeyUsersCollection();
-
+function createSupabasePasskeyProfileRepository(): PasskeyProfileRepository {
   return {
     mode: "durable-db",
     async getProfileByUsername(args) {
@@ -81,16 +72,15 @@ function createFirestorePasskeyProfileRepository(): PasskeyProfileRepository {
         displayName: args.displayName,
         profile: args.fallbackProfile,
       });
-      const snapshot = await users.doc(requested.userId).get();
-      if (!snapshot.exists) {
+      const storedUser = await getSupabasePasskeyUserByUsername(requested.username);
+      if (!storedUser) {
         return null;
       }
 
-      const doc = snapshot.data() as FirestorePasskeyUserDocument | undefined;
-      return hydrateFirestoreProfile({
+      return hydrateSupabaseProfile({
         profileSeed: requested,
-        storedUser: doc ?? null,
-        credentialsSnapshot: await snapshot.ref.collection("credentials").get(),
+        storedUser,
+        credentials: await listSupabasePasskeyCredentials(storedUser.user_id),
       });
     },
     async ensureProfile(args) {
@@ -99,103 +89,114 @@ function createFirestorePasskeyProfileRepository(): PasskeyProfileRepository {
         displayName: args.displayName,
         profile: args.fallbackProfile,
       });
-      const userRef = users.doc(fallbackProfile.userId);
-      const snapshot = await userRef.get();
-      const now = new Date().toISOString();
+      const storedUser = await getSupabasePasskeyUserById(fallbackProfile.userId);
 
-      if (!snapshot.exists) {
-        await userRef.set({
-          userId: fallbackProfile.userId,
-          username: fallbackProfile.username,
-          displayName: fallbackProfile.displayName,
-          createdAt: fallbackProfile.createdAt,
-          updatedAt: now,
-          credentialCount: fallbackProfile.credentials.length,
-          approvalStatus: "self-serve",
-          smartWalletStatus:
-            fallbackProfile.credentials.length > 0 ? "deployment-ready" : "not-enrolled",
-        } satisfies FirestorePasskeyUserDocument);
+      if (!storedUser) {
+        await upsertSupabasePasskeyUser(toSupabaseUserRow(fallbackProfile, null));
 
         return fallbackProfile;
       }
 
-      const storedUser = snapshot.data() as FirestorePasskeyUserDocument | undefined;
-      const nextDisplayName = args.displayName?.trim() || storedUser?.displayName || fallbackProfile.displayName;
+      const nextDisplayName =
+        args.displayName?.trim() || storedUser.display_name || fallbackProfile.displayName;
       if (
-        storedUser &&
-        (storedUser.displayName !== nextDisplayName || storedUser.username !== fallbackProfile.username)
+        storedUser.display_name !== nextDisplayName ||
+        storedUser.username !== fallbackProfile.username
       ) {
-        await userRef.set(
-          {
-            displayName: nextDisplayName,
-            username: fallbackProfile.username,
-            updatedAt: now,
-          },
-          { merge: true },
+        await upsertSupabasePasskeyUser(
+          toSupabaseUserRow(
+            {
+              ...fallbackProfile,
+              displayName: nextDisplayName,
+            },
+            storedUser,
+          ),
         );
       }
 
-      return hydrateFirestoreProfile({
+      return hydrateSupabaseProfile({
         profileSeed: {
           ...fallbackProfile,
           displayName: nextDisplayName,
         },
-        storedUser: storedUser ?? null,
-        credentialsSnapshot: await userRef.collection("credentials").get(),
+        storedUser,
+        credentials: await listSupabasePasskeyCredentials(fallbackProfile.userId),
       });
     },
     async saveProfile(profile) {
       const nextProfile = sanitizeProfile(profile);
-      const userRef = users.doc(nextProfile.userId);
-      const now = new Date().toISOString();
-      const batch = users.firestore.batch();
+      const storedUser = await getSupabasePasskeyUserById(nextProfile.userId);
 
-      batch.set(
-        userRef,
-        {
-          userId: nextProfile.userId,
-          username: nextProfile.username,
-          displayName: nextProfile.displayName,
-          createdAt: nextProfile.createdAt,
-          updatedAt: now,
-          credentialCount: nextProfile.credentials.length,
-          approvalStatus: "self-serve",
-          smartWalletStatus:
-            nextProfile.credentials.length > 0 ? "deployment-ready" : "not-enrolled",
-        } satisfies FirestorePasskeyUserDocument,
-        { merge: true },
+      await upsertSupabasePasskeyUser(
+        toSupabaseUserRow(nextProfile, storedUser),
       );
 
-      for (const credential of nextProfile.credentials) {
-        batch.set(
-          userRef.collection("credentials").doc(credential.id),
-          {
-            ...credential,
-            updatedAt: now,
-          },
-          { merge: true },
-        );
-      }
-
-      await batch.commit();
+      await upsertSupabasePasskeyCredentials(
+        nextProfile.credentials.map((credential) => toSupabaseCredentialRow(nextProfile.userId, credential)),
+      );
       return nextProfile;
     },
   };
 }
 
-async function hydrateFirestoreProfile(args: {
+async function hydrateSupabaseProfile(args: {
   profileSeed: WalletlessProfileRecord;
-  storedUser: FirestorePasskeyUserDocument | null;
-  credentialsSnapshot: QuerySnapshot;
+  storedUser: SupabasePasskeyUserRow | null;
+  credentials: SupabasePasskeyCredentialRow[];
 }) {
   return sanitizeProfile({
     userId: args.profileSeed.userId,
     username: args.storedUser?.username ?? args.profileSeed.username,
-    displayName: args.storedUser?.displayName ?? args.profileSeed.displayName,
-    createdAt: args.storedUser?.createdAt ?? args.profileSeed.createdAt,
-    credentials: args.credentialsSnapshot.docs.map((document) => {
-      const data = document.data() as WalletlessProfileRecord["credentials"][number];
-      return data;
-    }),
+    displayName: args.storedUser?.display_name ?? args.profileSeed.displayName,
+    createdAt: args.storedUser?.created_at ?? args.profileSeed.createdAt,
+    credentials: args.credentials.map((credential) => ({
+      id: credential.credential_id,
+      publicKey: credential.public_key,
+      counter: credential.counter,
+      transports: Array.isArray(credential.transports) ? credential.transports : undefined,
+      deviceType: credential.device_type,
+      backedUp: credential.backed_up,
+      createdAt: credential.created_at,
+    })),
   });
+}
+
+function toSupabaseUserRow(
+  profile: WalletlessProfileRecord,
+  existing: SupabasePasskeyUserRow | null,
+): SupabasePasskeyUserRow {
+  const now = new Date().toISOString();
+
+  return {
+    user_id: profile.userId,
+    username: profile.username,
+    display_name: profile.displayName,
+    created_at: existing?.created_at ?? profile.createdAt,
+    updated_at: now,
+    credential_count: profile.credentials.length,
+    approval_status: existing?.approval_status ?? "self-serve",
+    smart_wallet_status:
+      profile.credentials.length > 0
+        ? "deployment-ready"
+        : (existing?.smart_wallet_status ?? "not-enrolled"),
+  };
+}
+
+function toSupabaseCredentialRow(
+  userId: string,
+  credential: WalletlessProfileRecord["credentials"][number],
+): SupabasePasskeyCredentialRow {
+  const now = new Date().toISOString();
+
+  return {
+    credential_id: credential.id,
+    user_id: userId,
+    public_key: credential.publicKey,
+    counter: credential.counter,
+    transports: credential.transports ?? null,
+    device_type: credential.deviceType,
+    backed_up: credential.backedUp,
+    created_at: credential.createdAt,
+    updated_at: now,
+  };
 }

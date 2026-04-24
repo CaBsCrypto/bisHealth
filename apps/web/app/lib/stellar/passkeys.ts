@@ -1,6 +1,6 @@
 import { Networks } from "@stellar/stellar-sdk";
 
-import { isFirestorePasskeyStoreConfigured } from "@/app/lib/passkeys/firestore";
+import { isSupabasePasskeyStoreConfigured } from "@/app/lib/passkeys/supabase";
 import type { StellarPasskeysConfigView } from "@/app/lib/walletless/types";
 
 const DEFAULT_RPC_URL = "https://soroban-testnet.stellar.org";
@@ -16,8 +16,7 @@ export function getStellarPasskeysConfig(): StellarPasskeysConfigView {
     factoryContractId && walletWasmHash ? "passkey-kit-ready" : "webauthn-mvp";
   const durableProfileStore =
     (process.env.TRUST_LEAF_PASSKEY_PROFILE_STORE ?? "").toLowerCase() === "durable-db" ||
-    Boolean(process.env.TRUST_LEAF_PASSKEY_DATABASE_URL) ||
-    isFirestorePasskeyStoreConfigured();
+    isSupabasePasskeyStoreConfigured();
   const backendPhase =
     normalizeBackendPhase(
       process.env.TRUST_LEAF_PASSKEYS_PHASE,

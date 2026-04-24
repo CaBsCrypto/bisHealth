@@ -38,13 +38,14 @@ Recommended outputs:
 - `backendPhase = 2`
 
 MVP implementation path:
-- Firestore via `firebase-admin`
-- service account through:
-  - `TRUST_LEAF_FIREBASE_PROJECT_ID`
-  - `TRUST_LEAF_FIREBASE_CLIENT_EMAIL`
-  - `TRUST_LEAF_FIREBASE_PRIVATE_KEY`
-  - or `TRUST_LEAF_FIREBASE_SERVICE_ACCOUNT_JSON`
-- passkey user docs + credential subcollections owned by the backend service layer
+- Supabase with an isolated `trustleaf` schema inside the shared project
+- backend service role through:
+  - `TRUST_LEAF_SUPABASE_URL`
+  - `TRUST_LEAF_SUPABASE_SERVICE_ROLE_KEY`
+  - `TRUST_LEAF_SUPABASE_SCHEMA`
+- passkey tables:
+  - `trustleaf.passkey_users`
+  - `trustleaf.passkey_credentials`
 
 Definition of done:
 - Login works across devices/browsers for the same account identity.
