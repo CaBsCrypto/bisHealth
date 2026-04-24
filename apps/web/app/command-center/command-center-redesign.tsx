@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ActorLiveSession } from "../actor-live-session";
 import { LanguageSwitcher } from "../language-switcher";
 import { PresentationStrip } from "../presentation-strip";
 import type { getCommandCenterCopy, getPipelineSteps } from "../lib/i18n";
@@ -48,6 +49,9 @@ export function CommandCenterRedesign({
           eyebrow: "Ops room",
           title: "Una sala de control mas clara para demo y operacion.",
           body: "Command center ya no intenta mostrarlo todo a la vez. Primero muestra salud del sistema. Luego deja abrir cada rail.",
+          sessionEyebrow: "Sesion activa",
+          sessionTitle: "El rail live ya puede seguirte entre pantallas.",
+          sessionBody: "Si ya entraste con passkeys o Freighter, este tablero te lo deja visible antes de abrir rails protegidos o submits live.",
           actorStatus: "Estado del rail",
           actorRoute: "Abrir rail",
           actorApi: "Abrir API",
@@ -63,6 +67,9 @@ export function CommandCenterRedesign({
           eyebrow: "Ops room",
           title: "A clearer control room for demo and operations.",
           body: "Command center no longer tries to show everything at once. It starts with system health, then lets you open each rail.",
+          sessionEyebrow: "Active session",
+          sessionTitle: "The live rail can now follow you across screens.",
+          sessionBody: "If you already entered with passkeys or Freighter, this board keeps it visible before you open protected rails or live submits.",
           actorStatus: "Rail status",
           actorRoute: "Open rail",
           actorApi: "Open API",
@@ -159,6 +166,13 @@ export function CommandCenterRedesign({
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-2">
+          <article className="rounded-[2.1rem] border border-white/8 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)] xl:col-span-2">
+            <p className="text-xs uppercase tracking-[0.24em] text-stone-400">{opsCopy.sessionEyebrow}</p>
+            <h2 className="mt-3 font-display text-4xl text-stone-50">{opsCopy.sessionTitle}</h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">{opsCopy.sessionBody}</p>
+            <ActorLiveSession locale={locale} />
+          </article>
+
           {actorCards.map((card) => (
             <article key={card.key} className="rounded-[2.1rem] border border-white/8 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
               <div className="flex items-start justify-between gap-4">
