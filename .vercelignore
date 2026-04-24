@@ -1,0 +1,16 @@
+.git
+.vercel
+**/node_modules
+target
+target-*
+contracts
+docs
+indexer
+packages
+scripts
+supabase
+tools
+zk
+Cargo.lock
+Cargo.toml
+README.md
