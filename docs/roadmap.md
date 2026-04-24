@@ -20,6 +20,5 @@
 
 - exact smart account framework choice for passkey-backed signing
 - proof system choice between Noir and Circom for fastest hackathon execution
-- Firestore vs PostgreSQL first deployment target
+- Supabase/PostgreSQL first deployment target
 - Defindex integration depth for the MVP demo
-

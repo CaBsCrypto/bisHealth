@@ -71,7 +71,7 @@ Execution flow:
 
 Primary short-term recommendation:
 
-- Firestore for rapid MVP velocity.
+- Supabase with an isolated `trustleaf` schema for rapid MVP velocity.
 
 Ideal production path:
 

@@ -30,4 +30,4 @@
 
 - The frontend reads snapshots from the indexer instead of waiting on repeated chain queries.
 - Optimistic UI can render local success immediately and reconcile once indexed confirmation lands.
-- Firestore or PostgreSQL objects are never trusted unless their hash matches the chain anchor.
+- Supabase or PostgreSQL objects are never trusted unless their hash matches the chain anchor.

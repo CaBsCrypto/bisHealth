@@ -740,7 +740,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
               <SessionRow label={copy.network}>{session.networkPassphrase}</SessionRow>
               <SessionRow label={usesDurablePasskeyStore ? "Durable passkey store" : "Local profile cache"}>
                 {usesDurablePasskeyStore
-                  ? `${session.credentialCount} credential(s) served from Firestore`
+                  ? `${session.credentialCount} credential(s) served from Supabase`
                   : profile
                     ? `${profile.credentials.length} device credential(s) ready`
                     : "No device cache found yet"}
