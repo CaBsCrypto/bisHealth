@@ -38,11 +38,11 @@ const actorTone = {
 const actorCopy = {
   es: {
     eyebrow: "Modo de entrada",
-    title: "Passkeys para rail real o demo guiada para presentar el MVP.",
-    body: "En esta fase, cada POV ofrece dos caminos: entrar por wallet-less con passkeys para probar los rails protegidos o seguir en modo demo/mockup para mostrar la experiencia completa sin friccion operativa.",
-    liveTitle: "Entrar con passkeys",
+    title: "Passkeys o Freighter para el rail real, o demo guiada para presentar el MVP.",
+    body: "En esta fase, cada POV ofrece dos caminos: entrar por wallet-less con passkeys o Freighter para probar los rails protegidos, o seguir en modo demo/mockup para mostrar la experiencia completa sin friccion operativa.",
+    liveTitle: "Entrar con passkeys o Freighter",
     liveBody:
-      "Abre el rail wallet-less, registra o inicia sesion y vuelve a este POV para probar las acciones protegidas.",
+      "Abre el rail wallet-less, entra con passkeys o Freighter y vuelve a este POV para probar las acciones protegidas.",
     demoTitle: "Explorar demo/mockup",
     demoBody:
       "Recorre este POV como historia de producto. Es ideal para grants, inversionistas y validacion visual del MVP.",
@@ -59,11 +59,11 @@ const actorCopy = {
   },
   en: {
     eyebrow: "Entry mode",
-    title: "Passkeys for the live rail or guided demo mode for MVP storytelling.",
-    body: "At this stage, every POV offers two paths: enter through the wallet-less passkey rail to test protected actions, or continue in demo/mockup mode to present the full experience without operational friction.",
-    liveTitle: "Enter with passkeys",
+    title: "Passkeys or Freighter for the live rail, or guided demo mode for MVP storytelling.",
+    body: "At this stage, every POV offers two paths: enter through the wallet-less rail with passkeys or Freighter to test protected actions, or continue in demo/mockup mode to present the full experience without operational friction.",
+    liveTitle: "Enter with passkeys or Freighter",
     liveBody:
-      "Open the wallet-less rail, register or sign in, then return to this POV to test protected actions.",
+      "Open the wallet-less rail, sign in with passkeys or Freighter, then return to this POV to test protected actions.",
     demoTitle: "Explore demo/mockup",
     demoBody:
       "Walk this POV as a product story. It is ideal for grants, investors, and visual MVP validation.",

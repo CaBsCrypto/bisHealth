@@ -1,6 +1,7 @@
 "use client";
 
 import { browserSupportsWebAuthn, startAuthentication, startRegistration } from "@simplewebauthn/browser";
+import { isConnected as isFreighterConnected, requestAccess, signMessage } from "@stellar/freighter-api";
 import { useEffect, useState, useTransition } from "react";
 
 import { getWalletlessWorkbenchCopy, type Locale } from "@/app/lib/i18n";
@@ -26,6 +27,14 @@ type PasskeyVerificationEnvelope = {
   verified: boolean;
   profile: WalletlessProfileRecord;
   session: WalletlessSessionView;
+};
+
+type FreighterChallengeEnvelope = {
+  flowToken: string;
+  challenge: string;
+  address: string;
+  username: string;
+  displayName: string;
 };
 
 type SessionEnvelope = {
@@ -132,6 +141,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
   const [defindexAmounts, setDefindexAmounts] = useState("1000000");
   const [selectedVaultAddress, setSelectedVaultAddress] = useState("");
   const [supportsPasskeys, setSupportsPasskeys] = useState<boolean | null>(null);
+  const [supportsFreighter, setSupportsFreighter] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
   const usesDurablePasskeyStore = stellarPasskeysConfig?.profileStorage === "durable-db";
   const sponsorSmokeSummary = getSponsorSmokeSummary(sponsorResponse);
@@ -141,6 +151,13 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
 
     void (async () => {
       try {
+        const freighterConnection = await isFreighterConnected().catch(() => null);
+        setSupportsFreighter(
+          freighterConnection && "isConnected" in freighterConnection
+            ? Boolean(freighterConnection.isConnected)
+            : false,
+        );
+
         const [
           nextConfig,
           nextSession,
@@ -303,6 +320,54 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
       setSession(verification.session);
       setSponsorResponse(null);
       setStatus(copy.loginDone);
+    });
+  }
+
+  function handleFreighterLogin() {
+    runAction(async () => {
+      setStatus(copy.freighterRequestAccess);
+      const access = await requestAccess();
+      if (access.error || !access.address) {
+        throw new Error(access.error?.message ?? copy.freighterUnavailable);
+      }
+
+      const connectedAddress = access.address;
+      setSupportsFreighter(true);
+
+      const challenge = await fetchJson<FreighterChallengeEnvelope>(
+        "/api/walletless/freighter/challenge",
+        jsonRequest({
+          address: connectedAddress,
+        }),
+      );
+
+      setStatus(copy.freighterSign);
+      const signed = await signMessage(challenge.challenge, {
+        address: connectedAddress,
+        networkPassphrase: config?.networkPassphrase,
+      });
+
+      if (signed.error || !signed.signedMessage) {
+        throw new Error(signed.error?.message ?? copy.freighterSignatureMissing);
+      }
+
+      setStatus(copy.freighterVerify);
+      const verification = await fetchJson<PasskeyVerificationEnvelope>(
+        "/api/walletless/freighter/verify",
+        jsonRequest({
+          flowToken: challenge.flowToken,
+          address: connectedAddress,
+          signerAddress: signed.signerAddress,
+          signedMessage: serializeFreighterSignedMessage(signed.signedMessage),
+        }),
+      );
+
+      setProfile(verification.profile);
+      setUsername(verification.profile.username);
+      setDisplayName(verification.profile.displayName);
+      setSession(verification.session);
+      setSponsorResponse(null);
+      setStatus(copy.freighterDone);
     });
   }
 
@@ -583,6 +648,11 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
                   value={supportsPasskeys ? copy.supported : copy.unavailable}
                 />
                 <SummaryPill
+                  label={copy.freighter}
+                  tone={supportsFreighter ? "sky" : "amber"}
+                  value={supportsFreighter ? copy.connected : copy.optional}
+                />
+                <SummaryPill
                   label={copy.sponsorMode}
                   tone={config?.sponsorMode === "fee-bump" ? "sky" : "amber"}
                   value={config?.sponsorMode === "fee-bump" ? copy.liveFeeBump : copy.mockSponsor}
@@ -650,6 +720,14 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
                   className="rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:border-emerald-200/40 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {copy.signIn}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleFreighterLogin}
+                  disabled={isPending}
+                  className="rounded-full border border-sky-300/25 px-5 py-3 text-sm font-semibold text-sky-100 transition hover:bg-sky-300/10 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {copy.signInWithFreighter}
                 </button>
                 <button
                   type="button"
@@ -734,6 +812,7 @@ export function WalletlessWorkbench({ locale }: { locale: Locale }) {
             <div className="mt-6 grid gap-4">
               <SessionRow label={copy.user}>{session.displayName}</SessionRow>
               <SessionRow label={copy.handle}>{session.username}</SessionRow>
+              <SessionRow label={copy.entryRail}>{getSessionEntryRail(session, copy)}</SessionRow>
               <SessionRow label={copy.walletHint}>{session.smartWalletHint}</SessionRow>
               <SessionRow label={copy.smartWalletStatus}>{session.smartWalletStatus}</SessionRow>
               <SessionRow label={copy.passkeysStored}>{String(session.credentialCount)}</SessionRow>
@@ -1327,6 +1406,13 @@ function getSponsorSmokeSummary(source: Record<string, unknown> | null) {
   };
 }
 
+function getSessionEntryRail(
+  session: WalletlessSessionView,
+  copy: ReturnType<typeof getWalletlessWorkbenchCopy>,
+) {
+  return session.username.startsWith("freighter-") ? copy.freighterRail : copy.passkeyRail;
+}
+
 function getNestedRecord(source: Record<string, unknown>, path: string[]) {
   let current: unknown = source;
   for (const key of path) {
@@ -1374,4 +1460,16 @@ function getZkFieldLabel(locale: Locale, field: keyof ZkCircuitInput) {
         };
 
   return labels[field];
+}
+
+function serializeFreighterSignedMessage(value: string | Uint8Array) {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  let binary = "";
+  value.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return globalThis.btoa(binary);
 }

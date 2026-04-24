@@ -30,7 +30,7 @@ export function WalletlessShell({
           phase: "Backend phase",
           stableEyebrow: "Como mirar esta pantalla",
           stableTitle: "Primero producto, despues laboratorio.",
-          stableBody: "Wallet-less sigue siendo el lugar para validar login, sponsor y rails protegidos. Ahora esta mejor enmarcado para demo y para operacion.",
+          stableBody: "Wallet-less sigue siendo el lugar para validar login con passkeys o Freighter, sponsor y rails protegidos. Ahora esta mejor enmarcado para demo y para operacion.",
           commandCenter: "Abrir command center",
         }
       : {
@@ -41,7 +41,7 @@ export function WalletlessShell({
           phase: "Backend phase",
           stableEyebrow: "How to read this screen",
           stableTitle: "Product first, lab second.",
-          stableBody: "Wallet-less remains the place to validate login, sponsorship, and protected rails. It is now framed better for demos and operations.",
+          stableBody: "Wallet-less remains the place to validate passkey or Freighter login, sponsorship, and protected rails. It is now framed better for demos and operations.",
           commandCenter: "Open command center",
         };
 
