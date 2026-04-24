@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ActorLiveSession } from "./actor-live-session";
 import type { Locale } from "./lib/i18n";
 
 type ActorId = "patient" | "doctor" | "dispensary" | "superadmin";
@@ -139,6 +140,8 @@ export function ActorEntryMode({
           </Link>
         </article>
       </div>
+
+      <ActorLiveSession locale={locale} />
     </div>
   );
 }
