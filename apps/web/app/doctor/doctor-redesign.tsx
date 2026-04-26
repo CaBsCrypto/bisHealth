@@ -76,14 +76,14 @@ export function DoctorRedesign({
         <PresentationStrip locale={locale} current="doctor" />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
-          <article className="rounded-[2.8rem] border border-slate-900/10 bg-[linear-gradient(145deg,#0d2740,#123c59_44%,#eef5fb_100%)] p-7 shadow-[0_30px_110px_rgba(15,23,42,0.14)] md:p-10">
+          <article className="rounded-[2.9rem] border border-slate-900/10 bg-[linear-gradient(145deg,#071b31,#0f3552_42%,#edf5fb_100%)] p-7 shadow-[0_32px_120px_rgba(15,23,42,0.14)] md:p-10">
             <div className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-sky-50">
               <span className="h-2 w-2 rounded-full bg-sky-300" />
               {copy.heroStatus}
             </div>
             <p className="mt-8 text-sm uppercase tracking-[0.32em] text-sky-100/70">{copy.eyebrow}</p>
             <h1 className="font-display mt-5 max-w-4xl text-5xl leading-[0.95] text-white md:text-7xl">{copy.title}</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-100/90">{copy.body}</p>
+            <p className="mt-5 max-w-xl text-sm leading-7 text-slate-100/90 md:text-base">{copy.body}</p>
 
             <div className="mt-8 grid gap-4 md:grid-cols-4">
               <HeroPill label={copy.activePatients} value={String(patientRoster.length)} />
@@ -94,9 +94,9 @@ export function DoctorRedesign({
           </article>
 
           <aside className="grid gap-6">
-            <article className="rounded-[2.3rem] border border-slate-900/10 bg-white/82 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+            <article className="rounded-[2.3rem] border border-slate-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(245,250,255,0.9))] p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
               <p className="text-xs uppercase tracking-[0.26em] text-slate-500">{locale === "es" ? "Resumen del dia" : "Day summary"}</p>
-              <h2 className="font-display mt-4 text-4xl leading-tight text-slate-950">
+              <h2 className="font-display mt-4 text-3xl leading-tight text-slate-950">
                 {locale === "es" ? "La operacion clinica deberia sentirse limpia." : "Clinical operations should feel clean."}
               </h2>
               <div className="mt-6 grid gap-3">
@@ -106,7 +106,7 @@ export function DoctorRedesign({
               </div>
             </article>
 
-            <article className="rounded-[2.3rem] border border-slate-900/10 bg-white/82 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+            <article className="rounded-[2.3rem] border border-slate-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(245,250,255,0.9))] p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
               <ActorEntryMode actor="doctor" locale={locale} demoHref="#doctor-flow" />
               <div className="mt-6">
                 <ActorNav current="doctor" locale={locale} />
@@ -116,19 +116,19 @@ export function DoctorRedesign({
         </section>
 
         <section id="doctor-flow" className="mt-10 grid gap-6 xl:grid-cols-[1fr_1fr]">
-          <article className="rounded-[2.3rem] border border-slate-900/10 bg-white/82 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+          <article className="rounded-[2.3rem] border border-slate-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(244,248,252,0.94))] p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
             <p className="text-sm uppercase tracking-[0.24em] text-sky-700">{copy.scheduleEyebrow}</p>
             <h2 className="font-display mt-3 text-5xl leading-[0.96] text-slate-950">{copy.scheduleTitle}</h2>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-slate-600">{copy.scheduleBody}</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-slate-600">{copy.scheduleBody}</p>
 
             <div className="mt-6 grid gap-4">
               {consultSchedule.map((consult) => (
-                <article key={consult.id} className="rounded-[1.8rem] border border-slate-900/10 bg-[#f4f8fc] p-5">
+                <article key={consult.id} className="rounded-[1.8rem] border border-slate-900/10 bg-[linear-gradient(180deg,#f7fbff,#eef5fb)] p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-sky-700">{consult.time}</p>
-                      <h3 className="mt-3 font-display text-3xl text-slate-950">{consult.patientName}</h3>
-                      <p className="mt-2 text-sm leading-7 text-slate-600">{consult.reason}</p>
+                      <h3 className="mt-3 font-display text-[2rem] text-slate-950">{consult.patientName}</h3>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">{consult.reason}</p>
                     </div>
                     <span className="rounded-full bg-sky-950/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-sky-950">{copy.scheduleStatus}</span>
                   </div>
@@ -142,19 +142,19 @@ export function DoctorRedesign({
             </div>
           </article>
 
-          <article className="rounded-[2.3rem] border border-emerald-900/10 bg-[linear-gradient(180deg,rgba(247,253,250,0.96),rgba(234,247,239,0.94))] p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+          <article className="rounded-[2.3rem] border border-emerald-900/10 bg-[linear-gradient(180deg,rgba(248,254,251,0.96),rgba(236,248,242,0.95))] p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
             <p className="text-sm uppercase tracking-[0.24em] text-emerald-700">{copy.patientRosterEyebrow}</p>
             <h2 className="font-display mt-3 text-5xl leading-[0.96] text-slate-950">{copy.patientRosterTitle}</h2>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-slate-700">{copy.patientRosterBody}</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-slate-700">{copy.patientRosterBody}</p>
 
             <div className="mt-6 grid gap-4">
               {patientRoster.map((patient) => (
-                <article key={patient.id} className="rounded-[1.8rem] border border-emerald-900/10 bg-white/80 p-5">
+                <article key={patient.id} className="rounded-[1.8rem] border border-emerald-900/10 bg-white/88 p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-emerald-700">{patient.tag}</p>
-                      <h3 className="mt-3 font-display text-3xl text-slate-950">{patient.name}</h3>
-                      <p className="mt-2 text-sm leading-7 text-slate-600">{patient.context}</p>
+                      <h3 className="mt-3 font-display text-[2rem] text-slate-950">{patient.name}</h3>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">{patient.context}</p>
                     </div>
                     <span className={`rounded-full px-3 py-1 text-xs uppercase tracking-[0.22em] ${patient.priority === "high" ? "bg-amber-900/10 text-amber-900" : "bg-emerald-900/10 text-emerald-900"}`}>
                       {patient.priority === "high" ? copy.priorityHigh : copy.priorityNormal}
@@ -172,12 +172,12 @@ export function DoctorRedesign({
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-[1.02fr_0.98fr]">
-          <article className="rounded-[2.3rem] border border-slate-900/10 bg-white/82 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+          <article className="rounded-[2.3rem] border border-slate-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(244,248,252,0.94))] p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
             <p className="text-sm uppercase tracking-[0.24em] text-slate-500">{copy.actionRailEyebrow}</p>
             <h2 className="font-display mt-3 text-5xl leading-[0.96] text-slate-950">{copy.actionRailTitle}</h2>
             <div className="mt-6 grid gap-4">
               {[copy.actionConsult, copy.actionPrescription, copy.actionRenewal, copy.actionPatient].map((step, index) => (
-                <article key={step} className="rounded-[1.6rem] border border-slate-900/10 bg-slate-950 px-5 py-5 text-slate-100">
+                <article key={step} className="rounded-[1.7rem] border border-slate-900/10 bg-[linear-gradient(180deg,#08131f,#0d1b29)] px-5 py-5 text-slate-100">
                   <p className="text-xs uppercase tracking-[0.24em] text-slate-400">0{index + 1}</p>
                   <p className="mt-3 text-lg leading-8">{step}</p>
                 </article>
@@ -195,12 +195,12 @@ export function DoctorRedesign({
             </div>
           </article>
 
-          <article className="rounded-[2.3rem] border border-slate-900/10 bg-slate-950 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+          <article className="rounded-[2.5rem] border border-slate-900/10 bg-[linear-gradient(180deg,#061018,#0b1622_42%,#101b29_100%)] p-6 shadow-[0_22px_70px_rgba(15,23,42,0.12)]">
             <p className="text-sm uppercase tracking-[0.24em] text-slate-400">{locale === "es" ? "Live rail" : "Live rail"}</p>
-            <h2 className="font-display mt-3 text-5xl leading-[0.96] text-slate-50">
+            <h2 className="font-display mt-3 text-5xl leading-[0.92] text-slate-50">
               {locale === "es" ? "Emitir receta real desde este POV." : "Issue a real prescription from this POV."}
             </h2>
-            <p className="mt-4 text-base leading-8 text-slate-300">
+            <p className="mt-4 max-w-xl text-sm leading-6 text-slate-300">
               {locale === "es"
                 ? "El submit real ya esta montado. Si faltan secrets, la experiencia sigue sirviendo como preview operativo."
                 : "The real submit rail is already mounted. If secrets are still missing, the experience still works as an operational preview."}
@@ -234,9 +234,9 @@ export function DoctorRedesign({
 
 function HeroPill({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-[1.6rem] border border-white/12 bg-white/8 p-4 backdrop-blur">
+    <article className="rounded-[1.8rem] border border-white/12 bg-white/8 p-4 backdrop-blur">
       <p className="text-xs uppercase tracking-[0.24em] text-slate-200/70">{label}</p>
-      <p className="font-display mt-3 text-3xl leading-none text-white">{value}</p>
+      <p className="font-display mt-3 text-[2.6rem] leading-none text-white">{value}</p>
     </article>
   );
 }

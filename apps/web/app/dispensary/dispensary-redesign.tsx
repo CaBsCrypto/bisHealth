@@ -74,14 +74,14 @@ export function DispensaryRedesign({
         <PresentationStrip locale={locale} current="dispensary" />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
-          <article className="rounded-[2.8rem] border border-stone-900/10 bg-[linear-gradient(145deg,#2f1c0d,#5f3918_44%,#f9f2e7_100%)] p-7 shadow-[0_30px_110px_rgba(41,37,36,0.14)] md:p-10">
+          <article className="rounded-[2.9rem] border border-stone-900/10 bg-[linear-gradient(145deg,#241206,#563111_44%,#faf2e5_100%)] p-7 shadow-[0_32px_120px_rgba(41,37,36,0.14)] md:p-10">
             <div className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-amber-50">
               <span className="h-2 w-2 rounded-full bg-amber-300" />
               {copy.heroStatus}
             </div>
             <p className="mt-8 text-sm uppercase tracking-[0.32em] text-amber-100/70">{copy.eyebrow}</p>
             <h1 className="font-display mt-5 max-w-4xl text-5xl leading-[0.95] text-white md:text-7xl">{copy.title}</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-stone-100/90">{copy.body}</p>
+            <p className="mt-5 max-w-xl text-sm leading-7 text-stone-100/90 md:text-base">{copy.body}</p>
 
             <div className="mt-8 grid gap-4 md:grid-cols-4">
               <HeroPill label={copy.liveInventory} value={String(inventoryCards.length)} />
@@ -92,9 +92,9 @@ export function DispensaryRedesign({
           </article>
 
           <aside className="grid gap-6">
-            <article className="rounded-[2.3rem] border border-stone-900/10 bg-white/82 p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
+            <article className="rounded-[2.3rem] border border-stone-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(252,248,241,0.92))] p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
               <p className="text-xs uppercase tracking-[0.26em] text-stone-500">{locale === "es" ? "Resumen comercial" : "Commercial summary"}</p>
-              <h2 className="font-display mt-4 text-4xl leading-tight text-stone-950">
+              <h2 className="font-display mt-4 text-3xl leading-tight text-stone-950">
                 {locale === "es" ? "Catalogo claro. Validacion visible. Checkout confiable." : "Clear catalog. Visible validation. Trusted checkout."}
               </h2>
               <div className="mt-6 grid gap-3">
@@ -104,7 +104,7 @@ export function DispensaryRedesign({
               </div>
             </article>
 
-            <article className="rounded-[2.3rem] border border-stone-900/10 bg-white/82 p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
+            <article className="rounded-[2.3rem] border border-stone-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(252,248,241,0.92))] p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
               <ActorEntryMode actor="dispensary" locale={locale} demoHref="#dispensary-flow" />
               <div className="mt-6">
                 <ActorNav current="dispensary" locale={locale} />
@@ -114,19 +114,19 @@ export function DispensaryRedesign({
         </section>
 
         <section id="dispensary-flow" className="mt-10 grid gap-6 xl:grid-cols-[1fr_1fr]">
-          <article className="rounded-[2.3rem] border border-stone-900/10 bg-white/82 p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
+          <article className="rounded-[2.3rem] border border-stone-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(250,246,239,0.94))] p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
             <p className="text-sm uppercase tracking-[0.24em] text-amber-700">{copy.inventoryEyebrow}</p>
             <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-950">{copy.inventoryTitle}</h2>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-stone-600">{copy.inventoryBody}</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-600">{copy.inventoryBody}</p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               {inventoryCards.map((card) => (
-                <article key={card.id} className="rounded-[1.8rem] border border-stone-900/10 bg-[#faf6ef] p-5">
+                <article key={card.id} className="rounded-[1.8rem] border border-stone-900/10 bg-[linear-gradient(180deg,#fdf9f1,#f6efe2)] p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-amber-700">{card.format}</p>
-                      <h3 className="mt-3 font-display text-3xl text-stone-950">{card.name}</h3>
-                      <p className="mt-2 text-sm leading-7 text-stone-600">{card.description}</p>
+                      <h3 className="mt-3 font-display text-[2rem] text-stone-950">{card.name}</h3>
+                      <p className="mt-2 text-sm leading-6 text-stone-600">{card.description}</p>
                     </div>
                     <span className="rounded-full bg-amber-900/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-amber-900">{card.price}</span>
                   </div>
@@ -141,18 +141,18 @@ export function DispensaryRedesign({
             </div>
           </article>
 
-          <article className="rounded-[2.3rem] border border-sky-900/10 bg-[linear-gradient(180deg,rgba(245,250,255,0.96),rgba(232,242,255,0.92))] p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
+          <article className="rounded-[2.3rem] border border-sky-900/10 bg-[linear-gradient(180deg,rgba(246,250,255,0.96),rgba(236,244,255,0.94))] p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
             <p className="text-sm uppercase tracking-[0.24em] text-sky-700">{copy.validationEyebrow}</p>
             <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-950">{copy.validationTitle}</h2>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-stone-700">{copy.validationBody}</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-700">{copy.validationBody}</p>
 
             <div className="mt-6 grid gap-4">
               {pendingPrescriptions.slice(0, 3).map((prescription) => (
-                <article key={prescription.id} className="rounded-[1.8rem] border border-sky-900/10 bg-white/80 p-5">
+                <article key={prescription.id} className="rounded-[1.8rem] border border-sky-900/10 bg-white/86 p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-sky-700">{copy.readyForCheckout}</p>
-                      <h3 className="mt-3 font-display text-3xl text-stone-950">{shortHash(prescription.id)}</h3>
+                      <h3 className="mt-3 font-display text-[2rem] text-stone-950">{shortHash(prescription.id)}</h3>
                     </div>
                     <span className="rounded-full bg-sky-900/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-sky-900">{copy.waitingReview}</span>
                   </div>
@@ -168,18 +168,18 @@ export function DispensaryRedesign({
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-[0.96fr_1.04fr]">
-          <article className="rounded-[2.3rem] border border-stone-900/10 bg-white/82 p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
+          <article className="rounded-[2.3rem] border border-stone-900/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(244,250,246,0.94))] p-6 shadow-[0_18px_60px_rgba(41,37,36,0.06)]">
             <p className="text-sm uppercase tracking-[0.24em] text-stone-500">{copy.salesEyebrow}</p>
             <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-950">{copy.salesTitle}</h2>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-stone-700">{copy.salesBody}</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-700">{copy.salesBody}</p>
 
             <div className="mt-6 grid gap-4">
               {salesHistory.map((receipt) => (
-                <article key={receipt.id} className="rounded-[1.8rem] border border-emerald-900/10 bg-[#f4faf6] p-5">
+                <article key={receipt.id} className="rounded-[1.8rem] border border-emerald-900/10 bg-[linear-gradient(180deg,#f8fcf8,#eef7f1)] p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-emerald-700">{copy.receipt}</p>
-                      <h3 className="mt-3 font-display text-3xl text-stone-950">{receipt.id}</h3>
+                      <h3 className="mt-3 font-display text-[2rem] text-stone-950">{receipt.id}</h3>
                     </div>
                     <span className="rounded-full bg-emerald-900/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-emerald-900">live</span>
                   </div>
@@ -193,12 +193,12 @@ export function DispensaryRedesign({
             </div>
           </article>
 
-          <article className="rounded-[2.3rem] border border-stone-900/10 bg-stone-950 p-6 shadow-[0_18px_60px_rgba(41,37,36,0.08)]">
+          <article className="rounded-[2.5rem] border border-stone-900/10 bg-[linear-gradient(180deg,#160e08,#24160c_42%,#2c1a0d_100%)] p-6 shadow-[0_22px_70px_rgba(41,37,36,0.12)]">
             <p className="text-sm uppercase tracking-[0.24em] text-stone-400">{locale === "es" ? "Live rail" : "Live rail"}</p>
-            <h2 className="font-display mt-3 text-5xl leading-[0.96] text-stone-50">
+            <h2 className="font-display mt-3 text-5xl leading-[0.92] text-stone-50">
               {locale === "es" ? "Validar y consumir una receta real." : "Validate and consume a real prescription."}
             </h2>
-            <p className="mt-4 text-base leading-8 text-stone-300">
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-300">
               {locale === "es"
                 ? "Este rail deja al dispensario muy cerca del submit real desde web y sigue funcionando como bridge de presentacion mientras afinamos el ultimo tramo."
                 : "This rail brings the dispensary very close to direct web submission and still works as a presentation bridge while we finish the last stretch."}
@@ -240,9 +240,9 @@ export function DispensaryRedesign({
 
 function HeroPill({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-[1.6rem] border border-white/12 bg-white/8 p-4 backdrop-blur">
+    <article className="rounded-[1.8rem] border border-white/12 bg-white/8 p-4 backdrop-blur">
       <p className="text-xs uppercase tracking-[0.24em] text-stone-200/70">{label}</p>
-      <p className="font-display mt-3 text-3xl leading-none text-white">{value}</p>
+      <p className="font-display mt-3 text-[2.6rem] leading-none text-white">{value}</p>
     </article>
   );
 }

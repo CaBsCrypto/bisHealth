@@ -40,9 +40,9 @@ export function DispensaryConsumeSubmit({
     locale === "es"
       ? {
           eyebrow: "Submit live",
-          title: "Consumir una receta desde la web.",
-          body: "Este rail usa el backend para firmar y enviar `verify_and_consume` a testnet. Requiere sesion wallet-less activa y una key del dispensario configurada en el servidor.",
-          sessionHint: "Primero inicia sesion en wallet-less con passkey para habilitar este endpoint protegido.",
+          title: "Consumir desde este rail.",
+          body: "Firma server-side y envio directo a testnet.",
+          sessionHint: "Necesita sesion activa y key del dispensario cargada.",
           envReady: "Servidor listo para firmar con la cuenta del dispensario configurada.",
           envMissing:
             "Falta `TRUST_LEAF_DISPENSARY_SECRET_KEY` en el servidor. El panel queda listo y el submit se habilita apenas carguemos esa variable.",
@@ -72,9 +72,9 @@ export function DispensaryConsumeSubmit({
         }
       : {
           eyebrow: "Live submit",
-          title: "Consume a prescription from the web.",
-          body: "This rail uses the backend to sign and send `verify_and_consume` to testnet. It requires an active wallet-less session and a dispensary key configured on the server.",
-          sessionHint: "Sign in through wallet-less with a passkey first to enable this protected endpoint.",
+          title: "Consume from this rail.",
+          body: "Server-side signing and direct testnet submission.",
+          sessionHint: "Requires an active session and a configured dispensary key.",
           envReady: "Server is ready to sign with the configured dispensary account.",
           envMissing:
             "Missing `TRUST_LEAF_DISPENSARY_SECRET_KEY` on the server. The panel is ready and submit becomes live as soon as we load that variable.",
@@ -156,11 +156,11 @@ export function DispensaryConsumeSubmit({
   }
 
   return (
-    <div className="mt-6 rounded-[1.7rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5">
+    <div className="mt-6 rounded-[1.9rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5">
       <p className="text-xs uppercase tracking-[0.24em] text-amber-300/70">{copy.eyebrow}</p>
-      <h3 className="mt-3 text-2xl text-stone-50">{copy.title}</h3>
-      <p className="mt-3 text-sm leading-7 text-stone-300">{copy.body}</p>
-      <p className="mt-3 text-sm leading-7 text-stone-400">{copy.sessionHint}</p>
+      <h3 className="mt-3 text-3xl text-stone-50">{copy.title}</h3>
+      <p className="mt-3 text-sm leading-6 text-stone-300">{copy.body}</p>
+      <p className="mt-2 text-sm leading-6 text-stone-400">{copy.sessionHint}</p>
       <p
         className={`mt-4 rounded-2xl border px-4 py-3 text-sm leading-6 ${
           submitReady
