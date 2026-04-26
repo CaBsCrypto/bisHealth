@@ -51,8 +51,8 @@ export function CommandCenterRedesign({
     locale === "es"
       ? {
           eyebrow: "Ops room",
-          title: "Una sala de control mas clara para demo y operacion.",
-          body: "Command center ya no intenta mostrarlo todo a la vez. Primero muestra salud del sistema. Luego deja abrir cada rail.",
+          title: "Una sala de control corta, clara y util.",
+          body: "Primero salud real del sistema. Despues, acceso directo a cada rail.",
           sessionEyebrow: "Sesion activa",
           sessionTitle: "El rail live ya puede seguirte entre pantallas.",
           sessionBody: "Si ya entraste con passkeys o Freighter, este tablero te lo deja visible antes de abrir rails protegidos o submits live.",
@@ -64,11 +64,11 @@ export function CommandCenterRedesign({
           missing: "pendiente",
           liveReadinessEyebrow: "Readiness live",
           liveReadinessTitle: "Lo que realmente puede ejecutar hoy.",
-          liveReadinessBody: "Este panel refleja capacidad backend real. Si falta una key de firma o un rail operativo, deberia aparecer aqui antes que en la demo.",
+          liveReadinessBody: "Sin rodeos. Si falta una key o un rail live, se ve aqui.",
           infraEyebrow: "Infra real",
-          infraTitle: "Lo que ya esta funcionando debajo del producto.",
+          infraTitle: "Infra real, no promesas.",
           snapshotEyebrow: "Snapshot indexado",
-          snapshotTitle: "La lectura rapida ya existe.",
+          snapshotTitle: "El snapshot ya responde.",
           mode: "Modo",
           account: "Cuenta",
           profileStore: "Store de perfil",
@@ -76,8 +76,8 @@ export function CommandCenterRedesign({
         }
       : {
           eyebrow: "Ops room",
-          title: "A clearer control room for demo and operations.",
-          body: "Command center no longer tries to show everything at once. It starts with system health, then lets you open each rail.",
+          title: "A shorter, clearer control room.",
+          body: "Real system health first. Direct access to each rail second.",
           sessionEyebrow: "Active session",
           sessionTitle: "The live rail can now follow you across screens.",
           sessionBody: "If you already entered with passkeys or Freighter, this board keeps it visible before you open protected rails or live submits.",
@@ -89,11 +89,11 @@ export function CommandCenterRedesign({
           missing: "pending",
           liveReadinessEyebrow: "Live readiness",
           liveReadinessTitle: "What can actually execute today.",
-          liveReadinessBody: "This panel reflects real backend capability. If a signing key or live rail is missing, it should show up here before the demo does.",
+          liveReadinessBody: "No narrative padding. If a key or live rail is missing, it shows here.",
           infraEyebrow: "Real infra",
-          infraTitle: "What is already working under the product.",
+          infraTitle: "Real infra, not promises.",
           snapshotEyebrow: "Indexed snapshot",
-          snapshotTitle: "Fast read models already exist.",
+          snapshotTitle: "The snapshot already answers.",
           mode: "Mode",
           account: "Account",
           profileStore: "Profile store",
@@ -167,12 +167,12 @@ export function CommandCenterRedesign({
 
         <PresentationStrip locale={locale} current="ops" dark />
 
-        <section className="rounded-[2.6rem] border border-emerald-200/10 bg-[linear-gradient(145deg,#0b1511,#0f211a_48%,#0a1611)] p-8 shadow-[0_28px_100px_rgba(0,0,0,0.24)] md:p-10">
+        <section className="rounded-[2.8rem] border border-emerald-200/10 bg-[linear-gradient(145deg,#08140f,#0d2119_46%,#09140f)] p-8 shadow-[0_30px_110px_rgba(0,0,0,0.26)] md:p-10">
           <div className="grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-end">
             <div>
               <p className="text-xs uppercase tracking-[0.35em] text-emerald-300/75">{opsCopy.eyebrow}</p>
-              <h1 className="mt-4 font-display text-5xl leading-[0.96] text-emerald-50 md:text-7xl">{copy.title}</h1>
-              <p className="mt-5 max-w-3xl text-base leading-8 text-stone-300 md:text-lg">{opsCopy.body}</p>
+              <h1 className="mt-4 font-display text-5xl leading-[0.92] text-emerald-50 md:text-7xl">{opsCopy.title}</h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-300 md:text-base">{opsCopy.body}</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -187,7 +187,7 @@ export function CommandCenterRedesign({
           <article className="rounded-[2.1rem] border border-white/8 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)] xl:col-span-2">
             <p className="text-xs uppercase tracking-[0.24em] text-stone-400">{opsCopy.liveReadinessEyebrow}</p>
             <h2 className="mt-3 font-display text-4xl text-stone-50">{opsCopy.liveReadinessTitle}</h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">{opsCopy.liveReadinessBody}</p>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-stone-300">{opsCopy.liveReadinessBody}</p>
             <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
               <ReadinessCard
                 title="Sponsor"
@@ -244,21 +244,21 @@ export function CommandCenterRedesign({
 
           <article className="rounded-[2.1rem] border border-white/8 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)] xl:col-span-2">
             <p className="text-xs uppercase tracking-[0.24em] text-stone-400">{opsCopy.sessionEyebrow}</p>
-            <h2 className="mt-3 font-display text-4xl text-stone-50">{opsCopy.sessionTitle}</h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">{opsCopy.sessionBody}</p>
+            <h2 className="mt-3 font-display text-3xl text-stone-50">{opsCopy.sessionTitle}</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-stone-300">{opsCopy.sessionBody}</p>
             <ActorLiveSession locale={locale} />
           </article>
 
           {actorCards.map((card) => (
-            <article key={card.key} className="rounded-[2.1rem] border border-white/8 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+            <article key={card.key} className="rounded-[2.1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.16))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.24em] text-stone-400">{card.title}</p>
-                  <h2 className="mt-3 font-display text-4xl text-stone-50">{card.title}</h2>
+                  <h2 className="mt-3 font-display text-3xl text-stone-50">{card.title}</h2>
                 </div>
                 <span className={`rounded-full px-3 py-1 text-xs uppercase tracking-[0.22em] ${toneClass(card.tone)}`}>{card.status}</span>
               </div>
-              <p className="mt-4 text-base leading-7 text-stone-300">{card.body}</p>
+              <p className="mt-4 max-w-xl text-sm leading-6 text-stone-300">{card.body}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href={card.href} className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
                   {opsCopy.actorRoute}
@@ -315,9 +315,9 @@ export function CommandCenterRedesign({
 
 function HeroPill({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-[1.6rem] border border-white/10 bg-white/6 p-5">
+    <article className="rounded-[1.8rem] border border-white/10 bg-white/6 p-5 backdrop-blur">
       <p className="text-xs uppercase tracking-[0.24em] text-stone-400">{label}</p>
-      <p className="mt-3 font-display text-4xl leading-none text-stone-50">{value}</p>
+      <p className="mt-3 font-display text-[2.6rem] leading-none text-stone-50">{value}</p>
     </article>
   );
 }
@@ -356,11 +356,11 @@ function ReadinessCard({
   rows: Array<{ label: string; value: string }>;
 }) {
   return (
-    <article className="rounded-[1.8rem] border border-white/8 bg-white/5 p-4">
+    <article className="rounded-[1.8rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.12))] p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[0.22em] text-stone-400">{title}</p>
-          <h3 className="mt-3 text-2xl text-stone-50">{title}</h3>
+          <h3 className="mt-3 text-xl text-stone-50">{title}</h3>
         </div>
         <span className={`rounded-full px-3 py-1 text-xs uppercase tracking-[0.22em] ${toneClass(tone)}`}>
           {status}

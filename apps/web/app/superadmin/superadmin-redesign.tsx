@@ -78,10 +78,10 @@ export function SuperAdminRedesign({
         <PresentationStrip locale={locale} current="superadmin" dark />
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
-          <article className="rounded-[2.8rem] border border-white/10 bg-[linear-gradient(145deg,#0c1221,#0d2a33_46%,#162132_100%)] p-7 shadow-[0_30px_110px_rgba(0,0,0,0.28)] md:p-10">
+          <article className="rounded-[2.9rem] border border-white/10 bg-[linear-gradient(145deg,#0b1020,#0b2531_44%,#141c2d_100%)] p-7 shadow-[0_32px_120px_rgba(0,0,0,0.28)] md:p-10">
             <p className="text-xs uppercase tracking-[0.34em] text-sky-300/70">{copy.eyebrow}</p>
             <h1 className="font-display mt-5 max-w-4xl text-5xl leading-[0.95] text-stone-50 md:text-7xl">{copy.title}</h1>
-            <p className="mt-6 max-w-3xl text-base leading-8 text-stone-200 md:text-lg">{copy.body}</p>
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-stone-200 md:text-base">{copy.body}</p>
 
             <div className="mt-8 grid gap-4 md:grid-cols-5">
               <HeroPill label={copy.activeAdmins} value={String(activeAdmins.length)} />
@@ -93,9 +93,9 @@ export function SuperAdminRedesign({
           </article>
 
           <aside className="grid gap-6">
-            <article className="rounded-[2.3rem] border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+            <article className="rounded-[2.3rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.16))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
               <p className="text-xs uppercase tracking-[0.26em] text-stone-400">{locale === "es" ? "Mision del superadmin" : "Superadmin mission"}</p>
-              <h2 className="font-display mt-4 text-4xl leading-tight text-stone-50">
+              <h2 className="font-display mt-4 text-3xl leading-tight text-stone-50">
                 {locale === "es" ? "Ordenar acceso, confianza y gobernanza." : "Bring order to access, trust, and governance."}
               </h2>
               <div className="mt-6 grid gap-3">
@@ -105,7 +105,7 @@ export function SuperAdminRedesign({
               </div>
             </article>
 
-            <article className="rounded-[2.3rem] border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+            <article className="rounded-[2.3rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.16))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
               <ActorEntryMode actor="superadmin" locale={locale} demoHref="#approval-flow" />
               <div className="mt-6">
                 <ActorNav current="superadmin" locale={locale} />
@@ -115,43 +115,43 @@ export function SuperAdminRedesign({
         </section>
 
         <section id="approval-flow" className="mt-10 grid gap-6 xl:grid-cols-[0.94fr_1.06fr]">
-          <article className="rounded-[2.3rem] border border-amber-200/10 bg-[#17130c]/90 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+          <article className="rounded-[2.3rem] border border-amber-200/10 bg-[linear-gradient(180deg,rgba(75,53,12,0.82),rgba(18,12,4,0.92))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
             <p className="text-sm uppercase tracking-[0.25em] text-amber-300/70">{copy.approvalQueueEyebrow}</p>
             <h2 className="mt-2 font-display text-4xl leading-tight text-amber-50">{copy.approvalQueueTitle}</h2>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-stone-300">{copy.approvalQueueBody}</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-300">{copy.approvalQueueBody}</p>
 
             <div className="mt-6 grid gap-4">
               {approvalQueue.map((item) => (
-                <article key={item.name} className="rounded-[1.7rem] border border-white/8 bg-black/15 p-5">
+                <article key={item.name} className="rounded-[1.7rem] border border-white/8 bg-black/20 p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-amber-200/70">{item.type}</p>
-                      <h3 className="mt-3 text-2xl text-stone-50">{item.name}</h3>
+                      <h3 className="mt-3 text-xl text-stone-50">{item.name}</h3>
                     </div>
                     <span className="rounded-full bg-amber-300/15 px-3 py-1 text-xs uppercase tracking-[0.22em] text-amber-100">{copy.queueStatus}</span>
                   </div>
-                  <p className="mt-4 text-sm leading-7 text-stone-300">{item.note}</p>
+                  <p className="mt-4 text-sm leading-6 text-stone-300">{item.note}</p>
                 </article>
               ))}
             </div>
           </article>
 
-          <article className="rounded-[2.3rem] border border-emerald-200/10 bg-[#0b1513]/90 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+          <article className="rounded-[2.3rem] border border-emerald-200/10 bg-[linear-gradient(180deg,rgba(9,25,20,0.84),rgba(7,15,12,0.96))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
             <p className="text-sm uppercase tracking-[0.25em] text-emerald-300/70">{copy.registryEyebrow}</p>
             <h2 className="mt-2 font-display text-4xl leading-tight text-emerald-50">{copy.registryTitle}</h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">{copy.registryBody}</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-300">{copy.registryBody}</p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               {activeMemberships.map((membership) => (
-                <article key={membership.id} className="rounded-[1.7rem] border border-white/8 bg-black/15 p-5">
+                <article key={membership.id} className="rounded-[1.7rem] border border-white/8 bg-black/20 p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-emerald-300/70">{normalizeRole(membership.role)}</p>
-                      <h3 className="mt-3 break-all text-xl text-stone-50">{shortValue(membership.account)}</h3>
+                      <h3 className="mt-3 break-all text-lg text-stone-50">{shortValue(membership.account)}</h3>
                     </div>
                     <span className="rounded-full bg-emerald-300/15 px-3 py-1 text-xs uppercase tracking-[0.22em] text-emerald-100">live</span>
                   </div>
-                  <div className="mt-4 space-y-2 text-sm leading-6 text-stone-300">
+                  <div className="mt-4 space-y-2 text-sm leading-5 text-stone-300">
                     <p>{copy.grantedBy}: {membership.grantedBy ? shortValue(membership.grantedBy) : copy.noGrantor}</p>
                     <p>{copy.grantedAt}: {membership.grantedAtLedger}</p>
                   </div>
@@ -162,7 +162,7 @@ export function SuperAdminRedesign({
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-[0.96fr_1.04fr]">
-          <article className="rounded-[2.3rem] border border-violet-200/10 bg-[#12101c]/92 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+          <article className="rounded-[2.3rem] border border-violet-200/10 bg-[linear-gradient(180deg,rgba(18,16,28,0.86),rgba(10,8,16,0.96))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
             <p className="text-sm uppercase tracking-[0.25em] text-violet-300/70">{copy.actionsEyebrow}</p>
             <h2 className="mt-2 font-display text-4xl leading-tight text-violet-50">{copy.actionsTitle}</h2>
             <div className="mt-6 grid gap-4">
@@ -173,22 +173,22 @@ export function SuperAdminRedesign({
             </div>
           </article>
 
-          <article className="rounded-[2.3rem] border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+          <article className="rounded-[2.3rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.16))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
             <p className="text-sm uppercase tracking-[0.25em] text-stone-400">{copy.recentChangesEyebrow}</p>
             <h2 className="mt-2 font-display text-4xl leading-tight text-stone-50">{copy.recentChangesTitle}</h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">{copy.recentChangesBody}</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-300">{copy.recentChangesBody}</p>
 
             <div className="mt-6 grid gap-4">
               {recentChanges.length > 0 ? recentChanges.map((change) => (
-                <article key={change.id} className="rounded-[1.7rem] border border-white/8 bg-black/15 p-5">
+                <article key={change.id} className="rounded-[1.7rem] border border-white/8 bg-black/20 p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-stone-400">{normalizeRole(change.role)}</p>
-                      <h3 className="mt-3 text-2xl text-stone-50">{shortValue(change.account)}</h3>
+                      <h3 className="mt-3 text-xl text-stone-50">{shortValue(change.account)}</h3>
                     </div>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-stone-200">{change.action}</span>
                   </div>
-                  <div className="mt-4 space-y-2 text-sm leading-6 text-stone-300">
+                  <div className="mt-4 space-y-2 text-sm leading-5 text-stone-300">
                     <p>{copy.grantedBy}: {change.admin ? shortValue(change.admin) : copy.noGrantor}</p>
                     <p>Ledger: {change.ledger}</p>
                   </div>
@@ -201,12 +201,12 @@ export function SuperAdminRedesign({
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-[1.02fr_0.98fr]">
-          <article className="rounded-[2.3rem] border border-sky-200/10 bg-[#0c1520]/92 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+          <article className="rounded-[2.3rem] border border-sky-200/10 bg-[linear-gradient(180deg,rgba(9,18,31,0.84),rgba(8,14,24,0.96))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
             <p className="text-sm uppercase tracking-[0.25em] text-sky-300/70">{locale === "es" ? "RBAC bridge" : "RBAC bridge"}</p>
             <h2 className="mt-2 font-display text-4xl leading-tight text-sky-50">
               {locale === "es" ? "Aprobaciones reales listas para ejecutar." : "Real approvals ready to execute."}
             </h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-300">
               {locale === "es"
                 ? "La parte operativa ya existe: contrato RBAC live, cuenta admin y plantillas de grant y revoke por actor."
                 : "The operational layer already exists: live RBAC contract, admin account, and grant/revoke templates by actor."}
@@ -230,12 +230,12 @@ export function SuperAdminRedesign({
             />
           </article>
 
-          <article className="rounded-[2.3rem] border border-white/10 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+          <article className="rounded-[2.3rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(0,0,0,0.2))] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
             <p className="text-sm uppercase tracking-[0.25em] text-stone-400">{locale === "es" ? "Bridge avanzado" : "Advanced bridge"}</p>
             <h2 className="mt-2 font-display text-4xl leading-tight text-stone-50">
               {locale === "es" ? "JSON y handoff del superadmin." : "Superadmin JSON and handoff."}
             </h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">
+            <p className="mt-4 max-w-xl text-sm leading-6 text-stone-300">
               {locale === "es"
                 ? "Este bloque queda como capa final para copiar el pack del admin o abrir el endpoint backend-first."
                 : "This block stays as the final layer for copying the admin pack or opening the backend-first endpoint."}
