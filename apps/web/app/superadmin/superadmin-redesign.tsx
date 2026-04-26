@@ -9,6 +9,8 @@ import type { getSuperAdminPageCopy } from "../lib/i18n";
 import type { getTrustLeafSuperAdminActionPack } from "../lib/trustleaf/actionRails";
 import type { getTrustLeafDeployment } from "../lib/trustleaf/deployment";
 import type { getIndexedState } from "../lib/trustleaf/indexedState";
+import { SuperAdminRoleSubmit } from "./superadmin-role-submit";
+import { getTrustLeafSuperAdminSubmitConfig } from "../lib/trustleaf/superAdminRbac";
 
 type Locale = "en" | "es";
 type SuperAdminCopy = ReturnType<typeof getSuperAdminPageCopy>;
@@ -35,6 +37,7 @@ export function SuperAdminRedesign({
   const activeDispensaries = activeMemberships.filter((membership) => membership.role.includes("DISP"));
   const liveContracts = deployment.contracts.filter((contract) => contract.status === "live");
   const recentChanges = indexedState.roleChanges.slice(0, 4);
+  const submitConfig = getTrustLeafSuperAdminSubmitConfig();
 
   const approvalQueue =
     locale === "es"
@@ -217,6 +220,14 @@ export function SuperAdminRedesign({
                 </article>
               ))}
             </div>
+
+            <SuperAdminRoleSubmit
+              locale={locale}
+              initialAdmin={superAdminActionPack.adminAccount}
+              roleTemplates={superAdminActionPack.roleTemplates}
+              submitReady={submitConfig.enabled}
+              submitMode={submitConfig.mode}
+            />
           </article>
 
           <article className="rounded-[2.3rem] border border-white/10 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
