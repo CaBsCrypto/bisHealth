@@ -7,6 +7,7 @@ import type { getCommandCenterCopy, getPipelineSteps } from "../lib/i18n";
 import type { getTrustLeafDispensaryActionPack, getTrustLeafDoctorActionPack, getTrustLeafPatientActionPack, getTrustLeafSuperAdminActionPack } from "../lib/trustleaf/actionRails";
 import type { getTrustLeafDeployment } from "../lib/trustleaf/deployment";
 import type { getIndexedState } from "../lib/trustleaf/indexedState";
+import type { getTrustLeafLiveReadiness } from "../lib/trustleaf/liveReadiness";
 
 type Locale = "en" | "es";
 type CommandCopy = ReturnType<typeof getCommandCenterCopy>;
@@ -17,6 +18,7 @@ type PatientActionPack = Awaited<ReturnType<typeof getTrustLeafPatientActionPack
 type DoctorActionPack = Awaited<ReturnType<typeof getTrustLeafDoctorActionPack>>;
 type DispensaryActionPack = Awaited<ReturnType<typeof getTrustLeafDispensaryActionPack>>;
 type SuperAdminActionPack = Awaited<ReturnType<typeof getTrustLeafSuperAdminActionPack>>;
+type LiveReadiness = ReturnType<typeof getTrustLeafLiveReadiness>;
 
 export function CommandCenterRedesign({
   locale,
@@ -28,6 +30,7 @@ export function CommandCenterRedesign({
   doctorActionPack,
   dispensaryActionPack,
   superAdminActionPack,
+  liveReadiness,
 }: {
   locale: Locale;
   copy: CommandCopy;
@@ -38,6 +41,7 @@ export function CommandCenterRedesign({
   doctorActionPack: DoctorActionPack;
   dispensaryActionPack: DispensaryActionPack;
   superAdminActionPack: SuperAdminActionPack;
+  liveReadiness: LiveReadiness;
 }) {
   const latestBatch = indexedState.batches[0] ?? null;
   const latestPrescription = indexedState.prescriptions[0] ?? null;
@@ -58,10 +62,17 @@ export function CommandCenterRedesign({
           ready: "listo",
           review: "revision",
           missing: "pendiente",
+          liveReadinessEyebrow: "Readiness live",
+          liveReadinessTitle: "Lo que realmente puede ejecutar hoy.",
+          liveReadinessBody: "Este panel refleja capacidad backend real. Si falta una key de firma o un rail operativo, deberia aparecer aqui antes que en la demo.",
           infraEyebrow: "Infra real",
           infraTitle: "Lo que ya esta funcionando debajo del producto.",
           snapshotEyebrow: "Snapshot indexado",
           snapshotTitle: "La lectura rapida ya existe.",
+          mode: "Modo",
+          account: "Cuenta",
+          profileStore: "Store de perfil",
+          none: "ninguno",
         }
       : {
           eyebrow: "Ops room",
@@ -76,10 +87,17 @@ export function CommandCenterRedesign({
           ready: "ready",
           review: "review",
           missing: "pending",
+          liveReadinessEyebrow: "Live readiness",
+          liveReadinessTitle: "What can actually execute today.",
+          liveReadinessBody: "This panel reflects real backend capability. If a signing key or live rail is missing, it should show up here before the demo does.",
           infraEyebrow: "Real infra",
           infraTitle: "What is already working under the product.",
           snapshotEyebrow: "Indexed snapshot",
           snapshotTitle: "Fast read models already exist.",
+          mode: "Mode",
+          account: "Account",
+          profileStore: "Profile store",
+          none: "none",
         };
 
   const actorCards = [
@@ -166,6 +184,64 @@ export function CommandCenterRedesign({
         </section>
 
         <section className="mt-10 grid gap-6 xl:grid-cols-2">
+          <article className="rounded-[2.1rem] border border-white/8 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)] xl:col-span-2">
+            <p className="text-xs uppercase tracking-[0.24em] text-stone-400">{opsCopy.liveReadinessEyebrow}</p>
+            <h2 className="mt-3 font-display text-4xl text-stone-50">{opsCopy.liveReadinessTitle}</h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-stone-300">{opsCopy.liveReadinessBody}</p>
+            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+              <ReadinessCard
+                title="Sponsor"
+                status={liveReadiness.sponsor.ready ? opsCopy.ready : opsCopy.missing}
+                tone={liveReadiness.sponsor.ready ? "emerald" : "amber"}
+                rows={[
+                  { label: opsCopy.mode, value: liveReadiness.sponsor.mode },
+                  { label: opsCopy.account, value: liveReadiness.sponsor.publicKey ?? opsCopy.missing },
+                ]}
+              />
+              <ReadinessCard
+                title="Passkeys"
+                status={liveReadiness.passkeys.ready ? opsCopy.ready : opsCopy.review}
+                tone={liveReadiness.passkeys.ready ? "emerald" : "violet"}
+                rows={[
+                  { label: opsCopy.mode, value: liveReadiness.passkeys.integrationMode },
+                  { label: "Phase", value: String(liveReadiness.passkeys.backendPhase) },
+                  { label: opsCopy.profileStore, value: liveReadiness.passkeys.profileStorage },
+                ]}
+              />
+              <ReadinessCard
+                title="Doctor"
+                status={liveReadiness.doctor.ready ? opsCopy.ready : opsCopy.missing}
+                tone={liveReadiness.doctor.ready ? "emerald" : "amber"}
+                rows={[
+                  { label: opsCopy.mode, value: liveReadiness.doctor.mode },
+                  { label: opsCopy.account, value: liveReadiness.doctor.publicKey ?? opsCopy.missing },
+                ]}
+              />
+              <ReadinessCard
+                title="Dispensary"
+                status={liveReadiness.dispensary.ready ? opsCopy.ready : opsCopy.missing}
+                tone={liveReadiness.dispensary.ready ? "emerald" : "amber"}
+                rows={[
+                  { label: opsCopy.mode, value: liveReadiness.dispensary.mode },
+                  { label: opsCopy.account, value: liveReadiness.dispensary.publicKey ?? opsCopy.missing },
+                ]}
+              />
+              <ReadinessCard
+                title="Superadmin"
+                status={liveReadiness.superadmin.ready ? opsCopy.ready : opsCopy.missing}
+                tone={liveReadiness.superadmin.ready ? "emerald" : "amber"}
+                rows={[
+                  { label: opsCopy.mode, value: liveReadiness.superadmin.mode },
+                  { label: opsCopy.account, value: liveReadiness.superadmin.publicKey ?? opsCopy.missing },
+                  {
+                    label: "Passkey gaps",
+                    value: liveReadiness.passkeys.missingPieces.slice(0, 2).join(", ") || opsCopy.none,
+                  },
+                ]}
+              />
+            </div>
+          </article>
+
           <article className="rounded-[2.1rem] border border-white/8 bg-black/20 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.16)] xl:col-span-2">
             <p className="text-xs uppercase tracking-[0.24em] text-stone-400">{opsCopy.sessionEyebrow}</p>
             <h2 className="mt-3 font-display text-4xl text-stone-50">{opsCopy.sessionTitle}</h2>
@@ -266,4 +342,38 @@ function toneClass(tone: "amber" | "cyan" | "emerald" | "violet") {
     emerald: "bg-emerald-300/15 text-emerald-100",
     violet: "bg-violet-300/15 text-violet-100",
   }[tone];
+}
+
+function ReadinessCard({
+  title,
+  status,
+  tone,
+  rows,
+}: {
+  title: string;
+  status: string;
+  tone: "amber" | "emerald" | "violet";
+  rows: Array<{ label: string; value: string }>;
+}) {
+  return (
+    <article className="rounded-[1.8rem] border border-white/8 bg-white/5 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs uppercase tracking-[0.22em] text-stone-400">{title}</p>
+          <h3 className="mt-3 text-2xl text-stone-50">{title}</h3>
+        </div>
+        <span className={`rounded-full px-3 py-1 text-xs uppercase tracking-[0.22em] ${toneClass(tone)}`}>
+          {status}
+        </span>
+      </div>
+      <div className="mt-4 space-y-2">
+        {rows.map((row) => (
+          <div key={`${title}-${row.label}`} className="rounded-[1rem] border border-white/8 bg-black/15 px-3 py-3">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-stone-400">{row.label}</p>
+            <p className="mt-2 break-all text-sm leading-6 text-stone-100">{row.value}</p>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
 }

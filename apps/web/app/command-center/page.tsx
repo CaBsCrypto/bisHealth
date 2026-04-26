@@ -13,6 +13,7 @@ import {
 } from "../lib/trustleaf/actionRails";
 import { getTrustLeafDeployment } from "../lib/trustleaf/deployment";
 import { getIndexedState } from "../lib/trustleaf/indexedState";
+import { getTrustLeafLiveReadiness } from "../lib/trustleaf/liveReadiness";
 
 export default async function CommandCenterPage() {
   const locale = await getLocale();
@@ -25,6 +26,7 @@ export default async function CommandCenterPage() {
     doctorActionPack,
     dispensaryActionPack,
     superAdminActionPack,
+    liveReadiness,
   ] = await Promise.all([
     getIndexedState(),
     getTrustLeafDeployment(),
@@ -32,6 +34,7 @@ export default async function CommandCenterPage() {
     getTrustLeafDoctorActionPack(null),
     getTrustLeafDispensaryActionPack(null),
     getTrustLeafSuperAdminActionPack(),
+    Promise.resolve(getTrustLeafLiveReadiness()),
   ]);
   const latestBatch = indexedState.batches[0] ?? null;
   const latestPrescription = indexedState.prescriptions[0] ?? null;
@@ -117,6 +120,7 @@ export default async function CommandCenterPage() {
       doctorActionPack={doctorActionPack}
       dispensaryActionPack={dispensaryActionPack}
       superAdminActionPack={superAdminActionPack}
+      liveReadiness={liveReadiness}
     />
   );
 }
