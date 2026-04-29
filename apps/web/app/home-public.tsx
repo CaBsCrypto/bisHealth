@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { LanguageSwitcher } from "./language-switcher";
@@ -53,16 +53,15 @@ export function HomePublic({
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 text-sm">
-              <a href="#journey" className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white">{copy.navJourney}</a>
-              <a href="#directory" className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white">{copy.navDirectory}</a>
-              <a href="#profiles" className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white">{copy.navProfiles}</a>
+              <a href="#how" className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white">{copy.navHow}</a>
+              <a href="#network" className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white">{copy.navNetwork}</a>
               <LanguageSwitcher locale={locale} />
               <Link href="/patient" className="rounded-full bg-[#f2eadc] px-5 py-2.5 font-semibold text-[#10211a] transition hover:bg-white">{copy.navCta}</Link>
             </div>
           </div>
         </header>
 
-        <section className="mt-8 grid gap-7 xl:grid-cols-[1.1fr_0.9fr] xl:items-end">
+        <section className="mt-8 grid gap-7 xl:grid-cols-[1.08fr_0.92fr] xl:items-end">
           <article className="rounded-[3rem] border border-white/10 bg-[linear-gradient(160deg,rgba(17,33,26,0.98),rgba(19,51,39,0.92)_55%,rgba(31,87,65,0.78)_100%)] p-7 shadow-[0_36px_120px_rgba(0,0,0,0.28)] md:p-10">
             <div className="inline-flex items-center gap-3 rounded-full border border-white/12 bg-white/6 px-4 py-2 text-[11px] uppercase tracking-[0.3em] text-emerald-100/90">
               <span className="h-2 w-2 rounded-full bg-emerald-300" />
@@ -83,22 +82,25 @@ export function HomePublic({
             </div>
           </article>
 
-          <div className="grid gap-5">
-            <SurfaceCard eyebrow={copy.productEyebrow} title={copy.productTitle} body={copy.productBody} light />
-            <article className="rounded-[2.4rem] border border-white/10 bg-white/8 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur">
-              <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">{copy.signalEyebrow}</p>
-              <h2 className="font-display mt-4 text-4xl leading-[0.94] text-white">{copy.signalTitle}</h2>
-              <div className="mt-6 grid gap-3 md:grid-cols-3">
-                {marketing.heroStats.map((stat) => (
-                  <HeroStat key={stat.label} label={stat.label} value={stat.value} dark />
-                ))}
-              </div>
-            </article>
-          </div>
+          <article className="rounded-[2.4rem] border border-white/10 bg-white/8 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur">
+            <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">{copy.rightEyebrow}</p>
+            <h2 className="font-display mt-4 text-4xl leading-[0.94] text-white">{copy.rightTitle}</h2>
+            <div className="mt-6 grid gap-3">
+              {copy.rightPoints.map((point) => (
+                <article key={point.title} className="rounded-[1.5rem] border border-white/10 bg-white/6 px-4 py-4">
+                  <p className="text-[11px] uppercase tracking-[0.22em] text-white/48">{point.badge}</p>
+                  <p className="mt-2 font-display text-2xl text-white">{point.title}</p>
+                  <p className="mt-2 text-sm leading-6 text-white/72">{point.body}</p>
+                </article>
+              ))}
+            </div>
+          </article>
         </section>
 
-        <section id="journey" className="mt-20 rounded-[3rem] border border-[#17392d]/10 bg-[#efe5d7] p-7 text-[#13231d] shadow-[0_28px_100px_rgba(20,24,22,0.08)] md:p-9">
-          <div className="grid gap-5 md:grid-cols-3">
+        <section id="how" className="mt-20 rounded-[3rem] border border-[#17392d]/10 bg-[#efe5d7] p-7 text-[#13231d] shadow-[0_28px_100px_rgba(20,24,22,0.08)] md:p-9">
+          <p className="text-sm uppercase tracking-[0.3em] text-[#6d7d75]">{copy.howEyebrow}</p>
+          <h2 className="font-display mt-4 text-5xl leading-[0.92] text-[#13231d] md:text-6xl">{copy.howTitle}</h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
             {marketing.patientJourney.map((step) => (
               <article key={step.step} className="rounded-[2rem] border border-[#17392d]/10 bg-[linear-gradient(180deg,#fffdf8,#f8f1e6)] p-5">
                 <div className="flex items-center justify-between gap-4">
@@ -112,7 +114,7 @@ export function HomePublic({
           </div>
         </section>
 
-        <section id="directory" className="mt-20 grid gap-6 xl:grid-cols-2">
+        <section id="network" className="mt-20 grid gap-6 xl:grid-cols-2">
           <SurfaceCard eyebrow={copy.doctorsEyebrow} title={copy.doctorsTitle} body={copy.doctorsBody} dark>
             <div className="mt-8 grid gap-4">
               {doctors.map((card) => <DirectorySurface key={card.name} card={card} dark />)}
@@ -125,21 +127,17 @@ export function HomePublic({
           </SurfaceCard>
         </section>
 
-        <section id="profiles" className="mt-20 rounded-[2.8rem] border border-[#17392d]/10 bg-[linear-gradient(135deg,#f6efe5,#eee1cf)] p-8 text-[#13231d] shadow-[0_24px_90px_rgba(20,24,22,0.08)] md:p-10">
-          <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+        <section className="mt-20 rounded-[2.8rem] border border-[#17392d]/10 bg-[linear-gradient(135deg,#f6efe5,#eee1cf)] p-8 text-[#13231d] shadow-[0_24px_90px_rgba(20,24,22,0.08)] md:p-10">
+          <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-[#6b7b73]">{copy.profilesEyebrow}</p>
-              <h2 className="font-display mt-4 max-w-4xl text-5xl leading-[0.92] text-[#13231d] md:text-6xl">{copy.profilesTitle}</h2>
-              <p className="mt-5 max-w-2xl text-base leading-8 text-[#4a5d54]">{copy.profilesBody}</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-[#6b7b73]">{copy.finalEyebrow}</p>
+              <h2 className="font-display mt-4 max-w-4xl text-5xl leading-[0.92] text-[#13231d] md:text-6xl">{copy.finalTitle}</h2>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-[#4a5d54]">{copy.finalBody}</p>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {copy.profileCards.map((card) => (
-                <article key={card.title} className="rounded-[1.9rem] border border-[#17392d]/10 bg-white/78 p-5">
-                  <p className="text-[11px] uppercase tracking-[0.24em] text-[#6c7c74]">{card.badge}</p>
-                  <h3 className="font-display mt-3 text-3xl leading-tight text-[#13231d]">{card.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-[#4a5d54]">{card.body}</p>
-                </article>
-              ))}
+            <div className="flex flex-wrap gap-4">
+              <Link href="/patient" className="rounded-full bg-[#163c30] px-6 py-3 text-sm font-semibold text-[#eef5f1] transition hover:bg-[#214d3f]">{copy.primaryCta}</Link>
+              <Link href="/walletless" className="rounded-full border border-[#17392d]/12 bg-white/72 px-6 py-3 text-sm font-semibold text-[#163c30] transition hover:bg-white">{copy.liveCta}</Link>
+              <Link href="/demo-script" className="rounded-full border border-[#17392d]/12 bg-white/72 px-6 py-3 text-sm font-semibold text-[#163c30] transition hover:bg-white">{copy.mockCta}</Link>
             </div>
           </div>
         </section>
@@ -152,75 +150,71 @@ function getCopy(locale: Locale) {
   return locale === "es"
     ? {
         brandTag: "Red medicinal privada y trazable",
-        navJourney: "Ruta paciente",
-        navDirectory: "Directorio",
-        navProfiles: "Perfiles",
+        navHow: "Como funciona",
+        navNetwork: "Red verificada",
         navCta: "Entrar",
         announcement: "MVP listo para jueces, grants y testnet",
         eyebrow: "Cannabis medicinal con calidad de producto real",
-        title: "Una experiencia privada para encontrar medico, validar tu receta y comprar con confianza.",
-        body: "Trust Leaf organiza el journey del paciente desde la consulta hasta el inventario disponible, sin empujar dashboards internos ni complejidad cripto en la primera pantalla.",
+        title: "Encuentra medico, valida tu receta y compra con confianza.",
+        body: "Trust Leaf organiza todo el journey del paciente en una experiencia privada, simple y mucho mas clara.",
         primaryCta: "Entrar como paciente",
         liveCta: "Entrar con passkeys o Freighter",
-        mockCta: "Ver flujo mockup",
+        mockCta: "Ver demo/mockup",
         metricDoctors: "Medicos verificados",
         metricDisp: "Dispensarios listos",
         metricRx: "Recetas en red",
-        productEyebrow: "Lo que siente el paciente",
-        productTitle: "Menos burocracia. Menos friccion. Mas evidencia.",
-        productBody: "Primero se descubre atencion, luego una receta protegida y finalmente inventario real. La blockchain queda atras del telon.",
-        signalEyebrow: "Infraestructura real",
-        signalTitle: "Producto primero. Infraestructura despues.",
-        doctorsEyebrow: "Medicos visibles",
-        doctorsTitle: "Encuentra profesionales ya aprobados por la red.",
-        doctorsBody: "La landing publica solo expone discovery: ver medicos, entender cobertura y seguir hacia el perfil paciente.",
-        dispensaryEyebrow: "Dispensarios visibles",
-        dispensaryTitle: "Explora dispensarios y su readiness antes de salir.",
-        dispensaryBody: "El paciente mira actores verificados, no dashboards internos. Eso hace que la red se sienta cuidada y simple.",
-        profilesEyebrow: "Perfiles conectados",
-        profilesTitle: "Cada actor entra de forma distinta, sin chocar en la misma pantalla.",
-        profilesBody: "Pacientes pueden entrar solos con passkeys o Freighter. Medicos y dispensarios pasan por validacion y despues reciben su propio workspace.",
-        profileCards: [
-          { badge: "Paciente", title: "Auto-servicio", body: "Passkeys de Stellar, Freighter opcional y demo/mockup para presentar el flujo completo." },
-          { badge: "Medico", title: "Perfil aprobado", body: "Registro asistido, aprobacion manual y despues acceso al panel clinico." },
-          { badge: "Dispensario", title: "Perfil operativo", body: "Onboarding de compliance, readiness de inventario y despues rails de venta." },
+        rightEyebrow: "Que cambia",
+        rightTitle: "Lo importante se entiende en segundos.",
+        rightPoints: [
+          { badge: "01", title: "Encuentras atencion", body: "Ves medicos aprobados sin entrar a dashboards internos." },
+          { badge: "02", title: "Tu receta sigue privada", body: "La red valida lo necesario sin exponer informacion medica." },
+          { badge: "03", title: "Compras mirando inventario", body: "El paciente revisa dispensario, lote y readiness antes de salir." },
         ],
+        howEyebrow: "Ruta paciente",
+        howTitle: "Tres pasos. Nada mas.",
+        doctorsEyebrow: "Medicos visibles",
+        doctorsTitle: "Profesionales que ya pueden operar en la red.",
+        doctorsBody: "La landing publica solo muestra discovery: quien puede atenderte y que tipo de soporte ofrece.",
+        dispensaryEyebrow: "Dispensarios visibles",
+        dispensaryTitle: "Puntos de venta listos para validar y entregar.",
+        dispensaryBody: "El paciente ve actores verificados y readiness operativo, no paneles internos.",
+        finalEyebrow: "Entrar ahora",
+        finalTitle: "Primero entiendes el producto. Despues descubres la infraestructura.",
+        finalBody: "Eso es exactamente lo que deberia pasar frente a un jurado o un paciente real.",
       }
     : {
         brandTag: "Private and traceable medicinal network",
-        navJourney: "Patient route",
-        navDirectory: "Directory",
-        navProfiles: "Profiles",
+        navHow: "How it works",
+        navNetwork: "Verified network",
         navCta: "Enter",
         announcement: "MVP ready for judges, grants, and testnet",
         eyebrow: "Medicinal cannabis with real product quality",
-        title: "A private experience to find care, validate prescriptions, and buy with confidence.",
-        body: "Trust Leaf organizes the patient journey from consult to inventory without pushing internal dashboards or crypto complexity into the first screen.",
+        title: "Find care, validate your prescription, and buy with confidence.",
+        body: "Trust Leaf organizes the full patient journey into one private, simple, and much clearer experience.",
         primaryCta: "Enter as patient",
         liveCta: "Enter with passkeys or Freighter",
-        mockCta: "View mockup flow",
+        mockCta: "View demo/mockup",
         metricDoctors: "Verified doctors",
         metricDisp: "Ready dispensaries",
         metricRx: "Prescriptions on network",
-        productEyebrow: "What the patient feels",
-        productTitle: "Less bureaucracy. Less friction. More evidence.",
-        productBody: "Care discovery comes first, then a protected prescription, then real inventory. Blockchain stays behind the curtain.",
-        signalEyebrow: "Real infrastructure",
-        signalTitle: "Product first. Infrastructure second.",
-        doctorsEyebrow: "Visible doctors",
-        doctorsTitle: "Find clinicians already approved by the network.",
-        doctorsBody: "The public landing only exposes discovery: see doctors, understand coverage, and continue into the patient profile.",
-        dispensaryEyebrow: "Visible dispensaries",
-        dispensaryTitle: "Explore dispensaries and their readiness before you travel.",
-        dispensaryBody: "Patients see verified actors, not internal dashboards. That makes the network feel curated and simple.",
-        profilesEyebrow: "Connected profiles",
-        profilesTitle: "Every actor enters differently without colliding in the same screen.",
-        profilesBody: "Patients can enter alone with passkeys or Freighter. Doctors and dispensaries go through validation and then receive their own workspace.",
-        profileCards: [
-          { badge: "Patient", title: "Self-serve", body: "Stellar passkeys, optional Freighter, and demo/mockup to present the full journey." },
-          { badge: "Doctor", title: "Approved profile", body: "Assisted registration, manual approval, then access to the clinical workspace." },
-          { badge: "Dispensary", title: "Operational profile", body: "Compliance onboarding, inventory readiness, then access to sales rails." },
+        rightEyebrow: "What changes",
+        rightTitle: "The important part becomes clear in seconds.",
+        rightPoints: [
+          { badge: "01", title: "You find care", body: "You see approved doctors without entering internal dashboards." },
+          { badge: "02", title: "Your prescription stays private", body: "The network validates what is needed without exposing medical context." },
+          { badge: "03", title: "You buy against visible inventory", body: "The patient reviews dispensary, batch, and readiness before leaving home." },
         ],
+        howEyebrow: "Patient route",
+        howTitle: "Three steps. Nothing else.",
+        doctorsEyebrow: "Visible doctors",
+        doctorsTitle: "Professionals who can already operate on the network.",
+        doctorsBody: "The public landing only shows discovery: who can care for you and what support they offer.",
+        dispensaryEyebrow: "Visible dispensaries",
+        dispensaryTitle: "Retail points ready to validate and deliver.",
+        dispensaryBody: "Patients see verified actors and operational readiness, not internal dashboards.",
+        finalEyebrow: "Enter now",
+        finalTitle: "You understand the product first. Then you discover the infrastructure.",
+        finalBody: "That is exactly what should happen in front of judges or a real patient.",
       };
 }
 
@@ -235,14 +229,8 @@ function buildDoctors(snapshot: IndexedSnapshot, locale: Locale): DirectoryCard[
       live: true,
     }));
   const preview = locale === "es"
-    ? [
-        { name: "Dra. Camila Rojas", body: "Dolor cronico y seguimiento longitudinal.", badge: "Mockup de agenda", meta: "Preview", live: false },
-        { name: "Dr. Tomas Ibarra", body: "Teleconsulta, renovaciones y control continuo.", badge: "Mockup de agenda", meta: "Preview", live: false },
-      ]
-    : [
-        { name: "Dr. Camila Rojas", body: "Chronic pain and longitudinal follow-up.", badge: "Schedule mockup", meta: "Preview", live: false },
-        { name: "Dr. Tomas Ibarra", body: "Tele-consult, renewals, and continuity of care.", badge: "Schedule mockup", meta: "Preview", live: false },
-      ];
+    ? [{ name: "Dra. Camila Rojas", body: "Dolor cronico y seguimiento longitudinal.", badge: "Preview", meta: "Preview", live: false }]
+    : [{ name: "Dr. Camila Rojas", body: "Chronic pain and longitudinal follow-up.", badge: "Preview", meta: "Preview", live: false }];
   return [...live, ...preview].slice(0, 3);
 }
 
@@ -257,14 +245,8 @@ function buildDispensaries(snapshot: IndexedSnapshot, locale: Locale): Directory
       live: true,
     }));
   const preview = locale === "es"
-    ? [
-        { name: "Patagonia Care", body: "Catalogo premium, laboratorio visible y pickup rapido.", badge: "Mockup de inventario", meta: "Preview", live: false },
-        { name: "Leaf Point", body: "Retail medico con trazabilidad visible desde el lote.", badge: "Mockup de inventario", meta: "Preview", live: false },
-      ]
-    : [
-        { name: "Patagonia Care", body: "Premium catalog, visible lab status, and fast pickup.", badge: "Inventory mockup", meta: "Preview", live: false },
-        { name: "Leaf Point", body: "Medical retail with visible batch traceability.", badge: "Inventory mockup", meta: "Preview", live: false },
-      ];
+    ? [{ name: "Patagonia Care", body: "Catalogo premium y laboratorio visible.", badge: "Preview", meta: "Preview", live: false }]
+    : [{ name: "Patagonia Care", body: "Premium catalog and visible lab status.", badge: "Preview", meta: "Preview", live: false }];
   return [...live, ...preview].slice(0, 3);
 }
 
@@ -274,9 +256,9 @@ function shortAccount(account: string) {
 
 function HeroStat({ label, value, dark = false }: { label: string; value: string; dark?: boolean }) {
   return (
-    <article className={`rounded-[1.7rem] border p-5 ${dark ? "border-white/10 bg-white/6" : "border-white/10 bg-white/6"}`}>
+    <article className="rounded-[1.7rem] border border-white/10 bg-white/6 p-5">
       <p className={`text-xs uppercase tracking-[0.24em] ${dark ? "text-[#9dcbb6]" : "text-white/48"}`}>{label}</p>
-      <p className={`font-display mt-4 text-4xl leading-none ${dark ? "text-[#f7fbf9]" : "text-white"}`}>{value}</p>
+      <p className="font-display mt-4 text-4xl leading-none text-white">{value}</p>
     </article>
   );
 }
