@@ -10,6 +10,7 @@ export type TrustLeafActivityItem = {
   id: string;
   kind:
     | "onboarding_submitted"
+    | "onboarding_reviewed"
     | "role_change"
     | "prescription_consumed"
     | "batch_released"
@@ -31,14 +32,31 @@ export async function getTrustLeafActivityLog(limit = 12) {
 
   const onboardingItems: TrustLeafActivityItem[] = onboardingQueue.applications.map((application) => ({
     id: `onboarding-${application.applicationId}`,
-    kind: "onboarding_submitted",
-    title: `${humanizeActorType(application.actorType)} onboarding`,
-    body: application.organizationName
-      ? `${application.fullName} submitted ${application.organizationName} for review.`
-      : `${application.fullName} submitted an onboarding request.`,
+    kind: application.status === "submitted" ? "onboarding_submitted" : "onboarding_reviewed",
+    title:
+      application.status === "submitted"
+        ? `${humanizeActorType(application.actorType)} onboarding`
+        : `${humanizeActorType(application.actorType)} ${application.status}`,
+    body:
+      application.status === "submitted"
+        ? application.organizationName
+          ? `${application.fullName} submitted ${application.organizationName} for review.`
+          : `${application.fullName} submitted an onboarding request.`
+        : application.organizationName
+          ? `${application.organizationName} is now ${application.status}.`
+          : `${application.fullName} is now ${application.status}.`,
     actor: application.email,
     createdAt: application.createdAt,
-    tone: application.actorType === "doctor" ? "emerald" : application.actorType === "dispensary" ? "amber" : "violet",
+    tone:
+      application.status === "approved"
+        ? "emerald"
+        : application.status === "rejected"
+          ? "amber"
+          : application.actorType === "doctor"
+            ? "emerald"
+            : application.actorType === "dispensary"
+              ? "amber"
+              : "violet",
     source: onboardingQueue.storageMode,
   }));
 

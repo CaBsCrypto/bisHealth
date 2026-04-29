@@ -2,8 +2,8 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 
-type ActorType = "patient" | "doctor" | "dispensary" | "growshop";
-type ApplicationStatus = "draft" | "submitted" | "approved" | "rejected";
+export type ActorType = "patient" | "doctor" | "dispensary" | "growshop";
+export type ApplicationStatus = "draft" | "submitted" | "approved" | "rejected";
 
 export type TrustLeafOnboardingApplication = {
   applicationId: string;
@@ -154,6 +154,41 @@ export async function listTrustLeafOnboardingQueue(filters?: {
   }
 }
 
+export async function updateTrustLeafOnboardingApplicationStatus(input: {
+  applicationId: string;
+  status: ApplicationStatus;
+}) {
+  const applicationId = input.applicationId.trim();
+
+  if (!applicationId) {
+    throw new Error("application_id_required");
+  }
+
+  try {
+    const row = await updateSupabaseApplicationStatus({
+      applicationId,
+      status: input.status,
+    });
+
+    return {
+      storageMode: "durable-db" as const,
+      persisted: true,
+      application: fromSupabaseRow(row),
+    };
+  } catch {
+    const application = updateFallbackApplicationStatus({
+      applicationId,
+      status: input.status,
+    });
+
+    return {
+      storageMode: "preview-fallback" as const,
+      persisted: false,
+      application,
+    };
+  }
+}
+
 function normalizeApplicationInput(input: {
   actorType: ActorType;
   fullName: string;
@@ -253,9 +288,51 @@ async function upsertSupabaseApplication(row: SupabaseOnboardingRow) {
   return rows[0] ?? row;
 }
 
+async function updateSupabaseApplicationStatus(input: {
+  applicationId: string;
+  status: ApplicationStatus;
+}) {
+  const config = getTrustLeafOnboardingRuntimeConfig();
+  const rows = await supabaseRequest<SupabaseOnboardingRow[]>({
+    table: config.applicationsTable,
+    method: "PATCH",
+    query: {
+      application_id: `eq.${input.applicationId}`,
+      select:
+        "application_id,actor_type,full_name,email,organization_name,country,wallet_address,notes,status,source,created_at,updated_at",
+    },
+    body: {
+      status: input.status,
+    },
+    prefer: "return=representation",
+  });
+
+  const row = rows[0];
+  if (!row) {
+    throw new Error("application_not_found");
+  }
+
+  return row;
+}
+
+function updateFallbackApplicationStatus(input: {
+  applicationId: string;
+  status: ApplicationStatus;
+}) {
+  const match = fallbackQueue.find((item) => item.applicationId === input.applicationId);
+
+  if (!match) {
+    throw new Error("application_not_found");
+  }
+
+  match.status = input.status;
+  match.updatedAt = new Date().toISOString();
+  return match;
+}
+
 async function supabaseRequest<T>(args: {
   table: string;
-  method?: "GET" | "POST";
+  method?: "GET" | "POST" | "PATCH";
   query?: Record<string, string>;
   body?: unknown;
   prefer?: string;
