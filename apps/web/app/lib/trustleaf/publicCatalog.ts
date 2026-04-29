@@ -13,7 +13,7 @@ const ACTOR_ALIASES: Record<string, { doctor?: string; dispensary?: string }> = 
   },
 };
 
-type PublicBrand = {
+export type PublicBrand = {
   id: string;
   name: string;
   category: string;
@@ -24,7 +24,7 @@ type PublicBrand = {
   featuredIn: string[];
 };
 
-type PublicProduct = {
+export type PublicProduct = {
   id: string;
   brandId: string;
   brandName: string;
@@ -35,6 +35,15 @@ type PublicProduct = {
   cbd: string;
   traceability: string;
   availableAt: string[];
+};
+
+export type TrustLeafPublicBrandDetail = PublicBrand & {
+  products: PublicProduct[];
+};
+
+export type TrustLeafPublicProductDetail = PublicProduct & {
+  brand: Pick<PublicBrand, "id" | "name" | "category" | "origin">;
+  relatedProducts: PublicProduct[];
 };
 
 export async function getTrustLeafPublicCatalog(locale: Locale = "en") {
@@ -96,6 +105,55 @@ export async function getTrustLeafPublicCatalog(locale: Locale = "en") {
     dispensaries,
     brands,
     products,
+  };
+}
+
+export async function getTrustLeafPublicBrandDetail(
+  brandId: string,
+  locale: Locale = "en",
+): Promise<TrustLeafPublicBrandDetail | null> {
+  const brands = getAssociatedBrands(locale);
+  const products = getAssociatedProducts(locale);
+  const brand = brands.find((item) => item.id === brandId);
+
+  if (!brand) {
+    return null;
+  }
+
+  return {
+    ...brand,
+    products: products.filter((product) => product.brandId === brandId),
+  };
+}
+
+export async function getTrustLeafPublicProductDetail(
+  productId: string,
+  locale: Locale = "en",
+): Promise<TrustLeafPublicProductDetail | null> {
+  const brands = getAssociatedBrands(locale);
+  const products = getAssociatedProducts(locale);
+  const product = products.find((item) => item.id === productId);
+
+  if (!product) {
+    return null;
+  }
+
+  const brand = brands.find((item) => item.id === product.brandId);
+  if (!brand) {
+    return null;
+  }
+
+  return {
+    ...product,
+    brand: {
+      id: brand.id,
+      name: brand.name,
+      category: brand.category,
+      origin: brand.origin,
+    },
+    relatedProducts: products.filter(
+      (item) => item.brandId === product.brandId && item.id !== product.id,
+    ),
   };
 }
 
