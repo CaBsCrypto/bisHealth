@@ -20,6 +20,21 @@ type PublicBrand = {
   body: string;
   heroProduct: string;
   origin: string;
+  productCount: number;
+  featuredIn: string[];
+};
+
+type PublicProduct = {
+  id: string;
+  brandId: string;
+  brandName: string;
+  name: string;
+  format: string;
+  strain: string;
+  thc: string;
+  cbd: string;
+  traceability: string;
+  availableAt: string[];
 };
 
 export async function getTrustLeafPublicCatalog(locale: Locale = "en") {
@@ -65,6 +80,7 @@ export async function getTrustLeafPublicCatalog(locale: Locale = "en") {
     }));
 
   const brands = getAssociatedBrands(locale);
+  const products = getAssociatedProducts(locale);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -72,12 +88,14 @@ export async function getTrustLeafPublicCatalog(locale: Locale = "en") {
       doctors: doctors.length,
       dispensaries: dispensaries.length,
       brands: brands.length,
+      products: products.length,
       prescriptions: indexedState.prescriptions.length,
       consumedPrescriptions: indexedState.prescriptionConsumptions.length,
     },
     doctors,
     dispensaries,
     brands,
+    products,
   };
 }
 
@@ -91,6 +109,8 @@ function getAssociatedBrands(locale: Locale): PublicBrand[] {
         body: "Extractos premium y formulaciones pensadas para pacientes con continuidad clinica.",
         heroProduct: "Aceite balance 10:10",
         origin: "Chile",
+        productCount: 2,
+        featuredIn: ["Green North Dispensary"],
       },
       {
         id: "patagonia-care",
@@ -99,6 +119,8 @@ function getAssociatedBrands(locale: Locale): PublicBrand[] {
         body: "Linea curada de bienestar, formatos simples y presentacion confiable para dispensarios.",
         heroProduct: "Flor medicinal indoor",
         origin: "Patagonia",
+        productCount: 2,
+        featuredIn: ["Green North Dispensary"],
       },
       {
         id: "verde-clinico",
@@ -107,6 +129,8 @@ function getAssociatedBrands(locale: Locale): PublicBrand[] {
         body: "Productos orientados a dolor cronico, descanso y acompanamiento terapeutico.",
         heroProduct: "Gomitas funcionales CBD",
         origin: "LatAm",
+        productCount: 2,
+        featuredIn: ["Green North Dispensary"],
       },
     ];
   }
@@ -119,6 +143,8 @@ function getAssociatedBrands(locale: Locale): PublicBrand[] {
       body: "Premium extracts and formulations designed for patients who need continuity of care.",
       heroProduct: "Balanced 10:10 oil",
       origin: "Chile",
+      productCount: 2,
+      featuredIn: ["Green North Dispensary"],
     },
     {
       id: "patagonia-care",
@@ -127,6 +153,8 @@ function getAssociatedBrands(locale: Locale): PublicBrand[] {
       body: "Curated wellness line, simple formats, and trusted presentation for dispensary shelves.",
       heroProduct: "Indoor medicinal flower",
       origin: "Patagonia",
+      productCount: 2,
+      featuredIn: ["Green North Dispensary"],
     },
     {
       id: "verde-clinico",
@@ -135,6 +163,162 @@ function getAssociatedBrands(locale: Locale): PublicBrand[] {
       body: "Products oriented to chronic pain, rest, and therapeutic follow-up.",
       heroProduct: "Functional CBD gummies",
       origin: "LatAm",
+      productCount: 2,
+      featuredIn: ["Green North Dispensary"],
+    },
+  ];
+}
+
+function getAssociatedProducts(locale: Locale): PublicProduct[] {
+  if (locale === "es") {
+    return [
+      {
+        id: "andes-balance-1010",
+        brandId: "andes-herbal-lab",
+        brandName: "Andes Herbal Lab",
+        name: "Aceite Balance 10:10",
+        format: "Aceite sublingual",
+        strain: "Blend terapeutico",
+        thc: "10%",
+        cbd: "10%",
+        traceability: "Lote y laboratorio visibles",
+        availableAt: ["Green North Dispensary"],
+      },
+      {
+        id: "andes-night-drop",
+        brandId: "andes-herbal-lab",
+        brandName: "Andes Herbal Lab",
+        name: "Night Drop",
+        format: "Tintura nocturna",
+        strain: "Formula descanso",
+        thc: "4%",
+        cbd: "18%",
+        traceability: "Perfil de laboratorio verificado",
+        availableAt: ["Green North Dispensary"],
+      },
+      {
+        id: "patagonia-flower",
+        brandId: "patagonia-care",
+        brandName: "Patagonia Care",
+        name: "Flor Indoor Patagonia",
+        format: "Flor medicinal",
+        strain: "Patagonia Calm",
+        thc: "17%",
+        cbd: "1%",
+        traceability: "Origen de cultivo visible",
+        availableAt: ["Green North Dispensary"],
+      },
+      {
+        id: "patagonia-softgel",
+        brandId: "patagonia-care",
+        brandName: "Patagonia Care",
+        name: "Softgel Balance",
+        format: "Softgels",
+        strain: "Uso diario",
+        thc: "2%",
+        cbd: "12%",
+        traceability: "Liberacion y stock indexados",
+        availableAt: ["Green North Dispensary"],
+      },
+      {
+        id: "verde-gummies",
+        brandId: "verde-clinico",
+        brandName: "Verde Clinico",
+        name: "Gomitas CBD Focus",
+        format: "Gomitas funcionales",
+        strain: "CBD functional",
+        thc: "0%",
+        cbd: "20mg",
+        traceability: "Marca asociada verificada",
+        availableAt: ["Green North Dispensary"],
+      },
+      {
+        id: "verde-rest-oil",
+        brandId: "verde-clinico",
+        brandName: "Verde Clinico",
+        name: "Rest Oil",
+        format: "Aceite terapeutico",
+        strain: "Sleep formula",
+        thc: "3%",
+        cbd: "15%",
+        traceability: "Historial de batch disponible",
+        availableAt: ["Green North Dispensary"],
+      },
+    ];
+  }
+
+  return [
+    {
+      id: "andes-balance-1010",
+      brandId: "andes-herbal-lab",
+      brandName: "Andes Herbal Lab",
+      name: "Balance 10:10 Oil",
+      format: "Sublingual oil",
+      strain: "Therapeutic blend",
+      thc: "10%",
+      cbd: "10%",
+      traceability: "Visible batch and lab",
+      availableAt: ["Green North Dispensary"],
+    },
+    {
+      id: "andes-night-drop",
+      brandId: "andes-herbal-lab",
+      brandName: "Andes Herbal Lab",
+      name: "Night Drop",
+      format: "Night tincture",
+      strain: "Rest formula",
+      thc: "4%",
+      cbd: "18%",
+      traceability: "Verified lab profile",
+      availableAt: ["Green North Dispensary"],
+    },
+    {
+      id: "patagonia-flower",
+      brandId: "patagonia-care",
+      brandName: "Patagonia Care",
+      name: "Patagonia Indoor Flower",
+      format: "Medicinal flower",
+      strain: "Patagonia Calm",
+      thc: "17%",
+      cbd: "1%",
+      traceability: "Visible cultivation origin",
+      availableAt: ["Green North Dispensary"],
+    },
+    {
+      id: "patagonia-softgel",
+      brandId: "patagonia-care",
+      brandName: "Patagonia Care",
+      name: "Balance Softgel",
+      format: "Softgels",
+      strain: "Daily use",
+      thc: "2%",
+      cbd: "12%",
+      traceability: "Indexed release and stock",
+      availableAt: ["Green North Dispensary"],
+    },
+    {
+      id: "verde-gummies",
+      brandId: "verde-clinico",
+      brandName: "Verde Clinico",
+      name: "CBD Focus Gummies",
+      format: "Functional gummies",
+      strain: "CBD functional",
+      thc: "0%",
+      cbd: "20mg",
+      traceability: "Verified associated brand",
+      availableAt: ["Green North Dispensary"],
+    },
+    {
+      id: "verde-rest-oil",
+      brandId: "verde-clinico",
+      brandName: "Verde Clinico",
+      name: "Rest Oil",
+      format: "Therapeutic oil",
+      strain: "Sleep formula",
+      thc: "3%",
+      cbd: "15%",
+      traceability: "Batch history available",
+      availableAt: ["Green North Dispensary"],
     },
   ];
 }
