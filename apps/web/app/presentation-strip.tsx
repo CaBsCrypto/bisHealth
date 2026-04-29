@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Locale } from "./lib/i18n";
 
 type StripKey =
+  | "admin"
   | "landing"
   | "demo"
   | "patient"
@@ -13,6 +14,10 @@ type StripKey =
   | "walletless";
 
 const stripItems: Record<StripKey, { href: string; label: Record<Locale, string> }> = {
+  admin: {
+    href: "/admin",
+    label: { es: "Admin hub", en: "Admin hub" },
+  },
   landing: {
     href: "/",
     label: { es: "Landing", en: "Landing" },
