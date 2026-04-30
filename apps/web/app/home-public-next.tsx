@@ -3,6 +3,7 @@ import Link from "next/link";
 import { LanguageSwitcher } from "./language-switcher";
 import { getMarketingData, type Locale } from "./lib/i18n";
 import { getTrustLeafPublicCatalog } from "./lib/trustleaf/publicCatalog";
+import { PublicExperiencePortal } from "./public-experience-portal";
 
 type MarketingData = ReturnType<typeof getMarketingData>;
 type PublicCatalog = Awaited<ReturnType<typeof getTrustLeafPublicCatalog>>;
@@ -55,6 +56,12 @@ export function HomePublicNext({
                 className="rounded-full px-4 py-2 text-[#1a3b32]/72 transition hover:bg-[#1a3b32]/6 hover:text-[#1a3b32]"
               >
                 {copy.navNetwork}
+              </a>
+              <a
+                href="#portal"
+                className="rounded-full px-4 py-2 text-[#1a3b32]/72 transition hover:bg-[#1a3b32]/6 hover:text-[#1a3b32]"
+              >
+                {copy.navPortal}
               </a>
               <LanguageSwitcher locale={locale} />
               <Link
@@ -254,6 +261,8 @@ export function HomePublicNext({
           ))}
         </section>
 
+        <PublicExperiencePortal locale={locale} catalog={catalog} />
+
         <section className="mt-20 rounded-[3rem] border border-[#1a3b32]/8 bg-[linear-gradient(145deg,#f6efe5,#efe1cf)] p-8 shadow-[0_24px_90px_rgba(14,31,25,0.06)] md:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <div>
@@ -306,6 +315,7 @@ function getCopy(locale: Locale) {
         navEcosystem: "Ecosistema",
         navProcess: "Proceso",
         navNetwork: "Red",
+        navPortal: "Portal",
         navCta: "Entrar",
         announcement: "Nueva experiencia publica basada en Trust Leaf UI",
         eyebrow: "Cannabis medicinal premium, centrado en el paciente",
@@ -378,6 +388,7 @@ function getCopy(locale: Locale) {
         navEcosystem: "Ecosystem",
         navProcess: "Process",
         navNetwork: "Network",
+        navPortal: "Portal",
         navCta: "Enter",
         announcement: "New public experience based on Trust Leaf UI",
         eyebrow: "Premium medicinal cannabis, centered around the patient",
