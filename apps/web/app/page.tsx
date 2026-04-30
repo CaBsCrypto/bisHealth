@@ -1,4 +1,4 @@
-import { HomePublicNext } from "./home-public-next";
+import { HomeTrustLeafLanding } from "./home-trustleaf-landing";
 import { getMarketingData } from "./lib/i18n";
 import { getLocale } from "./lib/locale";
 import { getTrustLeafPublicCatalog } from "./lib/trustleaf/publicCatalog";
@@ -8,5 +8,5 @@ export default async function HomePage() {
   const marketing = getMarketingData(locale);
   const catalog = await getTrustLeafPublicCatalog(locale);
 
-  return <HomePublicNext locale={locale} marketing={marketing} catalog={catalog} />;
+  return <HomeTrustLeafLanding locale={locale} marketing={marketing} catalog={catalog} />;
 }

@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { ReactNode } from "react";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Instrument_Sans, Playfair_Display } from "next/font/google";
 
 import { getLocale } from "./lib/locale";
 
@@ -9,15 +9,15 @@ export const metadata = {
   description: "Web2.5 medicinal cannabis trust network on Stellar",
 };
 
-const bodyFont = Manrope({
+const bodyFont = Instrument_Sans({
   subsets: ["latin"],
   variable: "--font-body",
 });
 
-const displayFont = Cormorant_Garamond({
+const displayFont = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "700"],
 });
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
