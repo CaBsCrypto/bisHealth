@@ -1,12 +1,12 @@
-import { HomePublic } from "./home-public";
+import { HomePublicNext } from "./home-public-next";
 import { getMarketingData } from "./lib/i18n";
 import { getLocale } from "./lib/locale";
-import { getIndexedState } from "./lib/trustleaf/indexedState";
+import { getTrustLeafPublicCatalog } from "./lib/trustleaf/publicCatalog";
 
 export default async function HomePage() {
   const locale = await getLocale();
   const marketing = getMarketingData(locale);
-  const indexedState = await getIndexedState();
+  const catalog = await getTrustLeafPublicCatalog(locale);
 
-  return <HomePublic locale={locale} marketing={marketing} indexedState={indexedState} />;
+  return <HomePublicNext locale={locale} marketing={marketing} catalog={catalog} />;
 }
